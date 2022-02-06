@@ -8,14 +8,6 @@ const users = new Map<string, Token>();
 const connections = new Map<string, number>(); // соединений может быть несколько (зашли с двух вкладок, например)
 const votes = new Map<string, number>();
 
-users.set('1', { "id": "1", "name": "Denis Kuleshov", "role": "user", "iat": 1644132487 });
-users.set('2', { "id": "1", "name": "Дмитрий Захаров", "role": "user", "iat": 1644132487 });
-users.set('3', { "id": "1", "name": "Elizaveta", "role": "user", "iat": 1644132487 });
-users.set('4', { "id": "1", "name": "Aleksei Lukianov", "role": "user", "iat": 1644132487 });
-users.set('5', { "id": "1", "name": "Dmitry", "role": "user", "iat": 1644132487 });
-users.set('6', { "id": "1", "name": "Mariia", "role": "admin", "iat": 1644132487 });
-users.set('7', { "id": "1", "name": "Евгений", "role": "user", "iat": 1644132487 });
-
 ws.on('connection', wsClient => {
   const client: { token?: string } = {}
 
