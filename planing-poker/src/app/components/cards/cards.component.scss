@@ -1,0 +1,109 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+}
+
+mat-horizontal-stepper {
+  width: 100%;
+  max-width: 660px;
+  margin: auto;
+  background: unset;
+  pointer-events: none;
+}
+
+.poker-cards {
+  flex-grow: 1;
+  place-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 660px;
+  margin: auto;
+
+  &__item {
+    width: 80px;
+    height: 120px;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+
+    &-deactivated {
+      pointer-events: none;
+    }
+
+    &-disabled {
+      color: #ccc;
+      cursor: default;
+    }
+  }
+
+
+}
+@media screen and (max-width: 1200px) {
+  mat-horizontal-stepper {
+    max-width: 460px;
+  }
+  .poker-cards {
+    max-width: 460px;
+    &__item {
+      width: 50px;
+      height: 100px;
+      margin: 5px;
+    }
+  }
+}
+
+@media screen and (max-width: 970px) {
+  .mat-headline {
+    font-size: 16px;
+    line-height: normal;
+  }
+  .poker-cards {
+    max-width: 252px;
+    &__item {
+      width: 50px;
+      height: 50px;
+      margin: 1px;
+    }
+  }
+}
+@media screen and (max-width: 760px) {
+  .poker-cards {
+    max-width: 216px;
+    &__item {
+      width: 20px;
+      height: 40px;
+      margin: 1px;
+      font-size: 25px;
+    }
+  }
+
+}
+
+.actions {
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+  border-radius: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  animation: 200ms ease-in-out show-actions;
+
+  *:not(:last-child):not(.flex-space) {
+    margin-right: 8px;
+  }
+}
+
+@keyframes show-actions {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

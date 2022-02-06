@@ -1,0 +1,23 @@
+@use "@angular/material/theming" as mat;
+
+.mat-chip-list {
+  animation: 200ms ease-in-out show-chip;
+}
+
+@keyframes show-chip {
+  from {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+:host ::ng-deep {
+  .mat-chip-list-wrapper {
+    flex-wrap: nowrap;
+  }
+}

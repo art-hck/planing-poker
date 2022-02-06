@@ -1,0 +1,21 @@
+<pp-header (menu)="togglePlayers()" (history)="toggleHistory()" [showHistory]="showHistory"></pp-header>
+
+<ng-container *ngIf="authService.user$ | async">
+  <mat-drawer-container>
+    <mat-drawer class='users' mode="side" [opened]="showPlayers">
+      <pp-users [showVotes]="cards.step === 2" (avg)="avg = $event" (votedCount)="votedCount = $event"></pp-users>
+    </mat-drawer>
+    <mat-drawer-content>
+      <pp-cards #cards [avg]="avg" [votedCount]="votedCount"></pp-cards>
+
+      <button mat-fab color="primary" class="story-create" *ngIf="cards.step !== 2 && !cards.selected">
+        <mat-icon>create</mat-icon>
+      </button>
+    </mat-drawer-content>
+
+    <mat-drawer mode="side" [opened]="showHistory" position="end">
+      <pp-history></pp-history>
+    </mat-drawer>
+
+  </mat-drawer-container>
+</ng-container>

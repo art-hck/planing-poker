@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "paths": {
+      "@common/*": [
+        "../common"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "../common"
+    }
+  ]
+}

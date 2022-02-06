@@ -1,0 +1,25 @@
+@use '@angular/material' as mat;
+
+
+.mat-accent {
+  color: mat.get-color-from-palette(mat.define-palette(mat.$pink-palette), 'A400');
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.flex-space {
+  flex: 1 1 auto;
+}
+
+div.bold {
+  font-weight: 500 !important;
+}
+
+.center {
+  text-align: center;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}

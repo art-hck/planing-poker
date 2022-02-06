@@ -1,0 +1,24 @@
+<form [formGroup]="form">
+  <h1 mat-dialog-title>Введите отображаемое имя</h1>
+  <div mat-dialog-content>
+
+    <mat-error *ngIf="data.loginAttempts > 0"><p>Неудачная попытка входа ({{data.loginAttempts}})</p></mat-error>
+    <div>
+      <mat-form-field>
+        <mat-label>Имя</mat-label>
+        <input matInput formControlName="name">
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field *ngIf="!form.get('guest')?.value">
+        <mat-label>Пароль</mat-label>
+        <input matInput formControlName="password" type="password">
+      </mat-form-field>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <mat-slide-toggle formControlName="guest" color="primary">Гость</mat-slide-toggle>
+    <div class="flex-space"></div>
+    <button mat-flat-button color="primary" [disabled]="form.invalid" [mat-dialog-close]="form.value">Войти</button>
+  </div>
+</form>

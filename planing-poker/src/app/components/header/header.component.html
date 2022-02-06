@@ -1,0 +1,14 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="menu.emit()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <h1>Planing Poker</h1>
+  <div class="flex-space"></div>
+  <button mat-icon-button (click)="authService.logout$.next(undefined)">
+    <mat-icon>logout</mat-icon>
+  </button>
+  <button mat-icon-button (click)="history.emit()">
+    <mat-icon *ngIf="!showHistory">history</mat-icon>
+    <mat-icon *ngIf="showHistory">chevron_right</mat-icon>
+  </button>
+</mat-toolbar>

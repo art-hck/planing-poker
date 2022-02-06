@@ -1,0 +1,22 @@
+:host ::ng-deep .mat-horizontal-content-container {
+  display: none;
+}
+
+.mat-drawer-container {
+  height: calc(100% - 64px)
+}
+
+.users {
+  width: 300px;
+}
+
+.history {
+  width: 200px;
+}
+
+.story-create {
+  position: fixed;
+  bottom: 16px;
+  right: 216px;
+}
+

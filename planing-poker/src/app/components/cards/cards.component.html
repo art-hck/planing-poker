@@ -1,0 +1,35 @@
+<mat-horizontal-stepper [selectedIndex]="step" [disableRipple]="true">
+  <mat-step completed="true" label="Презентация стори"></mat-step>
+  <mat-step label="Оценка Стори"></mat-step>
+  <mat-step label="Результаты"></mat-step>
+</mat-horizontal-stepper>
+
+<div class="mat-headline center">EWE-1986 Возврат в корзину по стрелке Назад</div>
+<div class="poker-cards">
+  <mat-card
+    *ngFor="let point of points"
+    matRipple
+    class="mat-display-2 poker-cards__item"
+    [class.mat-elevation-z8]="active === point"
+    [class.poker-cards__item-disabled]="selected && active !== point"
+    [class.poker-cards__item-deactivated]="step === 2"
+    (click)="vote(point)"
+  >{{point}}</mat-card>
+</div>
+
+
+<mat-card class="actions" *ngIf="selected || ((authService.user$ | async)?.role ==='admin' && votedCount > 0)">
+  <div *ngIf="step === 2">Итоговая средняя оценка: <b>{{avg | number:'0.0-1'}}</b></div>
+
+<!--  <div style="display: flex; align-items: center" *ngIf="step !== 2">-->
+<!--    <mat-icon style="margin-right: 8px">timer</mat-icon>-->
+<!--    <span>{{timer$ | async | date:'mm:ss'}}</span>-->
+<!--  </div>-->
+
+  <div class="flex-space"></div>
+  <button *ngIf="selected && step !== 2" mat-flat-button (click)="reset()">Отмена</button>
+  <ng-container *ngIf="(authService.user$ | async)?.role ==='admin'">
+    <button *ngIf="step !== 2" mat-flat-button color="primary" (click)="flip()">Открыть карты</button>
+    <button *ngIf="step === 2" mat-flat-button color="primary" (click)="endVoting()">Завершить голосование</button>
+  </ng-container>
+</mat-card>
