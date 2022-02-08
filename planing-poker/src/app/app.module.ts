@@ -30,6 +30,7 @@ import { NgxsModule } from "@ngxs/store";
 import { UsersState } from "./states/users.state";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { environment } from "../environments/environment";
 
 @NgModule({
   declarations: [
@@ -62,7 +63,9 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatSnackBarModule,
     MatSlideToggleModule,
     ReactiveFormsModule,
-    NgxsModule.forRoot([UsersState]),
+    NgxsModule.forRoot([UsersState], {
+      developmentMode: !environment.production
+    }),
     MatButtonToggleModule,
     MatTooltipModule
   ],
