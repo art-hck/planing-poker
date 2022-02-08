@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "fornex": "ng build --configuration fornex",
     "test": "ng test"
   },
   "private": true,

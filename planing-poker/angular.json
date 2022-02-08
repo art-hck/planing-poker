@@ -37,6 +37,14 @@
             "scripts": []
           },
           "configurations": {
+            "fornex": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.fornex.ts"
+                }
+              ]
+            },
             "production": {
               "budgets": [
                 {
