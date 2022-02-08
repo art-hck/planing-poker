@@ -8,5 +8,9 @@ export enum WsActions {
   unvoted = 'unvoted',
   flip = 'flip',
   endVoting = 'endVoting',
-  reject = 'reject'
+  reject = 'reject',
+  newVoting = 'newVoting',
+  votings = 'votings',
+  activateVoting = 'activateVoting',
+  denied = 'denied'
 }

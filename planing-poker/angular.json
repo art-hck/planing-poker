@@ -70,6 +70,11 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+            "port": 4201,
+            "host": "0.0.0.0",
+            "disableHostCheck": true
+          },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {

@@ -1,5 +1,11 @@
+import { Uuid } from "./uuid";
+import { Role } from "./role";
+
 export interface User {
-  name: string,
-  vote?: number,
-  role: 'user' | 'admin'
+  id: Uuid;
+  name: string;
+  iat: number;
+  role: 'user' | 'admin';
+  teamRole: Role;
+  voted?: boolean;
 }

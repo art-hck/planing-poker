@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { map, repeatWhen, takeUntil, timer } from "rxjs";
-import { WsService } from "../../services/ws.service";
 import { AuthService } from "../auth/auth.service";
+import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
+import { Voting } from "@common/models";
+import { MatStepper } from "@angular/material/stepper";
 
 @Component({
   selector: 'pp-cards',
@@ -10,21 +12,23 @@ import { AuthService } from "../auth/auth.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CardsComponent {
-  @Input() step = 1;
-  @Input() avg: number = 0;
-  @Input() votedCount: number = 0;
+  @ViewChild('stepper') stepper?: MatStepper;
+  @Input() step?: number;
+  @Input() avg: number | null = 0;
+  @Input() votedCount: number | null = 0;
+  @Input() activeVoting?: Voting | null;
+  @Output() stepChange = new EventEmitter<number>();
 
   readonly points = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40];
-  readonly flip$ = new EventEmitter();
   readonly vote$ = new EventEmitter<number>();
   readonly timer$ = timer(0, 1000).pipe(
-    takeUntil(this.flip$),
+    takeUntil(this.pp.flip$),
     repeatWhen(() => this.vote$),
     map(v => new Date(0).setSeconds(v))
   )
   active?: number;
 
-  constructor(private wsService: WsService, private cd: ChangeDetectorRef, public authService: AuthService) {
+  constructor(public pp: PlaningPokerWsService, private cd: ChangeDetectorRef, public authService: AuthService) {
   }
 
   get selected() {
@@ -33,36 +37,21 @@ export class CardsComponent {
 
   reset() {
     this.active = undefined;
-    this.step = 1;
-    this.wsService.send('unvote', {}, { withCredentials: true })
-  }
-
-  endVoting() {
-    this.wsService.send('endVoting', {}, { withCredentials: true })
-  }
-
-  flip() {
-    this.wsService.send('flip', {}, { withCredentials: true });
+    this.pp.unvote(this.activeVoting!.id);
   }
 
   vote(point: number) {
-    if(this.active !== point) {
+    if (this.active !== point) {
       this.active = point;
       this.vote$.emit(point)
-      this.wsService.send('vote', { point }, { withCredentials: true })
+      this.pp.vote(point, this.activeVoting!.id);
     }
   }
 
   ngOnInit() {
-    this.wsService.read('endVoting').subscribe(() => {
+    this.pp.endVoting$.subscribe(({ votingId }) => {
+      this.stepper?.reset();
       this.active = undefined;
-      this.step = 1;
-      this.cd.detectChanges();
-    })
-
-    this.wsService.read('flip').subscribe(() => {
-      this.step = 2;
-      this.flip$.emit();
       this.cd.detectChanges();
     })
   }

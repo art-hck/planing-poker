@@ -3,7 +3,7 @@
     "outDir": "dist",
     "paths": {
       "@common/*": [
-        "../common"
+        "../common/*"
       ]
     }
   },

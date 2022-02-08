@@ -9,8 +9,8 @@ import { AuthService } from "../auth/auth.service";
 })
 export class HeaderComponent {
   @Output() menu = new EventEmitter();
-  @Output() history = new EventEmitter();
-  @Input() showHistory = true;
+  @Output() votings = new EventEmitter();
+  @Input() showVotings = true;
 
   constructor(public authService: AuthService) {}
 

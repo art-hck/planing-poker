@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
 import { AuthComponent } from "./auth.component";
-import { of, ReplaySubject, startWith, Subject, switchMap } from "rxjs";
-import { Handshake, Token } from "@common/models";
+import { map, of, ReplaySubject, startWith, Subject, switchMap } from "rxjs";
+import { Handshake, User } from "@common/models";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,8 @@ export class AuthService {
   readonly beforeLogout$ = new Subject<void>();
   readonly logout$ = new Subject<void>();
   readonly login$ = new ReplaySubject<Handshake>(1);
-  readonly user$ = new ReplaySubject<Token | null>();
+  readonly user$ = new ReplaySubject<User | null>();
+  readonly isAdmin$ = this.user$.pipe(map(user => user?.role === 'admin'));
   loginAttempts = 0;
 
   constructor(public dialog: MatDialog) {

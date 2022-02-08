@@ -1,24 +1,34 @@
 <form [formGroup]="form">
-  <h1 mat-dialog-title>Введите отображаемое имя</h1>
+  <h1 mat-dialog-title>Let's start!</h1>
   <div mat-dialog-content>
 
     <mat-error *ngIf="data.loginAttempts > 0"><p>Неудачная попытка входа ({{data.loginAttempts}})</p></mat-error>
     <div>
-      <mat-form-field>
-        <mat-label>Имя</mat-label>
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
         <input matInput formControlName="name">
       </mat-form-field>
     </div>
     <div>
-      <mat-form-field *ngIf="!form.get('guest')?.value">
-        <mat-label>Пароль</mat-label>
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
         <input matInput formControlName="password" type="password">
       </mat-form-field>
     </div>
+
+    <div>
+      <mat-button-toggle-group formControlName="teamRole">
+        <mat-button-toggle *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+    <div>
+      <mat-button-toggle-group>
+      </mat-button-toggle-group>
+    </div>
   </div>
   <div mat-dialog-actions>
-    <mat-slide-toggle formControlName="guest" color="primary">Гость</mat-slide-toggle>
+    <mat-slide-toggle formControlName="guest" color="primary">Guest</mat-slide-toggle>
     <div class="flex-space"></div>
-    <button mat-flat-button color="primary" [disabled]="form.invalid" [mat-dialog-close]="form.value">Войти</button>
+    <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid" [mat-dialog-close]="form.value">Войти</button>
   </div>
 </form>

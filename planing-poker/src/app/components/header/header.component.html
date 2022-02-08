@@ -7,8 +7,8 @@
   <button mat-icon-button (click)="authService.logout$.next(undefined)">
     <mat-icon>logout</mat-icon>
   </button>
-  <button mat-icon-button (click)="history.emit()">
-    <mat-icon *ngIf="!showHistory">history</mat-icon>
-    <mat-icon *ngIf="showHistory">chevron_right</mat-icon>
+  <button mat-icon-button (click)="votings.emit()">
+    <mat-icon *ngIf="!showVotings">description</mat-icon>
+    <mat-icon *ngIf="showVotings">chevron_right</mat-icon>
   </button>
 </mat-toolbar>

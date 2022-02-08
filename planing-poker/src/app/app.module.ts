@@ -18,13 +18,18 @@ import { MatChipsModule } from "@angular/material/chips";
 import { HeaderComponent } from './components/header/header.component';
 import { UsersComponent } from './components/users/users.component';
 import { CardsComponent } from './components/cards/cards.component';
-import { HistoryComponent } from './components/history/history.component';
+import { VotingsComponent } from './components/votings/votings.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { CreateVoteComponent } from './components/create-vote/create-vote.component';
+import { NgxsModule } from "@ngxs/store";
+import { environment } from "../environments/environment";
+import { UsersState } from "./states/users.state";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 
 @NgModule({
   declarations: [
@@ -32,8 +37,9 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     HeaderComponent,
     UsersComponent,
     CardsComponent,
-    HistoryComponent,
+    VotingsComponent,
     AuthComponent,
+    CreateVoteComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,9 +61,12 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     MatDialogModule,
     MatSnackBarModule,
     MatSlideToggleModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxsModule.forRoot([UsersState]),
+    MatButtonToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

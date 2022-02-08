@@ -1,0 +1,18 @@
+<form [formGroup]="form">
+  <h1 mat-dialog-title>Добавить стори</h1>
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Каждая стори начинается с новой строки</mat-label>
+      <textarea matInput
+                formControlName="name"
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="3"
+                cdkAutosizeMaxRows="15"></textarea>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <div class="flex-space"></div>
+    <button mat-flat-button color="primary" [disabled]="form.invalid" [mat-dialog-close]="form.value">Создать</button>
+  </div>
+</form>

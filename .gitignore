@@ -31,3 +31,5 @@ Thumbs.db
 *.d.ts
 *.d.ts.map
 /common/**/*.js
+*.tsbuildinfo
+environment.fornex.ts

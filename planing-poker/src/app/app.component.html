@@ -1,20 +1,40 @@
-<pp-header (menu)="togglePlayers()" (history)="toggleHistory()" [showHistory]="showHistory"></pp-header>
-
+<pp-header (menu)="togglePlayers()" (votings)="toggleVotings()" [showVotings]="showVotings"></pp-header>
 <ng-container *ngIf="authService.user$ | async">
   <mat-drawer-container>
     <mat-drawer class='users' mode="side" [opened]="showPlayers">
-      <pp-users [showVotes]="cards.step === 2" (avg)="avg = $event" (votedCount)="votedCount = $event"></pp-users>
+
+      <!--- USERS --->
+      <pp-users
+        [showVotes]="step === 2"
+        [users]="users$ | async"
+        [activeVoting]="activeVoting$ | async">
+      </pp-users>
     </mat-drawer>
     <mat-drawer-content>
-      <pp-cards #cards [avg]="avg" [votedCount]="votedCount"></pp-cards>
 
-      <button mat-fab color="primary" class="story-create" *ngIf="cards.step !== 2 && !cards.selected">
-        <mat-icon>create</mat-icon>
-      </button>
+      <!--- CARDS --->
+      <pp-cards
+        [activeVoting]="activeVoting$ | async"
+        [avg]="avg$ | async"
+        [votedCount]="votedCount$ | async"
+        [(step)]="step"
+        (stepChange)="cd.detectChanges()"
+      ></pp-cards>
+
+      <!--- CREATE --->
+      <ng-container *ngIf="authService.isAdmin$ | async">
+        <button mat-fab color="primary" class="story-create" *ngIf="step === 0" (click)="createStory()">
+          <mat-icon>create</mat-icon>
+        </button>
+      </ng-container>
     </mat-drawer-content>
 
-    <mat-drawer mode="side" [opened]="showHistory" position="end">
-      <pp-history></pp-history>
+    <mat-drawer class='votings' mode="side" [opened]="showVotings" position="end" *ngIf="votings$ | async as votings">
+      <!--- VOTINGS --->
+      <pp-votings
+        [votings]="votings"
+        (select)="pp.activateVoting(($event.id))"
+      ></pp-votings>
     </mat-drawer>
 
   </mat-drawer-container>

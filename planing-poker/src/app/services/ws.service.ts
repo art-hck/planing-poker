@@ -4,6 +4,7 @@ import { filter, iif, map, mergeMap, Observable, of, ReplaySubject, take, tap } 
 import { AuthService } from "../components/auth/auth.service";
 import jwt_decode from "jwt-decode";
 import { WsActions, WsMessage } from "@common/models";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class WsService {
 
   constructor(private authService: AuthService) {
     this.ws$ = new WebSocketSubject({
-      url: 'ws://localhost:9000',
+      url: environment.websocketHost || 'ws://localhost:9000',
       openObserver: {
         next: () => {
           this.authService.login$.pipe(
@@ -52,9 +53,9 @@ export class WsService {
       .subscribe(() => this.ws$.next({ action, payload }));
   }
 
-  public read<T = unknown>(action: `${WsActions}` | `${WsActions}`[]): Observable<T> {
+  public read<T = {}>(action: `${WsActions}`): Observable<T> {
     // console.log('READ <- ', action);
-    return this.ws$.pipe(filter(p => p.action === action || action.includes(p.action)), map(p => p.payload));
+    return this.ws$.pipe(filter(p => p.action === action), map(p => p.payload));
   }
 
   public readMultiple<T = unknown>(actions: `${WsActions}`[]): Observable<WsMessage<any>> {
