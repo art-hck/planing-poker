@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { map, repeatWhen, takeUntil, timer } from "rxjs";
+import { map, merge, repeatWhen, takeUntil, timer } from "rxjs";
 import { AuthService } from "../auth/auth.service";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
 import { Voting } from "@common/models";
@@ -51,8 +51,11 @@ export class CardsComponent {
   ngOnInit() {
     this.pp.endVoting$.subscribe(({ votingId }) => {
       this.stepper?.reset();
+    });
+
+    merge(this.pp.activateVoting$, this.pp.endVoting$).subscribe(({ votingId }) => {
       this.active = undefined;
       this.cd.detectChanges();
-    })
+    });
   }
 }

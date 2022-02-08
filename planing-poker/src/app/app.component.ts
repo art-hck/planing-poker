@@ -60,7 +60,7 @@ export class AppComponent {
       filter(([voted, user]) => voted.userId !== user?.id),
       switchMap(([voted]) => this.users$.pipe(take(1), map(users => users.find((u) => u.id === voted.userId))))
     ).subscribe(user => {
-      this.snackBar.open(`${user?.name} проголосовал(а)`, 'Ну ок', { duration: 4000 });
+      this.snackBar.open(`${user?.name} проголосовал(а)`, 'Ну ок', { duration: 4000, horizontalPosition: 'right' });
     })
   }
 
