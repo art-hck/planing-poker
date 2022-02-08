@@ -11,13 +11,13 @@ export namespace Users {
   export class FetchVotings {
     static readonly type = '[Users] FetchVotings';
 
-    constructor(public votings: Voting[]) {}
+    constructor(public votings: Voting<true>[]) {}
   }
 
   export class Voted {
     static readonly type = '[Users] Voted';
 
-    constructor(public userId: string, public votingId: string) {}
+    constructor(public userId: string, public votingId: string, public point?: number) {}
   }
 
   export class Unvoted {
@@ -29,7 +29,7 @@ export namespace Users {
   export class Flip {
     static readonly type = '[Users] Flip';
 
-    constructor(public voting: Voting) {}
+    constructor(public voting: Voting<true>) {}
   }
 
   export class StartVoting {

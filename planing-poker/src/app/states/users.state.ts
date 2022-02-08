@@ -2,7 +2,7 @@ import { User, Uuid, Voting } from "@common/models";
 import { Action, Selector, State, StateContext } from "@ngxs/store";
 import { Injectable } from "@angular/core";
 import { Users } from "../actions/users.actions";
-import { patch, updateItem } from "@ngxs/store/operators";
+import { patch, removeItem, updateItem } from "@ngxs/store/operators";
 import { insertOrPatch } from "../util/insert-or-patch.state-operator";
 import Fetch = Users.Fetch;
 import Voted = Users.Voted;
@@ -16,7 +16,7 @@ import { mapItems } from "../util/map-items.state-operator";
 
 interface Model {
   users: (User & { voted?: boolean })[];
-  votings: Voting[];
+  votings: Voting<true>[];
   activeVotingId?: Uuid;
 }
 type Context = StateContext<Model>;
@@ -45,23 +45,33 @@ export class UsersState {
 
   @Action(FetchVotings)
   fetchVotings({ setState }: Context, { votings }: FetchVotings) {
-    votings.map(voting => voting.votes = new Map(voting.votes));
     setState(patch<Model>({
-      votings: insertOrPatch((a, b) => a.id === b.id, votings)
+      votings: insertOrPatch<Voting<true>>((a, b) => a.id === b.id, votings)
     }));
   }
 
   @Action(Voted)
-  voted({ setState }: Context, { userId }: Voted) {
+  voted({ setState, getState }: Context, { userId, votingId, point }: Voted) {
     setState(patch<Model>({
       users: updateItem(user => user?.id === userId, patch({ voted: true }))
     }));
+
+    if (point !== undefined) {
+      setState(patch<Model>({
+        votings: updateItem(v => v?.id === votingId, patch({
+          votes: insertOrPatch((a) => !!a && a[0] === userId, [[userId, point]], true)
+        }))
+      }));
+    }
   }
 
   @Action(Unvoted)
-  unvoted({ setState }: Context, { userId }: Unvoted) {
+  unvoted({ setState }: Context, { userId, votingId }: Unvoted) {
     setState(patch<Model>({
-      users: updateItem(user => user?.id === userId, patch({ voted: false }))
+      users: updateItem(user => user?.id === userId, patch({ voted: false })),
+      votings: updateItem(v => v?.id === votingId, patch({
+        votes: removeItem<Voting<true>['votes'][number]>(a => !!a && a[0] === userId)
+      }))
     }));
   }
 
@@ -94,8 +104,16 @@ export class UsersState {
 
   @Action(ActivateVoting)
   activateVoting({ setState, getState }: Context, { votingId }: ActivateVoting) {
+    if(['pristine', 'in-progress'].includes(getState().votings.find(v => v.id === getState().activeVotingId)?.status || "")) {
+      setState(patch<Model>({
+        votings: updateItem(item => item?.id === getState().activeVotingId, patch({
+          votes: [] as Voting<true>['votes']
+        }))
+      }));
+    }
     setState(patch<Model>({
-      activeVotingId: getState().votings.find(({ id }) => id === votingId)?.id,
+      users: mapItems(u => ({ ...u, voted: false })),
+      activeVotingId: votingId,
     }));
   }
 }

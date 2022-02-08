@@ -19,8 +19,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 })
 export class AppComponent {
   @Select(UsersState.users) users$!: Observable<(User & { voted?: boolean })[]>;
-  @Select(UsersState.votings) votings$!: Observable<Voting[]>;
-  @Select(UsersState.activeVoting) activeVoting$!: Observable<Voting>;
+  @Select(UsersState.votings) votings$!: Observable<Voting<true>[]>;
+  @Select(UsersState.activeVoting) activeVoting$!: Observable<Voting<true>>;
   @Select(UsersState.avg) avg$!: Observable<number>;
 
   readonly votedCount$: Observable<number> = this.users$.pipe(map(users => users.filter(u => u.voted).length))
@@ -39,7 +39,7 @@ export class AppComponent {
     public cd: ChangeDetectorRef
   ) {
     this.pp.users$.subscribe(users => this.store.dispatch(new Users.Fetch(users.map(([k, v]) => v))));
-    this.pp.voted$.subscribe(({ userId, votingId }) => this.store.dispatch(new Users.Voted(userId, votingId)));
+    this.pp.voted$.subscribe(({ userId, votingId, point }) => this.store.dispatch(new Users.Voted(userId, votingId, point)));
     this.pp.unvoted$.subscribe(({ userId, votingId }) => this.store.dispatch(new Users.Unvoted(userId, votingId)));
     this.pp.flip$.subscribe((voting) => this.store.dispatch(new Users.Flip(voting)));
     this.pp.votings$.subscribe((votings) => this.store.dispatch(new Users.FetchVotings(votings.map(([k, v]) => v))))

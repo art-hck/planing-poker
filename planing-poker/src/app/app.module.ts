@@ -27,9 +27,9 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { CreateVoteComponent } from './components/create-vote/create-vote.component';
 import { NgxsModule } from "@ngxs/store";
-import { environment } from "../environments/environment";
 import { UsersState } from "./states/users.state";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -63,7 +63,8 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
     MatSlideToggleModule,
     ReactiveFormsModule,
     NgxsModule.forRoot([UsersState]),
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatTooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]

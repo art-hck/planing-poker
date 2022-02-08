@@ -11,7 +11,7 @@ import { RolesName } from "@common/models/role";
 })
 export class UsersComponent {
   @Input() users?: (User & { voted?: boolean })[] | null;
-  @Input() activeVoting?: Voting | null;
+  @Input() activeVoting?: Voting<true> | null;
   @Input() showVotes = false;
   readonly teamRole = RolesName;
 
@@ -23,4 +23,5 @@ export class UsersComponent {
     return votes.get(user.id);
   }
 
+  trackByFn = (index: number, item: User) => item.id;
 }

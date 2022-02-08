@@ -9,9 +9,11 @@ import { AuthService } from "../auth/auth.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VotingsComponent {
-  @Input() votings?: Voting[]
-  @Output() select = new EventEmitter<Voting>();
+  @Input() votings?: Voting<true>[]
+  @Output() select = new EventEmitter<Voting<true>>();
 
   constructor(public authService: AuthService) {
   }
+
+  trackByFn = (index: number, item: Voting<true>) => item.id;
 }

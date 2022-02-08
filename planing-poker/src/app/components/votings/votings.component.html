@@ -5,10 +5,10 @@
 </mat-list>
 
 <mat-selection-list [multiple]="false" [class.disabled]="!(authService.isAdmin$ | async)">
-  <ng-container *ngFor="let voting of votings">
-    <mat-list-option (click)="select.emit(voting)" color="warn">
+  <ng-container *ngFor="let voting of votings; trackBy: trackByFn">
+    <mat-list-option (click)="select.emit(voting)" >
       <mat-icon matListIcon>description</mat-icon>
-      <h3 matLine>{{voting.name}}</h3>
+      <h3 matLine [matTooltip]="voting.name" matTooltipClass="voting-tooltip" matTooltipShowDelay="500">{{voting.name}}</h3>
     </mat-list-option>
     <mat-divider></mat-divider>
   </ng-container>

@@ -9,12 +9,12 @@ export class PlaningPokerWsService {
 
   readonly handshake$ = this.ws.read<{ token: Token }>('handshake');
   readonly endVoting$ = this.ws.read<{ votingId: Uuid }>('endVoting');
-  readonly flip$ = this.ws.read<Voting>('flip');
+  readonly flip$ = this.ws.read<Voting<true>>('flip');
   readonly users$ = this.ws.read<[Uuid, User][]>('users');
   readonly reject$ = this.ws.read('reject');
-  readonly voted$ = this.ws.read<{ userId: Uuid, votingId: Uuid }>('voted');
+  readonly voted$ = this.ws.read<{ userId: Uuid, votingId: Uuid, point?: number }>('voted');
   readonly unvoted$ = this.ws.read<{ userId: Uuid, votingId: Uuid }>('unvoted');
-  readonly votings$ = this.ws.read<[Uuid, Voting][]>('votings');
+  readonly votings$ = this.ws.read<[Uuid, Voting<true>][]>('votings');
   readonly activateVoting$ = this.ws.read<{ votingId: Uuid }>('activateVoting');
 
   constructor(private ws: WsService) {

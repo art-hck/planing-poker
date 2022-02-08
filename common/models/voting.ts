@@ -1,8 +1,8 @@
 import { Uuid } from "./uuid";
 
-export interface Voting {
+export interface Voting<serialized = false> {
   id: Uuid;
   name: string;
-  votes: Map<string, number>;
+  votes: serialized extends false ? Map<string, number> : [string, number][];
   status: "end" | "pristine" | "in-progress";
 }

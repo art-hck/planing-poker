@@ -16,7 +16,7 @@ export class CardsComponent {
   @Input() step?: number;
   @Input() avg: number | null = 0;
   @Input() votedCount: number | null = 0;
-  @Input() activeVoting?: Voting | null;
+  @Input() activeVoting?: Voting<true> | null;
   @Output() stepChange = new EventEmitter<number>();
 
   readonly points = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40];
