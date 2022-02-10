@@ -1,9 +1,14 @@
 import { WebSocket, WebSocketServer } from 'ws'
-import { Token, User, Uuid, Voting, WsActions, WsMessage } from "@common/models";
+import { Token, User, Uuid, Voting, WsEvent } from "@common/models";
 import { routes } from "./routes";
 import * as jwt from "jsonwebtoken";
 
+type MappablePayload<V> = V extends [any, any][] ? Map<V[number][0], V[number][1]> | V : never | V;
+export type Send = <E extends keyof WsEvent, P extends WsEvent<false>[E] | WsEvent[E]>(event: E, payload: MappablePayload<P>) => void;
+export type Broadcast = <E extends keyof WsEvent, P extends WsEvent<false>[E] | WsEvent[E]>(event: E, payloadOrFn: MappablePayload<P> | ((token: Token) => MappablePayload<P>)) => void;
+
 export const superSecretString = 'SuperSecretString';
+
 const server = new WebSocketServer({ port: 9000 });
 const users = new Map<Token, User>();
 const connections = new Map<Token, Set<WebSocket>>(); // соединений может быть несколько (зашли с двух вкладок, например)
@@ -15,52 +20,33 @@ server.on('connection', ws => {
 
   ws.on('close', () => {
     console.log('Закрыто соединение', users.get(client?.token)?.name);
-    client?.token && bye(client.token, ws)
+    client?.token && routes.bye({ payload: { token: client.token }, send, broadcast, users, votings, activeVoting, client, guard, connections, ws })
   });
 
   ws.on('message', (message: string) => {
     try {
-      const { action, payload }: WsMessage = JSON.parse(message) as WsMessage;
-      routes[action]({ payload, send, broadcast, bye, users, votings, activeVoting, client, guard, connections, ws});
+      const { action, payload } = JSON.parse(message);
+      routes[action]({ payload, send, broadcast, users, votings, activeVoting, client, guard, connections, ws });
     } catch (error) {
       console.log('Ошибка', error);
     }
   });
 
-  function send(action: `${WsActions}`, payload: unknown) {
-    ws.send(JSON.stringify({ action, payload }, replacer));
-  }
-
-  function broadcast(action: `${WsActions}`, payloadOrFn: unknown | ((token: Token) => unknown)) {
-    connections.forEach((clients, token) => {
-      clients.forEach(client => {
-        console.log('send', action);
-        const payload: unknown = typeof payloadOrFn === 'function' ? payloadOrFn(token) : payloadOrFn;
-        client.send(JSON.stringify({ action, payload }, replacer));
-      })
+  const send: Send = (event, payload) => ws.send(JSON.stringify({ event, payload }, replacer));
+  const broadcast: Broadcast = (event, payloadOrFn) => connections.forEach((clients, token) => {
+    clients.forEach(client => {
+      const payload = typeof payloadOrFn === 'function' ? payloadOrFn(token) : payloadOrFn;
+      client.send(JSON.stringify({ event, payload }, replacer));
     })
-  }
-
-  function bye(token: Token, ws: WebSocket) {
-    connections.get(token)?.delete(ws);
-
-    console.log(`${users.get(token)?.name} отключился (${connections.get(token).size} соединений)`);
-
-    if (connections.get(token)?.size < 1) {
-      users.delete(token);
-      delete client.token;
-      broadcast('users', users);
-    }
-  }
+  })
 
   function guard(token: string) {
-    if(!token || (jwt.decode(token) as User).role !== 'admin') {
+    if (!token || (jwt.decode(token) as User).role !== 'admin') {
       send('denied', {});
     }
   }
+
+  function replacer(key, value) {
+    return value instanceof Map ? Array.from(value.entries()) : value;
+  }
 });
-
-export function replacer(key, value) {
-  return value instanceof Map ? Array.from(value.entries()) : value;
-}
-

@@ -3,7 +3,7 @@ import { WebSocketSubject } from "rxjs/webSocket";
 import { filter, iif, map, mergeMap, Observable, of, ReplaySubject, take, tap } from "rxjs";
 import { AuthService } from "../components/auth/auth.service";
 import jwt_decode from "jwt-decode";
-import { WsActions, WsMessage } from "@common/models";
+import { WsAction, WsEvent, WsMessage } from "@common/models";
 import { environment } from "../../environments/environment";
 
 @Injectable({
@@ -21,7 +21,7 @@ export class WsService {
           this.authService.login$.pipe(
             mergeMap(payload => {
               this.send('handshake', payload!, { force: true });
-              return this.read<{ token: string }>('handshake');
+              return this.read('handshake');
             }),
             tap(({ token }) => window.localStorage.setItem('token', token)),
             tap(({ token }) => this.authService.user$.next(jwt_decode(token))),
@@ -38,12 +38,11 @@ export class WsService {
     });
 
     this.authService.beforeLogout$.subscribe(() => {
-      const token = window.localStorage.getItem('token');
-      this.send('bye', { token })
+      this.send('bye', {}, { withCredentials: true })
     })
   }
 
-  public send(action: `${WsActions}`, payload = {}, options?: WsSendOptions) {
+  public send<E extends keyof WsAction, P extends WsAction[E]>(action: E, payload: P, options?: WsSendOptions) {
     // console.log('SEND -> ', action, payload);
     if (options?.withCredentials) {
       const token = window.localStorage.getItem('token');
@@ -51,15 +50,13 @@ export class WsService {
     }
     iif(() => !!options?.force, of(null), this.connected$.pipe(take(1), filter(c => c)))
       .subscribe(() => this.ws$.next({ action, payload }));
+
   }
 
-  public read<T = {}>(action: `${WsActions}`): Observable<T> {
-    // console.log('READ <- ', action);
-    return this.ws$.pipe(filter(p => p.action === action), map(p => p.payload));
-  }
 
-  public readMultiple<T = unknown>(actions: `${WsActions}`[]): Observable<WsMessage<any>> {
-    return this.ws$.pipe(filter(p => actions.includes(p.action)));
+  public read<E extends keyof WsEvent, P extends WsEvent[E]>(event: E): Observable<P> {
+    // console.log('READ <- ', event);
+    return this.ws$.pipe(filter(p => p.event === event), map(p => p.payload));
   }
 }
 

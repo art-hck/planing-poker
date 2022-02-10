@@ -1,16 +1,29 @@
-export enum WsActions {
-  handshake = 'handshake',
-  bye = 'bye',
-  users = 'users',
-  vote = 'vote',
-  unvote = 'unvote',
-  voted = 'voted',
-  unvoted = 'unvoted',
-  flip = 'flip',
-  endVoting = 'endVoting',
-  reject = 'reject',
-  newVoting = 'newVoting',
-  votings = 'votings',
-  activateVoting = 'activateVoting',
-  denied = 'denied'
+import { Voting } from "./voting";
+import { Uuid } from "./uuid";
+import { User } from "./user";
+import { Handshake } from "./handshake";
+import { Token } from "./token";
+
+export interface WsAction {
+  handshake: Handshake;
+  bye: { token?: Token };
+  vote: { point: number, votingId: Uuid, token?: string };
+  unvote: { votingId: Uuid, token?: string };
+  flip: { votingId: Uuid, token?: string };
+  restartVoting: { votingId: Uuid, token?: string };
+  activateVoting: { votingId: Uuid, token?: string }
+  newVoting: { name: string, token?: string }
+}
+
+export interface WsEvent<serialized = true> {
+  handshake: { token: string };
+  restartVoting: Voting<serialized>;
+  flip: Voting<serialized>;
+  users: [Uuid, User][]
+  voted: { userId: Uuid, votingId: Uuid, point?: number }
+  unvoted: { userId: Uuid, votingId: Uuid }
+  votings: [Uuid, Voting<serialized>][]
+  activateVoting: { votingId: Uuid }
+  reject: {}
+  denied: {}
 }

@@ -1,10 +1,4 @@
-<mat-list>
-  <mat-list-item>
-    <div class="mat-subheader">Task list</div>
-  </mat-list-item>
-</mat-list>
-
-<mat-selection-list [multiple]="false" >
+<mat-selection-list [multiple]="false">
   <div *ngFor="let voting of votings; trackBy: trackByFn" [matTooltip]="voting.name" matTooltipClass="voting-tooltip" matTooltipShowDelay="500">
     <mat-list-option (click)="select.emit(voting)" [class.disabled]="!(authService.isAdmin$ | async)">
       <mat-icon matListIcon>description</mat-icon>

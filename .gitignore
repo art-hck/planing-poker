@@ -35,3 +35,4 @@ Thumbs.db
 environment.fornex.ts
 environment.prod.ts
 .env
+mongo

@@ -1,22 +1,18 @@
 <mat-list *ngIf="users">
-  <mat-list-item>
-    <div class="mat-subheader">Dream team ({{users.length}})</div>
-  </mat-list-item>
   <mat-list-item *ngFor="let user of users; index as i; trackBy: trackByFn">
-    <mat-icon *ngIf="!user.voted" [color]="user.role === 'admin' ? 'accent' : user.teamRole === 'dev' ? 'primary' : user.teamRole === 'qa' ? 'warn' : null" matListIcon>account_circle</mat-icon>
-    <mat-icon *ngIf="user.voted" style="color: green" matListIcon>check</mat-icon>
-    <div class="overflow-hidden" [class.mat-accent]="user.role === 'admin'" matLine>{{ user.name }}</div>
-    <div class="overflow-hidden" matLine>{{ teamRole[user.teamRole] }}</div>
+    <div class="avatar" matListIcon [style.background-color]="stringToColor(user.name)">
+      {{ getUserInitials(user) }}
+      <mat-icon *ngIf="user.role === 'admin'">grade</mat-icon>
+    </div>
+    <div class="overflow-hidden" matLine>{{ user.name }}</div>
+    <div class="overflow-hidden" matLine>{{ teamRole[user.teamRole] || 'PHP погромист' }}</div>
 
     <div class="flex-space"></div>
     <mat-chip-list>
       <mat-chip *ngIf="user.id === (authService.user$ | async)?.id"><small>Вы</small></mat-chip>
-      <ng-container *ngIf="getVote(user) !== undefined">
-        <mat-chip
-          [color]="getVote(user)! < 13 ? 'primary' : 'accent'"
-          [selected]="getVote(user)! > 3"
-        >
-          <small>{{getVote(user)}}</small>
+      <ng-container *ngIf="isVoted(user)">
+        <mat-chip [style.background]="voteColors?.get(votes?.get(user.id) || 0)" [selected]="true">
+          <small>{{ votes?.get(user.id) ?? "?" }}</small>
         </mat-chip>
       </ng-container>
     </mat-chip-list>

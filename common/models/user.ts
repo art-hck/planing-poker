@@ -7,5 +7,4 @@ export interface User {
   iat: number;
   role: 'user' | 'admin';
   teamRole: Role;
-  voted?: boolean;
 }

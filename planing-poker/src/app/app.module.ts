@@ -27,10 +27,15 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { CreateVoteComponent } from './components/create-vote/create-vote.component';
 import { NgxsModule } from "@ngxs/store";
-import { UsersState } from "./states/users.state";
+import { VotingsState } from "./states/votings.state";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { environment } from "../environments/environment";
+import { NgChartsModule } from 'ng2-charts';
+import { MatTableModule } from "@angular/material/table";
+import { DoughnutComponent } from './components/doughnut/doughnut.component';
+import { PluralizePipe } from "./pipes/pluralize-pipe";
+import { UsersState } from "./states/users.state";
 
 @NgModule({
   declarations: [
@@ -41,6 +46,8 @@ import { environment } from "../environments/environment";
     VotingsComponent,
     AuthComponent,
     CreateVoteComponent,
+    DoughnutComponent,
+    PluralizePipe
   ],
   imports: [
     BrowserModule,
@@ -63,11 +70,13 @@ import { environment } from "../environments/environment";
     MatSnackBarModule,
     MatSlideToggleModule,
     ReactiveFormsModule,
-    NgxsModule.forRoot([UsersState], {
+    NgxsModule.forRoot([UsersState, VotingsState], {
       developmentMode: !environment.production
     }),
     MatButtonToggleModule,
-    MatTooltipModule
+    MatTooltipModule,
+    NgChartsModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

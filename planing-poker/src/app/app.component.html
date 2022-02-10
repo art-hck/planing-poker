@@ -12,17 +12,11 @@
     <mat-drawer-content>
 
       <!--- CARDS --->
-      <pp-cards
-        [activeVoting]="activeVoting$ | async"
-        [avg]="avg$ | async"
-        [votedCount]="votedCount$ | async"
-        [(step)]="step"
-        (stepChange)="cd.detectChanges()"
-      ></pp-cards>
+      <pp-cards [activeVoting]="activeVoting$ | async" [step]="step"></pp-cards>
 
       <!--- CREATE --->
       <ng-container *ngIf="authService.isAdmin$ | async">
-        <button mat-fab color="primary" class="story-create" *ngIf="step === 0" (click)="createStory()">
+        <button mat-fab color="primary" class="story-create" (click)="createStory()">
           <mat-icon>create</mat-icon>
         </button>
       </ng-container>

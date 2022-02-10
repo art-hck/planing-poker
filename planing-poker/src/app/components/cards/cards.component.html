@@ -1,48 +1,51 @@
-<mat-horizontal-stepper #stepper [selectedIndex]="step" [disableRipple]="true">
-  <mat-step label="Презентация стори">
-    <ng-template matStepperIcon="edit">
-      <mat-icon>check</mat-icon>
-    </ng-template>
-  </mat-step>
-  <mat-step label="Оценка Стори">
-    <ng-template matStepperIcon="edit">
-      <mat-icon>check</mat-icon>
-    </ng-template>
-  </mat-step>
-  <mat-step label="Результаты">
-    <ng-template matStepperIcon="edit">
-      <mat-icon>check</mat-icon>
-    </ng-template>
-  </mat-step>
+<mat-horizontal-stepper #stepper [selectedIndex]="step" [disableRipple]="true" labelPosition="bottom">
+  <mat-step label="Подготовка"><ng-template matStepperIcon="edit"><mat-icon>check</mat-icon></ng-template></mat-step>
+  <mat-step label="Оценка" [completed]="step===2"><ng-template matStepperIcon="edit"><mat-icon>check</mat-icon></ng-template></mat-step>
+  <mat-step label="Результаты"><ng-template matStepperIcon="edit"><mat-icon>check</mat-icon></ng-template></mat-step>
 </mat-horizontal-stepper>
 
-<ng-container *ngIf="activeVoting as voting">
-  <div class="mat-headline center">{{ voting.name}}</div>
-  <div class="poker-cards">
-    <mat-card
-      *ngFor="let point of points"
-      matRipple
-      class="mat-display-2 poker-cards__item"
-      [class.mat-elevation-z8]="active === point"
-      [class.poker-cards__item-disabled]="step === 0 || (selected && active !== point)"
-      [class.poker-cards__item-deactivated]="step !== 1"
-      (click)="vote(point)"
-    >{{point}}</mat-card>
+<ng-container *ngIf="activeVoting" [ngSwitch]="step">
+  <div class="mat-headline app-center">
+    {{ activeVoting.name}}
   </div>
-</ng-container>
+  <ng-container *ngSwitchCase="1">
+    <div class="poker-cards">
+      <mat-card
+        *ngFor="let point of points"
+        matRipple
+        class="mat-display-2 poker-cards__item"
+        [class.mat-elevation-z8]="active === point"
+        (click)="vote(point)"
+      >{{point}}</mat-card>
+    </div>
 
-<mat-card class="actions" *ngIf="selected || ((authService.isAdmin$ | async) && votedCount! > 0)">
-  <div *ngIf="step === 2">Итоговая средняя оценка: <b>{{avg | number:'0.0-1'}}</b></div>
-
-<!--  <div style="display: flex; align-items: center" *ngIf="step !== 2">-->
-<!--    <mat-icon style="margin-right: 8px">timer</mat-icon>-->
-<!--    <span>{{timer$ | async | date:'mm:ss'}}</span>-->
-<!--  </div>-->
-
-  <div class="flex-space"></div>
-  <button *ngIf="selected && step !== 2" mat-flat-button (click)="reset()">Отмена</button>
-  <ng-container *ngIf="authService.isAdmin$ | async">
-    <button *ngIf="step !== 2" mat-flat-button color="primary" (click)="pp.flip(activeVoting!.id)">Открыть карты</button>
-    <button *ngIf="step === 2" mat-flat-button color="primary" (click)="pp.endVoting(activeVoting!.id)">Завершить голосование</button>
+    <ng-container class="actions" *ngIf="(authService.isAdmin$ | async) && activeVoting?.votes!.length">
+      <br/>
+      <button mat-flat-button color="primary" (click)="pp.flip(activeVoting!.id)">Открыть карты</button>
+    </ng-container>
   </ng-container>
-</mat-card>
+  <ng-container *ngSwitchCase="2">
+    <div class="summary">
+      <div class="summary__content">
+        <pp-doughnut [groupedVotes]="groupedVotes" [voting]="activeVoting">{{winner}}</pp-doughnut>
+      </div>
+      <table class="summary__aside">
+        <tr class="mat-row" *ngFor="let groupedVote of groupedVotes">
+          <td class="mat-cell">{{ groupedVote[1] | pluralize: 'голос' : 'голоса' : 'голосов' }} за</td>
+          <td class="mat-cell mat-body-strong">{{ groupedVote[0] }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="summary">
+      <div class="summary__content">
+        <ng-container *ngIf="authService.isAdmin$ | async">
+          <br/>
+          <button color="primary" mat-flat-button (click)="pp.restartVoting(activeVoting!.id)">Перезапустить</button>
+        </ng-container>
+      </div>
+      <div class="summary__aside"></div>
+    </div>
+  </ng-container>
+</ng-container>
+<div class="flex-space"></div>
+

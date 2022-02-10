@@ -1,7 +1,8 @@
-import { WsActions } from "./ws-actions";
+import { WsAction, WsEvent } from "./ws-actions";
 
 export interface WsMessage<T = unknown> {
-  action: `${WsActions}`,
+  action?: keyof WsAction,
+  event?: keyof WsEvent,
   payload?: T
 }
 

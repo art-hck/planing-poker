@@ -1,14 +1,13 @@
 import * as uuid from "uuid";
 import * as jwt from "jsonwebtoken";
-import { Handshake, Token, User, Uuid, Voting, WsActions } from "@common/models";
-import { superSecretString } from "./server";
+import { Token, User, Uuid, Voting, WsAction } from "@common/models";
+import { Broadcast, Send, superSecretString } from "./server";
 import { WebSocket } from "ws";
 
 interface RoutePayload<T = unknown> {
   payload: T,
-  send: (action: `${WsActions}`, payload: unknown) => void,
-  broadcast: (action: `${WsActions}`, payload: unknown | ((token: Token) => unknown)) => void,
-  bye: (token: Token, ws: WebSocket) => void,
+  send: Send,
+  broadcast: Broadcast,
   connections: Map<Token, Set<WebSocket>>,
   users: Map<Uuid, User>,
   votings: Map<Uuid, Voting>,
@@ -18,8 +17,11 @@ interface RoutePayload<T = unknown> {
   ws: WebSocket
 }
 
-export const routes: Partial<Record<`${WsActions}`, (payload: RoutePayload) => void>> = {
-  handshake: ({ payload: { name, teamRole, token, password }, send, connections, ws, activeVoting, broadcast, users, client, votings }: RoutePayload<Handshake>) => {
+type Routes = { [P in keyof WsAction]: (payload: RoutePayload<WsAction[P]>) => void; };
+
+export const routes: Routes = {
+  handshake: route => {
+    let { payload: { name, teamRole, token, password }, send, broadcast, connections, ws, activeVoting, users, client, votings } = route;
     if (password && password !== '123123') {
       send('reject', {});
       return;
@@ -27,7 +29,7 @@ export const routes: Partial<Record<`${WsActions}`, (payload: RoutePayload) => v
 
     const user: User = (name ? { id: uuid.v4(), name, teamRole, role: password ? 'admin' : 'user' } : jwt.decode(token)) as User;
     client.token = token = token ?? jwt.sign(user, superSecretString);
-    connections.has(token) ? connections.get(token).add(ws) : connections.set(token, new Set([ws]))
+    connections.has(token) ? connections.get(token).add(ws) : connections.set(token, new Set([ws]));
     users.set(token, user);
     console.log(`${user.name} подключился (${connections.get(token).size} соединений) `);
     send('handshake', { token });
@@ -35,51 +37,66 @@ export const routes: Partial<Record<`${WsActions}`, (payload: RoutePayload) => v
     // запрашивать на стороне клиента!
     broadcast('users', users);
     send('votings', Array.from(votings.entries()).map(([k, v]) => {
-      return [k, user.role === 'admin' || v.status === 'end' ? v : { ...v, votes: undefined }];
-    }));
+      return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user.role === 'admin' || v.status === 'end' ? p : null]) }];
+    }) as [Uuid, Voting<true>][]);
+
     if (votings.get(activeVoting.id)) {
       send('activateVoting', { votingId: activeVoting.id })
     }
     // запрашивать на стороне клиента!
   },
 
-  bye: ({ payload: { token }, bye, ws }: RoutePayload<{ token?: Token }>) => bye(token, ws),
-  users: ({ send, users }: RoutePayload) => send('users', users),
+  bye: route => {
+    const { payload: { token }, connections, users, client, broadcast, ws } = route;
+    connections.get(token)?.delete(ws);
 
-  vote: ({ payload: { token, point, votingId }, broadcast, users, votings }: RoutePayload<{ token: Token, votingId: Uuid, point: number }>) => {
+    console.log(`${users.get(token)?.name} отключился (${connections.get(token).size} соединений)`);
+
+    if (connections.get(token)?.size < 1) {
+      users.delete(token);
+      delete client.token;
+      broadcast('users', users);
+    }
+  },
+
+  vote: route => {
+    const { payload: { token, point, votingId }, broadcast, users, votings } = route;
     const userId = users.get(token)?.id;
-    users.get(token).voted = true;
 
     votings.get(votingId).votes?.set(userId, point);
-
     broadcast('voted', token => {
       return users.get(token)?.role === 'admin' ? { userId, votingId, point } : { userId, votingId };
     });
   },
 
-  unvote: ({ votings, broadcast, users, payload: { token, votingId } }: RoutePayload<{ token: Token, votingId: Uuid }>) => {
+  unvote: route => {
+    const { votings, broadcast, users, payload: { token, votingId } } = route;
     const userId = users.get(token)?.id;
-    users.get(token).voted = false;
     votings.get(votingId).votes?.delete(userId);
     broadcast('unvoted', { userId, votingId });
   },
 
-  endVoting: ({ broadcast, votings, activeVoting, users, guard, payload: { votingId, token } }: RoutePayload<{ votingId: Uuid, token: string }>) => {
+  restartVoting: route => {
+    const { broadcast, votings, guard, payload: { votingId, token } } = route;
     guard(token);
-    activeVoting.id = undefined;
     votings.get(votingId).votes?.clear();
-    votings.get(votingId).status = 'end';
-    users.forEach((u) => u.voted = false);
-    broadcast('endVoting', { votingId });
+    votings.get(votingId).status = 'in-progress';
+
+    broadcast('restartVoting', votings.get(votingId));
   },
 
-  flip: ({ broadcast, guard, payload: { votingId, token }, votings }: RoutePayload<{ votingId: Uuid, token: Uuid }>) => {
+  flip: route => {
+    const { broadcast, guard, payload: { votingId, token }, votings } = route;
     guard(token);
+    votings.get(votingId).status = 'end';
     broadcast('flip', votings.get(votingId));
   },
 
-  newVoting: ({ payload: { name, token }, guard, votings, broadcast }: RoutePayload<{ name: string, token: string }>) => {
-    guard(token)
+  newVoting: route => {
+    const { payload: { name, token }, guard, votings, broadcast } = route;
+    guard(token);
+
+    votings.clear();
     name.split('\n').filter(Boolean).forEach(name => {
       const id = uuid.v4();
       votings.set(id, { id, name: name.trim(), votes: new Map(), status: 'pristine' })
@@ -88,13 +105,14 @@ export const routes: Partial<Record<`${WsActions}`, (payload: RoutePayload) => v
     broadcast('votings', votings);
   },
 
-  activateVoting: ({ payload: { votingId }, votings, activeVoting, broadcast }: RoutePayload<{ votingId: Uuid }>) => {
-    if(['pristine', 'in-progress'].includes(votings.get(activeVoting.id)?.status)) {
-      votings.get(activeVoting.id).votes.clear(); // если активировали другое голосование - сбрасываем голоса.
+  activateVoting: route => {
+    const { payload: { votingId }, votings, activeVoting, broadcast } = route;
+    activeVoting.id = votingId;
+
+    if (votings.get(activeVoting.id).status === 'pristine') {
+      votings.get(activeVoting.id).status = 'in-progress'
     }
 
-    activeVoting.id = votingId;
     broadcast('activateVoting', { votingId })
   }
 }
-

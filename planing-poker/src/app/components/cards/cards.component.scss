@@ -14,7 +14,6 @@ mat-horizontal-stepper {
 }
 
 .poker-cards {
-  flex-grow: 1;
   place-content: flex-start;
   display: flex;
   flex-wrap: wrap;
@@ -30,10 +29,6 @@ mat-horizontal-stepper {
     justify-content: center;
     cursor: pointer;
     user-select: none;
-
-    &-deactivated {
-      pointer-events: none;
-    }
 
     &-disabled {
       color: #ccc;
@@ -96,6 +91,21 @@ mat-horizontal-stepper {
 
   *:not(:last-child):not(.flex-space) {
     margin-right: 8px;
+  }
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  margin-left: 166px;
+
+  &__content {
+    text-align: center;
+    margin-right: 16px
+  }
+
+  &__aside {
+    width: 150px;
   }
 }
 

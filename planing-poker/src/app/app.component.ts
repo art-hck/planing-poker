@@ -4,12 +4,14 @@ import { MatDialog } from "@angular/material/dialog";
 import { CreateVoteComponent } from "./components/create-vote/create-vote.component";
 import { WsService } from "./services/ws.service";
 import { Select, Store } from "@ngxs/store";
-import { UsersState } from "./states/users.state";
+import { VotingsState } from "./states/votings.state";
 import { filter, map, mapTo, merge, Observable, switchMap, take, withLatestFrom } from "rxjs";
 import { User, Voting } from "@common/models";
 import { PlaningPokerWsService } from "./services/planing-poker-ws.service";
-import { Users } from "./actions/users.actions";
+import { Votings } from "./actions/votings.actions";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { Users } from "./actions/users.actions";
+import { UsersState } from "./states/users.state";
 
 @Component({
   selector: 'app-root',
@@ -18,15 +20,12 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  @Select(UsersState.users) users$!: Observable<(User & { voted?: boolean })[]>;
-  @Select(UsersState.votings) votings$!: Observable<Voting<true>[]>;
-  @Select(UsersState.activeVoting) activeVoting$!: Observable<Voting<true>>;
-  @Select(UsersState.avg) avg$!: Observable<number>;
+  @Select(UsersState.users) users$!: Observable<User[]>;
+  @Select(VotingsState.votings) votings$!: Observable<Voting<true>[]>;
+  @Select(VotingsState.activeVoting) activeVoting$!: Observable<Voting<true>>;
 
-  readonly votedCount$: Observable<number> = this.users$.pipe(map(users => users.filter(u => u.voted).length))
   showVotings: boolean = (window.localStorage.getItem('showVotings') || 'true') === 'true';
   showPlayers: boolean = (window.localStorage.getItem('showPlayers') || 'true') === 'true';
-  avg: number = 0;
   step: number = 0;
 
   constructor(
@@ -37,23 +36,25 @@ export class AppComponent {
     private store: Store,
     private snackBar: MatSnackBar,
     public cd: ChangeDetectorRef
-  ) {
-    this.pp.users$.subscribe(users => this.store.dispatch(new Users.Fetch(users.map(([k, v]) => v))));
-    this.pp.voted$.subscribe(({ userId, votingId, point }) => this.store.dispatch(new Users.Voted(userId, votingId, point)));
-    this.pp.unvoted$.subscribe(({ userId, votingId }) => this.store.dispatch(new Users.Unvoted(userId, votingId)));
-    this.pp.flip$.subscribe((voting) => this.store.dispatch(new Users.Flip(voting)));
-    this.pp.votings$.subscribe((votings) => this.store.dispatch(new Users.FetchVotings(votings.map(([k, v]) => v))))
-    this.pp.activateVoting$.subscribe(({ votingId }) => this.store.dispatch(new Users.ActivateVoting(votingId)))
-    this.pp.endVoting$.subscribe(({ votingId }) => this.store.dispatch(new Users.EndVoting(votingId)))
+  ) {}
+
+  ngOnInit() {
+    this.pp.users$.subscribe(users => this.store.dispatch(new Users.Fetch(users.map(([, v]) => v))));
+    this.pp.voted$.subscribe(({ userId, votingId, point }) => this.store.dispatch(new Votings.Vote(userId, votingId, point)));
+    this.pp.unvoted$.subscribe(({ userId, votingId }) => this.store.dispatch(new Votings.Unvote(userId, votingId)));
+    this.pp.flip$.subscribe((voting) => this.store.dispatch(new Votings.Flip(voting)));
+    this.pp.votings$.subscribe((votings) => this.store.dispatch(new Votings.Fetch(votings.map(([, v]) => v))))
+    this.pp.activateVoting$.subscribe(({ votingId }) => this.store.dispatch(new Votings.Activate(votingId)))
+    this.pp.restartVoting$.subscribe((voting) => this.store.dispatch(new Votings.Restart(voting)))
 
     merge(
-      this.pp.endVoting$.pipe(mapTo(0)),
-      this.pp.activateVoting$.pipe(mapTo(1)),
+      this.pp.restartVoting$.pipe(mapTo(1)),
+      this.activeVoting$.pipe(filter(v => !!v), map(v => v ? v?.status === "end" ? 2 : 1 : 0)),
       this.pp.flip$.pipe(mapTo(2))
     ).subscribe(step => {
       this.step = step;
       this.cd.detectChanges();
-    })
+    });
 
     this.pp.voted$.pipe(
       withLatestFrom(this.authService.user$),
@@ -75,8 +76,8 @@ export class AppComponent {
   }
 
   createStory() {
-    this.dialog.open(CreateVoteComponent, { width: '500px' }).afterClosed().subscribe(data => {
-      this.ws.send('newVoting', data);
+    this.dialog.open(CreateVoteComponent, { width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(data => {
+      this.pp.newVoting(data.name);
     });
   }
 }
