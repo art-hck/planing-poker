@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button (click)="menu.emit()">
+  <button mat-icon-button (click)="showPlayersChange.emit(!showPlayers)">
     <mat-icon>menu</mat-icon>
   </button>
   <h1>Planing Poker</h1>
@@ -7,7 +7,7 @@
   <button mat-icon-button (click)="authService.logout$.next(undefined)">
     <mat-icon>logout</mat-icon>
   </button>
-  <button mat-icon-button (click)="votings.emit()">
+  <button mat-icon-button (click)="showVotingsChange.emit(!showVotings)">
     <mat-icon *ngIf="!showVotings">description</mat-icon>
     <mat-icon *ngIf="showVotings">chevron_right</mat-icon>
   </button>

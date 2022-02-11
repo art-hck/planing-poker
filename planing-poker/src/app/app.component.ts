@@ -65,17 +65,12 @@ export class AppComponent {
     })
   }
 
-  toggleVotings() {
-    this.showVotings = !this.showVotings;
+  saveSidebarsState() {
     window.localStorage.setItem('showVotings', this.showVotings.toString());
-  }
-
-  togglePlayers() {
-    this.showPlayers = !this.showPlayers;
     window.localStorage.setItem('showPlayers', this.showPlayers.toString());
   }
 
-  createStory() {
+  openNewVotingModal() {
     this.dialog.open(CreateVoteComponent, { width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(data => {
       this.pp.newVoting(data.name);
     });

@@ -1,34 +1,29 @@
-<pp-header (menu)="togglePlayers()" (votings)="toggleVotings()" [showVotings]="showVotings"></pp-header>
-<ng-container *ngIf="authService.user$ | async">
-  <mat-drawer-container>
-    <mat-drawer class='users' mode="side" [opened]="showPlayers">
+<pp-header
+  [(showPlayers)]="showPlayers"
+  [(showVotings)]="showVotings"
+  (showPlayersChange)="saveSidebarsState()"
+  (showVotingsChange)="saveSidebarsState()"
+></pp-header>
 
-      <!--- USERS --->
-      <pp-users
-        [users]="users$ | async"
-        [activeVoting]="activeVoting$ | async">
-      </pp-users>
-    </mat-drawer>
-    <mat-drawer-content>
+<mat-drawer-container *ngIf="authService.user$ | async">
+  <mat-drawer class='users' mode="side" [opened]="showPlayers">
+    <!--- USERS --->
+    <pp-users [users]="users$ | async" [activeVoting]="activeVoting$ | async"></pp-users>
+  </mat-drawer>
 
-      <!--- CARDS --->
-      <pp-cards [activeVoting]="activeVoting$ | async" [step]="step"></pp-cards>
+  <mat-drawer-content>
 
-      <!--- CREATE --->
-      <ng-container *ngIf="authService.isAdmin$ | async">
-        <button mat-fab color="primary" class="story-create" (click)="createStory()">
-          <mat-icon>create</mat-icon>
-        </button>
-      </ng-container>
-    </mat-drawer-content>
+    <!--- CARDS --->
+    <pp-cards [activeVoting]="activeVoting$ | async" [step]="step"></pp-cards>
 
-    <mat-drawer class='votings' mode="side" [opened]="showVotings" position="end" *ngIf="votings$ | async as votings">
-      <!--- VOTINGS --->
-      <pp-votings
-        [votings]="votings"
-        (select)="pp.activateVoting(($event.id))"
-      ></pp-votings>
-    </mat-drawer>
+    <!--- CREATE --->
+    <button mat-fab color="primary" class="new-voting-button" (click)="openNewVotingModal()" *ngIf="authService.isAdmin$ | async">
+      <mat-icon>create</mat-icon>
+    </button>
+  </mat-drawer-content>
 
-  </mat-drawer-container>
-</ng-container>
+  <mat-drawer class='votings' mode="side" [opened]="showVotings" position="end">
+    <!--- VOTINGS --->
+    <pp-votings [votings]="votings$ | async" (select)="pp.activateVoting(($event.id))"></pp-votings>
+  </mat-drawer>
+</mat-drawer-container>

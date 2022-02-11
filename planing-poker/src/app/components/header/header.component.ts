@@ -8,9 +8,10 @@ import { AuthService } from "../auth/auth.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
-  @Output() menu = new EventEmitter();
-  @Output() votings = new EventEmitter();
+  @Input() showPlayers = true;
   @Input() showVotings = true;
+  @Output() showPlayersChange = new EventEmitter<boolean>();
+  @Output() showVotingsChange = new EventEmitter<boolean>();
 
   constructor(public authService: AuthService) {}
 

@@ -32,25 +32,6 @@ export class CardsComponent implements OnChanges {
     return this.active !== undefined;
   }
 
-  vote(point: number) {
-    if(this.activeVoting) {
-      if (this.active !== point) {
-        this.active = point;
-        this.pp.vote(this.activeVoting.id, point);
-      } else {
-        this.active = undefined;
-        this.pp.unvote(this.activeVoting.id);
-      }
-    }
-  }
-
-  ngOnInit() {
-    merge(this.pp.activateVoting$, this.pp.restartVoting$).subscribe(() => {
-      this.active = undefined;
-      this.cd.detectChanges();
-    });
-  }
-
   get groupedVotes(): [number, number][] {
     return Array.from(this.activeVoting?.votes.reduce((group, vote) => {
       if (vote[1] !== null) {
@@ -63,5 +44,24 @@ export class CardsComponent implements OnChanges {
 
   get winner(): string {
     return this.groupedVotes.filter((v, i, [f]) => v[1] === f[1]).map(v => v[0]).join(" или ");
+  }
+
+  ngOnInit() {
+    merge(this.pp.activateVoting$, this.pp.restartVoting$).subscribe(() => {
+      this.active = undefined;
+      this.cd.detectChanges();
+    });
+  }
+
+  vote(point: number) {
+    if(this.activeVoting) {
+      if (this.active !== point) {
+        this.active = point;
+        this.pp.vote(this.activeVoting.id, point);
+      } else {
+        this.active = undefined;
+        this.pp.unvote(this.activeVoting.id);
+      }
+    }
   }
 }

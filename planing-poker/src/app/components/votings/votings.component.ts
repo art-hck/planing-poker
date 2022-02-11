@@ -9,7 +9,7 @@ import { AuthService } from "../auth/auth.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VotingsComponent {
-  @Input() votings?: Voting<true>[]
+  @Input() votings?: Voting<true>[] | null;
   @Output() select = new EventEmitter<Voting<true>>();
 
   constructor(public authService: AuthService) {
