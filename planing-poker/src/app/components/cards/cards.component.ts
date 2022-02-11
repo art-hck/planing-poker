@@ -53,7 +53,7 @@ export class CardsComponent implements OnChanges {
 
   get groupedVotes(): [number, number][] {
     return Array.from(this.activeVoting?.votes.reduce((group, vote) => {
-      if (vote[1]) {
+      if (vote[1] !== null) {
         group.set(vote[1], (group.get(vote[1]) ?? 0) + 1);
       }
 
