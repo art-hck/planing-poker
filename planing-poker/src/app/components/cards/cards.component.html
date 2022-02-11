@@ -19,15 +19,18 @@
       >{{point}}</mat-card>
     </div>
 
-    <ng-container class="actions" *ngIf="(authService.isAdmin$ | async) && activeVoting?.votes!.length">
+    <ng-container *ngIf="(authService.isAdmin$ | async) && activeVoting?.votes!.length">
       <br/>
       <button mat-flat-button color="primary" (click)="pp.flip(activeVoting!.id)">Открыть карты</button>
     </ng-container>
   </ng-container>
   <ng-container *ngSwitchCase="2">
+    <canvas class="confetti" #confettiCanvas></canvas>
     <div class="summary">
+      <div class="summary__aside"></div>
       <div class="summary__content">
-        <pp-doughnut [groupedVotes]="groupedVotes" [voting]="activeVoting">{{winner}}</pp-doughnut>
+        <canvas pp-doughnut [groupedVotes]="groupedVotes" [voting]="activeVoting" #chart></canvas>
+        <div class="doughnut-result mat-display-1">{{winner}}</div>
       </div>
       <table class="summary__aside">
         <tr class="mat-row" *ngFor="let groupedVote of groupedVotes">
@@ -37,6 +40,7 @@
       </table>
     </div>
     <div class="summary">
+      <div class="summary__aside"></div>
       <div class="summary__content">
         <ng-container *ngIf="authService.isAdmin$ | async">
           <br/>

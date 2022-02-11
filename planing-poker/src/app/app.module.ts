@@ -33,7 +33,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { environment } from "../environments/environment";
 import { NgChartsModule } from 'ng2-charts';
 import { MatTableModule } from "@angular/material/table";
-import { DoughnutComponent } from './components/doughnut/doughnut.component';
+import { DoughnutDirective } from './directives/doughnut.directive';
 import { PluralizePipe } from "./pipes/pluralize-pipe";
 import { UsersState } from "./states/users.state";
 
@@ -46,7 +46,7 @@ import { UsersState } from "./states/users.state";
     VotingsComponent,
     AuthComponent,
     CreateVoteComponent,
-    DoughnutComponent,
+    DoughnutDirective,
     PluralizePipe
   ],
   imports: [

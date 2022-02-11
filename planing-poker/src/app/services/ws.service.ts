@@ -30,7 +30,6 @@ export class WsService {
         }
       }
     });
-    this.ws$.subscribe();
 
     this.read('reject').subscribe(() => {
       this.authService.loginAttempts++;

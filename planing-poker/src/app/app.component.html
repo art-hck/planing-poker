@@ -1,12 +1,12 @@
 <pp-header
-  [(showPlayers)]="showPlayers"
-  [(showVotings)]="showVotings"
+  [(showPlayers)]="!!showPlayers"
+  [(showVotings)]="!!showVotings"
   (showPlayersChange)="saveSidebarsState()"
   (showVotingsChange)="saveSidebarsState()"
 ></pp-header>
 
 <mat-drawer-container *ngIf="authService.user$ | async">
-  <mat-drawer class='users' mode="side" [opened]="showPlayers">
+  <mat-drawer class='users' [mode]="sidenavMode" [(opened)]="showPlayers">
     <!--- USERS --->
     <pp-users [users]="users$ | async" [activeVoting]="activeVoting$ | async"></pp-users>
   </mat-drawer>
@@ -22,7 +22,7 @@
     </button>
   </mat-drawer-content>
 
-  <mat-drawer class='votings' mode="side" [opened]="showVotings" position="end">
+  <mat-drawer class='votings' [mode]="sidenavMode" [(opened)]="showVotings" position="end">
     <!--- VOTINGS --->
     <pp-votings [votings]="votings$ | async" (select)="pp.activateVoting(($event.id))"></pp-votings>
   </mat-drawer>

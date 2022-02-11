@@ -5,13 +5,14 @@ import { CreateVoteComponent } from "./components/create-vote/create-vote.compon
 import { WsService } from "./services/ws.service";
 import { Select, Store } from "@ngxs/store";
 import { VotingsState } from "./states/votings.state";
-import { filter, map, mapTo, merge, Observable, switchMap, take, withLatestFrom } from "rxjs";
+import { debounceTime, filter, fromEvent, map, mapTo, merge, Observable, startWith, switchMap, take, withLatestFrom } from "rxjs";
 import { User, Voting } from "@common/models";
 import { PlaningPokerWsService } from "./services/planing-poker-ws.service";
 import { Votings } from "./actions/votings.actions";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Users } from "./actions/users.actions";
 import { UsersState } from "./states/users.state";
+import { MatDrawerMode } from "@angular/material/sidenav/drawer";
 
 @Component({
   selector: 'app-root',
@@ -24,9 +25,10 @@ export class AppComponent {
   @Select(VotingsState.votings) votings$!: Observable<Voting<true>[]>;
   @Select(VotingsState.activeVoting) activeVoting$!: Observable<Voting<true>>;
 
-  showVotings: boolean = (window.localStorage.getItem('showVotings') || 'true') === 'true';
-  showPlayers: boolean = (window.localStorage.getItem('showPlayers') || 'true') === 'true';
+  showVotings: boolean = false;
+  showPlayers: boolean = false;
   step: number = 0;
+  sidenavMode: MatDrawerMode = 'over';
 
   constructor(
     public authService: AuthService,
@@ -62,12 +64,26 @@ export class AppComponent {
       switchMap(([voted]) => this.users$.pipe(take(1), map(users => users.find((u) => u.id === voted.userId))))
     ).subscribe(user => {
       this.snackBar.open(`${user?.name} проголосовал(а)`, 'Ну ок', { duration: 4000, horizontalPosition: 'right' });
-    })
+    });
+
+    fromEvent(window, 'resize').pipe(
+      debounceTime(200),
+      startWith(null),
+      map(() => (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) > 1000 ? 'side' : 'over'),
+      filter(sidenavMode => sidenavMode !== this.sidenavMode)
+    ).subscribe(sidenavMode => {
+        this.sidenavMode = sidenavMode;
+        this.showVotings = sidenavMode === 'side' ? (window.localStorage.getItem('showVotings') || 'true') === 'true' : false;
+        this.showPlayers = sidenavMode === 'side' ? (window.localStorage.getItem('showPlayers') || 'true') === 'true' : false;
+        this.cd.detectChanges();
+    });
   }
 
   saveSidebarsState() {
-    window.localStorage.setItem('showVotings', this.showVotings.toString());
-    window.localStorage.setItem('showPlayers', this.showPlayers.toString());
+    if (this.sidenavMode === 'side') {
+      window.localStorage.setItem('showVotings', this.showVotings.toString());
+      window.localStorage.setItem('showPlayers', this.showPlayers.toString());
+    }
   }
 
   openNewVotingModal() {

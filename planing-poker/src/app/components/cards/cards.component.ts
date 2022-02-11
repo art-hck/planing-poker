@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, ViewChild } from '@angular/core';
-import { merge } from "rxjs";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { concatMap, merge, range, Subject, takeUntil, timer } from "rxjs";
 import { AuthService } from "../auth/auth.service";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
 import { Voting } from "@common/models";
 import { MatStepper } from "@angular/material/stepper";
+import * as confetti from "canvas-confetti";
+import { CreateTypes as Confetti } from "canvas-confetti";
 
 @Component({
   selector: 'pp-cards',
@@ -15,16 +17,34 @@ export class CardsComponent implements OnChanges {
   @ViewChild('stepper') stepper?: MatStepper;
   @Input() step?: number;
   @Input() activeVoting?: Voting<true> | null;
+  @ViewChild('confettiCanvas') set confettiCanvas(el: ElementRef<HTMLCanvasElement>) {
+    this.confetti = el ? confetti.create(el.nativeElement, {resize: true}) : undefined;
+  };
 
   readonly points = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40];
+  readonly destroy$ = new Subject<void>();
   active?: number;
+  confetti?: Confetti;
 
   constructor(public pp: PlaningPokerWsService, private cd: ChangeDetectorRef, public authService: AuthService) {
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     if (!this.activeVoting) {
       this.stepper?.reset()
+    }
+
+    if (this.confetti && changes['activeVoting'] && changes['activeVoting'].previousValue?.id === changes['activeVoting'].currentValue?.id) {
+      if (this.groupedVotes.every(([vote], i, [[first]]) => vote === first)) {
+        range(1, 10)
+          .pipe(concatMap(() => timer(100 + (Math.random() * 700))), takeUntil(this.destroy$))
+          .subscribe(() => this.confetti && this.confetti({
+            particleCount: 100,
+            spread: 90,
+            angle: Math.random() * (45 - (135)) + (135),
+            scalar: .7
+          }));
+      }
     }
   }
 
@@ -47,7 +67,7 @@ export class CardsComponent implements OnChanges {
   }
 
   ngOnInit() {
-    merge(this.pp.activateVoting$, this.pp.restartVoting$).subscribe(() => {
+    merge(this.pp.activateVoting$, this.pp.restartVoting$).pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.active = undefined;
       this.cd.detectChanges();
     });
@@ -63,5 +83,10 @@ export class CardsComponent implements OnChanges {
         this.pp.unvote(this.activeVoting.id);
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
