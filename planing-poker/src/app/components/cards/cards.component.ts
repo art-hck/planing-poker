@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
-import { concatMap, merge, range, Subject, takeUntil, timer } from "rxjs";
+import { concatMap, range, Subject, takeUntil, timer } from "rxjs";
 import { AuthService } from "../auth/auth.service";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
 import { Voting } from "@common/models";
@@ -67,7 +67,7 @@ export class CardsComponent implements OnChanges {
   }
 
   ngOnInit() {
-    merge(this.pp.activateVoting$, this.pp.restartVoting$).pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.pp.events(['restartVoting', 'activateVoting']).pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.active = undefined;
       this.cd.detectChanges();
     });

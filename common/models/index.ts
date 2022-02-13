@@ -1,7 +1,6 @@
 export * from "./user";
 export * from "./ws-message";
 export * from "./ws-actions";
-export * from "./user";
 export * from "./handshake";
 export * from "./uuid";
 export * from "./voting";

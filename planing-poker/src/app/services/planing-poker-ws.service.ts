@@ -1,34 +1,33 @@
 import { Injectable } from '@angular/core';
 import { WsService } from "./ws.service";
 import { Handshake, Uuid, WsAction, WsEvent } from "@common/models";
-import { Observable } from "rxjs";
+import { merge, Observable, tap } from "rxjs";
 
-type Events = {
-  [K in keyof WsEvent as K extends string ? `${K}$` : never]: Observable<WsEvent[K]>
-} & Record<keyof WsAction, Function>;
+type PlaningPokerWsServiceEventsType = { [K in keyof WsEvent as K extends string ? `${K}$` : never]: Observable<WsEvent[K]> };
+type PlaningPokerWsServiceActionsType = Record<keyof WsAction, Function>;
+type PlaningPokerWsServiceEventsArrType = { events: Partial<{ [K in keyof WsEvent]: (payload: WsEvent[K]) => any | (keyof WsEvent)[] }> };
+
+type PlaningPokerWsServiceType = Partial<PlaningPokerWsServiceEventsType> & PlaningPokerWsServiceActionsType & PlaningPokerWsServiceEventsArrType;
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlaningPokerWsService implements Events {
+export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
-  readonly handshake$ = this.ws.read('handshake');
   readonly restartVoting$ = this.ws.read('restartVoting');
   readonly flip$ = this.ws.read('flip');
-  readonly users$ = this.ws.read('users');
   readonly voted$ = this.ws.read('voted');
-  readonly unvoted$ = this.ws.read('unvoted');
-  readonly votings$ = this.ws.read('votings');
-  readonly activateVoting$ = this.ws.read('activateVoting');
-  readonly reject$ = this.ws.read('reject');
-  readonly denied$ = this.ws.read('denied');
+
+  events(events: PlaningPokerWsServiceEventsArrType["events"] | (keyof WsEvent)[]) {
+    return merge(...(Array.isArray(events) ? events.map(e => this.ws.read(e)) : Object.entries(events).map(([e, fn]) => this.ws.read(e as keyof WsEvent).pipe(tap(d => fn(d as any))))));
+  }
 
   constructor(private ws: WsService) {
   }
 
   handshake(payload: Handshake) {
     this.ws.send('handshake', payload, { force: true });
-    return this.handshake$;
+    return this.ws.read('handshake');
   }
 
   bye() {
@@ -55,7 +54,15 @@ export class PlaningPokerWsService implements Events {
     this.ws.send('restartVoting', { votingId }, { withCredentials: true });
   }
 
-  newVoting(name: string) {
-    this.ws.send('newVoting', { name }, { withCredentials: true });
+  newVoting(roomId: Uuid, name: string) {
+    this.ws.send('newVoting', { name, roomId }, { withCredentials: true });
+  }
+
+  newRoom() {
+    this.ws.send('newRoom', {}, { withCredentials: true });
+  }
+
+  joinRoom(roomId: Uuid) {
+    this.ws.send('joinRoom', { roomId }, { withCredentials: true });
   }
 }

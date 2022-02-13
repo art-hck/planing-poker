@@ -20,3 +20,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-tooltip.voting-tooltip {
   font-size: 12px;
 }
+
+.mat-drawer-container {
+  height: calc(100% - 64px)
+}
+
+.app-left-side {
+  width: 300px;
+}
+
+.app-right-side {
+  width: 200px;
+}

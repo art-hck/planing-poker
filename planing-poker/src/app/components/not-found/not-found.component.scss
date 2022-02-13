@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+mat-drawer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  color: mat.get-color-from-palette(mat.define-palette(mat.$pink-palette), 200);
+  display: flex;
+  align-items: center;
+}
+
+mat-icon {
+  font-size: 112px;
+  width: 112px;
+  height: 112px;
+  margin-right: 20px;
+}

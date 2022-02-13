@@ -1,13 +1,13 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button (click)="showPlayersChange.emit(!showPlayers)">
+  <button mat-icon-button (click)="showPlayersChange.emit(!showPlayers)" *ngIf="showPlayersChange.observed">
     <mat-icon>menu</mat-icon>
   </button>
-  <h1>Planing Poker</h1>
+  <a mat-button routerLink="/"><h1>Planing Poker</h1></a>
   <div class="flex-space"></div>
   <button mat-icon-button (click)="authService.logout$.next(undefined)">
     <mat-icon>logout</mat-icon>
   </button>
-  <button mat-icon-button (click)="showVotingsChange.emit(!showVotings)">
+  <button mat-icon-button (click)="showVotingsChange.emit(!showVotings)"  *ngIf="showVotingsChange.observed">
     <mat-icon *ngIf="!showVotings">description</mat-icon>
     <mat-icon *ngIf="showVotings">chevron_right</mat-icon>
   </button>

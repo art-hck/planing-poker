@@ -1,118 +1,144 @@
 import * as uuid from "uuid";
 import * as jwt from "jsonwebtoken";
-import { Token, User, Uuid, Voting, WsAction } from "@common/models";
-import { Broadcast, Send, superSecretString } from "./server";
-import { WebSocket } from "ws";
+import { User, Uuid, Voting } from "@common/models";
+import { superSecretString } from "./server";
+import { Room, Routes } from "./models";
 
-interface RoutePayload<T = unknown> {
-  payload: T,
-  send: Send,
-  broadcast: Broadcast,
-  connections: Map<Token, Set<WebSocket>>,
-  users: Map<Uuid, User>,
-  votings: Map<Uuid, Voting>,
-  activeVoting: { id: Uuid },
-  client: { token?: Token },
-  guard: (token: string) => void,
-  ws: WebSocket
+function getUsers(rooms: Map<Uuid, Room>, users: Map<Uuid, User>, room: Room) {
+  return Array.from(users.entries()).filter(([token]) => room.connections.has(token)).map(entity => {
+    entity[1].role = room.adminIds.has(entity[1].id) ? 'admin' : entity[1].role;
+    return entity;
+  });
 }
-
-type Routes = { [P in keyof WsAction]: (payload: RoutePayload<WsAction[P]>) => void; };
 
 export const routes: Routes = {
   handshake: route => {
-    let { payload: { name, teamRole, token, password }, send, broadcast, connections, ws, activeVoting, users, client, votings } = route;
+    let { payload: { name, teamRole, token, password }, send, users, client } = route;
     if (password && password !== '123123') {
       send('reject', {});
       return;
     }
 
     const user: User = (name ? { id: uuid.v4(), name, teamRole, role: password ? 'admin' : 'user' } : jwt.decode(token)) as User;
+
     client.token = token = token ?? jwt.sign(user, superSecretString);
-    connections.has(token) ? connections.get(token).add(ws) : connections.set(token, new Set([ws]));
     users.set(token, user);
-    console.log(`${user.name} подключился (${connections.get(token).size} соединений) `);
+
     send('handshake', { token });
-
-    // запрашивать на стороне клиента!
-    broadcast('users', users);
-    send('votings', Array.from(votings.entries()).map(([k, v]) => {
-      return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user.role === 'admin' || v.status === 'end' ? p : null]) }];
-    }) as [Uuid, Voting<true>][]);
-
-    if (votings.get(activeVoting.id)) {
-      send('activateVoting', { votingId: activeVoting.id })
-    }
-    // запрашивать на стороне клиента!
   },
 
   bye: route => {
-    const { payload: { token }, connections, users, client, broadcast, ws } = route;
-    connections.get(token)?.delete(ws);
+    const { payload: { token }, rooms, users, broadcast, ws } = route;
 
-    console.log(`${users.get(token)?.name} отключился (${connections.get(token).size} соединений)`);
+    rooms.forEach((room) => {
+      if (!room.connections.has(token)) return;
+      room.connections.get(token).delete(ws);
 
-    if (connections.get(token)?.size < 1) {
-      users.delete(token);
-      delete client.token;
-      broadcast('users', users);
-    }
-  },
+      console.log(`${users.get(token)?.name} отключился (${room.connections.get(token).size} соединений)`);
 
-  vote: route => {
-    const { payload: { token, point, votingId }, broadcast, users, votings } = route;
-    const userId = users.get(token)?.id;
-
-    votings.get(votingId).votes?.set(userId, point);
-    broadcast('voted', token => {
-      return users.get(token)?.role === 'admin' ? { userId, votingId, point } : { userId, votingId };
+      if (room.connections.get(token)?.size < 1) {
+        room.connections.delete(token);
+        broadcast('users', getUsers(rooms, users, room), room.id);
+      }
     });
   },
 
-  unvote: route => {
-    const { votings, broadcast, users, payload: { token, votingId } } = route;
+  vote: route => {
+    const { payload: { token, point, votingId }, broadcast, users, votings, rooms } = route;
     const userId = users.get(token)?.id;
+
+    const roomId = Array.from(rooms.values()).find(r => r.votingIds.has(votingId))?.id;
+
+    votings.get(votingId).votes?.set(userId, point);
+
+    broadcast('voted', token => {
+      return users.get(token)?.role === 'admin' ? { userId, votingId, point } : { userId, votingId };
+    }, roomId);
+  },
+
+  unvote: route => {
+    const { votings, broadcast, users, rooms, payload: { token, votingId } } = route;
+    const userId = users.get(token)?.id;
+    const roomId = Array.from(rooms.values()).find(r => r.votingIds.has(votingId))?.id;
+
     votings.get(votingId).votes?.delete(userId);
-    broadcast('unvoted', { userId, votingId });
+
+    broadcast('unvoted', { userId, votingId }, roomId);
   },
 
   restartVoting: route => {
-    const { broadcast, votings, guard, payload: { votingId, token } } = route;
+    const { broadcast, votings, guard, rooms, payload: { votingId, token } } = route;
+    const roomId = Array.from(rooms.values()).find(r => r.votingIds.has(votingId))?.id;
     guard(token);
     votings.get(votingId).votes?.clear();
     votings.get(votingId).status = 'in-progress';
 
-    broadcast('restartVoting', votings.get(votingId));
+    broadcast('restartVoting', votings.get(votingId), roomId);
   },
 
   flip: route => {
-    const { broadcast, guard, payload: { votingId, token }, votings } = route;
+    const { broadcast, guard, payload: { votingId, token }, votings, rooms } = route;
+    const roomId = Array.from(rooms.values()).find(r => r.votingIds.has(votingId))?.id;
     guard(token);
     votings.get(votingId).status = 'end';
-    broadcast('flip', votings.get(votingId));
+
+    broadcast('flip', votings.get(votingId), roomId);
   },
 
   newVoting: route => {
-    const { payload: { name, token }, guard, votings, broadcast } = route;
+    const { payload: { roomId, name, token }, guard, votings, rooms, broadcast } = route;
     guard(token);
 
-    votings.clear();
     name.split('\n').filter(Boolean).forEach(name => {
       const id = uuid.v4();
-      votings.set(id, { id, name: name.trim(), votes: new Map(), status: 'pristine' })
+      votings.set(id, { id, name: name.trim(), votes: new Map(), status: 'pristine' });
+      rooms.get(roomId).votingIds.add(id);
     });
 
-    broadcast('votings', votings);
+    broadcast('votings', Array.from(votings.entries()).filter(([id]) => rooms.get(roomId).votingIds.has(id)), roomId);
   },
 
   activateVoting: route => {
-    const { payload: { votingId }, votings, activeVoting, broadcast } = route;
+    const { payload: { votingId }, votings, rooms, activeVoting, broadcast } = route;
+    const roomId = Array.from(rooms.values()).find(r => r.votingIds.has(votingId))?.id;
     activeVoting.id = votingId;
 
     if (votings.get(activeVoting.id).status === 'pristine') {
       votings.get(activeVoting.id).status = 'in-progress'
     }
 
-    broadcast('activateVoting', { votingId })
+    broadcast('activateVoting', { votingId }, roomId);
+  },
+
+  newRoom: route => {
+    const { rooms, send, users, payload: { token } } = route;
+    const id = uuid.v4();
+
+    rooms.set(id, { id, connections: new Map(), adminIds: new Set([users.get(token).id]), votingIds: new Set() });
+
+    send('newRoom', { roomId: id })
+  },
+
+  joinRoom: route => {
+    let { payload: { roomId, token }, send, broadcast, rooms, ws, activeVoting, users, votings } = route;
+    if (!rooms.get(roomId)) {
+      roomId && send('notFoundRoom', {});
+      return;
+    }
+
+    rooms.get(roomId).connections.has(token) ? rooms.get(roomId).connections.get(token).add(ws) : rooms.get(roomId).connections.set(token, new Set([ws]));
+    const user: User = users.get(token);
+
+    console.log(`${user.name} подключился (${rooms.get(roomId).connections.get(token).size} соединений) `);
+
+    send('votings', Array.from(votings.entries()).filter(([id]) => rooms.get(roomId).votingIds.has(id)).map(([k, v]) => {
+      return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user.role === 'admin' || v.status === 'end' ? p : null]) }];
+    }) as [Uuid, Voting<true>][]);
+
+    if (votings.get(activeVoting.id)) {
+      send('activateVoting', { votingId: activeVoting.id })
+    }
+
+    broadcast('users', getUsers(rooms, users, rooms.get(roomId)), roomId);
   }
 }

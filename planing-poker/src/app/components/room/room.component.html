@@ -1,0 +1,27 @@
+<pp-header
+  [(showPlayers)]="sidebars.showPlayers"
+  [(showVotings)]="sidebars.showVotings"
+  (showPlayersChange)="sidebars.saveSidebarsState();"
+  (showVotingsChange)="sidebars.saveSidebarsState();"
+></pp-header>
+<mat-drawer-container *ngIf="authService.user$ | async">
+  <mat-drawer class='app-left-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showPlayers">
+    <!--- USERS --->
+    <pp-users [users]="users$ | async" [activeVoting]="activeVoting$ | async"></pp-users>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <!--- CARDS --->
+    <pp-cards [activeVoting]="activeVoting$ | async" [step]="step"></pp-cards>
+
+    <!--- CREATE --->
+    <button mat-fab color="primary" class="new-voting-button" (click)="openNewVotingModal()" *ngIf="authService.isAdmin$ | async">
+      <mat-icon>create</mat-icon>
+    </button>
+  </mat-drawer-content>
+
+  <mat-drawer class='app-right-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showVotings" position="end">
+    <!--- VOTINGS --->
+    <pp-votings [votings]="votings$ | async" (select)="pp.activateVoting(($event.id))"></pp-votings>
+  </mat-drawer>
+</mat-drawer-container>

@@ -12,7 +12,9 @@ export interface WsAction {
   flip: { votingId: Uuid, token?: string };
   restartVoting: { votingId: Uuid, token?: string };
   activateVoting: { votingId: Uuid, token?: string }
-  newVoting: { name: string, token?: string }
+  newVoting: { name: string, roomId: Uuid, token?: string }
+  newRoom: { token?: string }
+  joinRoom: { roomId: Uuid, token?: string }
 }
 
 export interface WsEvent<serialized = true> {
@@ -25,5 +27,7 @@ export interface WsEvent<serialized = true> {
   votings: [Uuid, Voting<serialized>][]
   activateVoting: { votingId: Uuid }
   reject: {}
-  denied: {}
+  denied: {},
+  newRoom: { roomId: Uuid },
+  notFoundRoom: {}
 }

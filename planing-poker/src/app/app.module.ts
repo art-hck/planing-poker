@@ -36,6 +36,10 @@ import { MatTableModule } from "@angular/material/table";
 import { DoughnutDirective } from './directives/doughnut.directive';
 import { PluralizePipe } from "./pipes/pluralize-pipe";
 import { UsersState } from "./states/users.state";
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { RoomComponent } from "./components/room/room.component";
+import { NewRoomDialogComponent, RoomsComponent } from './components/rooms/rooms.component';
+import { AuthGuard } from "./components/auth/auth.guard";
 
 @NgModule({
   declarations: [
@@ -47,7 +51,11 @@ import { UsersState } from "./states/users.state";
     AuthComponent,
     CreateVoteComponent,
     DoughnutDirective,
-    PluralizePipe
+    PluralizePipe,
+    NotFoundComponent,
+    RoomComponent,
+    NewRoomDialogComponent,
+    RoomsComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +86,7 @@ import { UsersState } from "./states/users.state";
     NgChartsModule,
     MatTableModule
   ],
-  providers: [],
+  providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {

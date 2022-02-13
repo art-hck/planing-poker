@@ -1,0 +1,14 @@
+:host ::ng-deep .mat-horizontal-content-container {
+  display: none;
+}
+
+
+.new-voting-button {
+  position: fixed;
+  bottom: 16px;
+  right: 216px;
+
+  @media screen and (max-width: 1000px) {
+    right: 16px;
+  }
+}
