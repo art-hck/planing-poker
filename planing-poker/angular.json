@@ -71,9 +71,7 @@
         },
         "serve": {
           "options": {
-            "port": 4201,
-            "host": "0.0.0.0",
-            "disableHostCheck": true
+            "port": 4201
           },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
