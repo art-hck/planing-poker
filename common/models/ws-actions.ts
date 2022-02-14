@@ -15,6 +15,7 @@ export interface WsAction {
   newVoting: { name: string, roomId: Uuid, token?: string }
   deleteVoting: { votingId: Uuid, roomId: Uuid, token?: string }
   newRoom: { token?: string }
+  rooms: { token?: string }
   joinRoom: { roomId: Uuid, token?: string }
 }
 
@@ -30,5 +31,6 @@ export interface WsEvent<serialized = true> {
   reject: {}
   denied: {},
   newRoom: { roomId: Uuid },
-  notFoundRoom: {}
+  notFoundRoom: {},
+  rooms: [string, { id: Uuid }][]
 }

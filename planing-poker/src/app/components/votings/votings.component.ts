@@ -38,7 +38,7 @@ export class VotingsComponent {
 
 
 @Component({
-  template: `<h1 mat-dialog-title>Удалить голосование?</h1>
+  template: `<h1 mat-dialog-title>Удалить стори?</h1>
 <div mat-dialog-actions [align]="'end'">
   <button mat-flat-button [mat-dialog-close]="false">Отмена</button>
   <button mat-flat-button color="primary" [mat-dialog-close]="true">Удалить</button>

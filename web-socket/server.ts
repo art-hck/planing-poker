@@ -54,6 +54,6 @@ server.on('connection', ws => {
   }
 
   function replacer(key, value) {
-    return value instanceof Map ? Array.from(value.entries()) : value;
+    return value instanceof Map ? Array.from(value.entries()) : value instanceof Set ? Array.from(value) : value;
   }
 });

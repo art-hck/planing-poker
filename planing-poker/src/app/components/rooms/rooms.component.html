@@ -1,0 +1,26 @@
+<pp-header></pp-header>
+
+<mat-drawer-container>
+  <mat-drawer-content *ngIf="rooms$ | async as rooms">
+    <br/>
+    <mat-card *ngIf="rooms.length">
+      <mat-card-header >
+        <mat-card-title>Недавние комнаты</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-selection-list #shoes [multiple]="false">
+          <a [routerLink]="room[1].id" *ngFor="let room of rooms">
+          <mat-list-option>
+            <span matLine>Комната #{{room[1].id.slice(0, 5)}}</span>
+          </mat-list-option>
+          </a>
+        </mat-selection-list>
+      </mat-card-content>
+      <mat-card-actions [align]="'end'">
+        <button mat-flat-button color="primary" (click)="newRoom()">Новая комната</button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-drawer-content>
+</mat-drawer-container>
+

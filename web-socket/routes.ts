@@ -1,14 +1,14 @@
 import * as uuid from "uuid";
 import * as jwt from "jsonwebtoken";
-import { User, Uuid, Voting } from "@common/models";
+import { Token, User, Uuid, Voting } from "@common/models";
 import { superSecretString } from "./server";
 import { Room, Routes } from "./models";
 
 function getUsers(rooms: Map<Uuid, Room>, users: Map<Uuid, User>, room: Room) {
-  return Array.from(users.entries()).filter(([token]) => room.connections.has(token)).map(entity => {
-    entity[1].role = room.adminIds.has(entity[1].id) ? 'admin' : entity[1].role;
-    return entity;
-  });
+  return Array.from(users.entries()).filter(([token]) => room.connections.has(token)).map(([token, user]) => {
+    user.role = room.adminIds.has(user.id) ? 'admin' : user.role;
+    return [token, user];
+  }) as [Token, User][];
 }
 
 function getVotings(room: Room, votings: Map<Uuid, Voting>, user?: User) {
@@ -153,5 +153,14 @@ export const routes: Routes = {
     }
 
     broadcast('users', getUsers(rooms, users, rooms.get(roomId)), roomId);
+  },
+
+  rooms: route => {
+    const { payload: { token }, rooms, users, send } = route;
+    const userRooms = new Map(Array.from(rooms.entries())
+      .filter(([, room]) => room.connections.has(token) || room.adminIds.has(users.get(token).id))
+      .map(([key, { id }]) => ([key, { id }])));
+
+    send('rooms', userRooms);
   }
 }

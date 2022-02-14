@@ -17,6 +17,7 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   readonly restartVoting$ = this.ws.read('restartVoting');
   readonly flip$ = this.ws.read('flip');
   readonly voted$ = this.ws.read('voted');
+  readonly rooms$ = this.ws.read('rooms');
 
   events(events: PlaningPokerWsServiceEventsArrType["events"] | (keyof WsEvent)[]) {
     return merge(...(Array.isArray(events) ? events.map(e => this.ws.read(e)) : Object.entries(events).map(([e, fn]) => this.ws.read(e as keyof WsEvent).pipe(tap(d => fn(d as any))))));
@@ -68,5 +69,9 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
   deleteVoting(votingId: Uuid, roomId: Uuid) {
     this.ws.send('deleteVoting', { votingId, roomId }, { withCredentials: true })
+  }
+
+  rooms() {
+    this.ws.send('rooms', {}, { withCredentials: true })
   }
 }

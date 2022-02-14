@@ -4,6 +4,14 @@
   <mat-step label="Результаты"><ng-template matStepperIcon="edit"><mat-icon>check</mat-icon></ng-template></mat-step>
 </mat-horizontal-stepper>
 
+<ng-container *ngIf="!activeVoting">
+  <div class="mat-headline app-center">
+    Ожидаем начала голосования...
+  </div>
+  <div class="poker-cards">
+    <mat-card *ngFor="let point of points" class="mat-display-2 poker-cards__item poker-cards__item-disabled">{{point}}</mat-card>
+  </div>
+</ng-container>
 <ng-container *ngIf="activeVoting" [ngSwitch]="step">
   <div class="mat-headline app-center">
     {{ activeVoting.name}}
