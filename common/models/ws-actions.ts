@@ -13,6 +13,7 @@ export interface WsAction {
   restartVoting: { votingId: Uuid, token?: string };
   activateVoting: { votingId: Uuid, token?: string }
   newVoting: { name: string, roomId: Uuid, token?: string }
+  deleteVoting: { votingId: Uuid, roomId: Uuid, token?: string }
   newRoom: { token?: string }
   joinRoom: { roomId: Uuid, token?: string }
 }

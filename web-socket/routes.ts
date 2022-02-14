@@ -11,6 +11,12 @@ function getUsers(rooms: Map<Uuid, Room>, users: Map<Uuid, User>, room: Room) {
   });
 }
 
+function getVotings(room: Room, votings: Map<Uuid, Voting>, user?: User) {
+  return Array.from(votings.entries()).filter(([id]) => room.votingIds.has(id)).map(([k, v]) => {
+    return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user?.role === 'admin' || v.status === 'end' ? p : null]) }];
+  }) as [Uuid, Voting<true>][];
+}
+
 export const routes: Routes = {
   handshake: route => {
     let { payload: { name, teamRole, token, password }, send, users, client } = route;
@@ -95,7 +101,16 @@ export const routes: Routes = {
       rooms.get(roomId).votingIds.add(id);
     });
 
-    broadcast('votings', Array.from(votings.entries()).filter(([id]) => rooms.get(roomId).votingIds.has(id)), roomId);
+    broadcast('votings', getVotings(rooms.get(roomId), votings), roomId);
+  },
+
+  deleteVoting: route => {
+    const { payload: { votingId, roomId, token }, guard, send, users, rooms, votings } = route;
+    guard(token);
+
+    votings.delete(votingId);
+
+    send('votings', getVotings(rooms.get(roomId), votings, users.get(token)));
   },
 
   activateVoting: route => {
@@ -131,9 +146,7 @@ export const routes: Routes = {
 
     console.log(`${user.name} подключился (${rooms.get(roomId).connections.get(token).size} соединений) `);
 
-    send('votings', Array.from(votings.entries()).filter(([id]) => rooms.get(roomId).votingIds.has(id)).map(([k, v]) => {
-      return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user.role === 'admin' || v.status === 'end' ? p : null]) }];
-    }) as [Uuid, Voting<true>][]);
+    send('votings', getVotings(rooms.get(roomId), votings, user));
 
     if (votings.get(activeVoting.id)) {
       send('activateVoting', { votingId: activeVoting.id })

@@ -2,13 +2,22 @@
   display: none;
 }
 
+mat-drawer-content {
+  position: relative;
 
-.new-voting-button {
-  position: fixed;
-  bottom: 16px;
-  right: 216px;
+  .new-voting-button {
+    position: fixed;
 
-  @media screen and (max-width: 1000px) {
-    right: 16px;
+    &-wrap {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      width: 56px;
+      height: 56px;
+    }
+
+    @media screen and (max-width: 1000px) {
+      right: 16px;
+    }
   }
 }

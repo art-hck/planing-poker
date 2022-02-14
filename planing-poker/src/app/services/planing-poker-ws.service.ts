@@ -65,4 +65,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   joinRoom(roomId: Uuid) {
     this.ws.send('joinRoom', { roomId }, { withCredentials: true });
   }
+
+  deleteVoting(votingId: Uuid, roomId: Uuid) {
+    this.ws.send('deleteVoting', { votingId, roomId }, { withCredentials: true })
+  }
 }

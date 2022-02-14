@@ -48,7 +48,7 @@ server.on('connection', ws => {
   }
 
   function guard(token: string) {
-    if (!token || (jwt.decode(token) as User).role !== 'admin') {
+    if (!token || (jwt.decode(token) as User).role !== 'admin' || users.get(token).role !== 'admin') {
       send('denied', {});
     }
   }

@@ -18,7 +18,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { HeaderComponent } from './components/header/header.component';
 import { UsersComponent } from './components/users/users.component';
 import { CardsComponent } from './components/cards/cards.component';
-import { VotingsComponent } from './components/votings/votings.component';
+import { VotingsComponent, VotingDeleteConfirmComponent } from './components/votings/votings.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -40,6 +40,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { RoomComponent } from "./components/room/room.component";
 import { NewRoomDialogComponent, RoomsComponent } from './components/rooms/rooms.component';
 import { AuthGuard } from "./components/auth/auth.guard";
+import { MatBadgeModule } from "@angular/material/badge";
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { AuthGuard } from "./components/auth/auth.guard";
     NotFoundComponent,
     RoomComponent,
     NewRoomDialogComponent,
-    RoomsComponent
+    RoomsComponent,
+    VotingDeleteConfirmComponent
   ],
   imports: [
     BrowserModule,
@@ -84,7 +86,8 @@ import { AuthGuard } from "./components/auth/auth.guard";
     MatButtonToggleModule,
     MatTooltipModule,
     NgChartsModule,
-    MatTableModule
+    MatTableModule,
+    MatBadgeModule
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]
