@@ -46,9 +46,9 @@ server.on('connection', ws => {
       const { action, payload, token } = JSON.parse(message);
       routes[action]({ ...routePayloadPart, payload, userId: getUserId(token), token });
     } catch (e) {
-      if (e instanceof Error && e.message === 'denied') {
+      if (e instanceof Error && ['reject', 'denied'].includes(e.message)) {
         log.error(`Доступ запрещен`, message);
-        send('denied', {});
+        send(e.message as 'reject' | 'denied', {});
       } else {
         log.error(e instanceof TypeError ? e.stack : e);
       }

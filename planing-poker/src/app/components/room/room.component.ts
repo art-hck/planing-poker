@@ -43,7 +43,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.params // проверить работает ли переход по урлам без дестроя компонента
-      .pipe(mergeMap(p => this.authService.login$.pipe(mapTo(p))), takeUntil(this.destroy$))
+      .pipe(mergeMap(p => this.authService.user$.pipe(filter(u => !!u), mapTo(p))), takeUntil(this.destroy$))
       .subscribe(param => this.pp.joinRoom(param['id']))
 
     merge(

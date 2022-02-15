@@ -11,7 +11,7 @@ export const routes: Routes = {
     const user: User = (token ? jwt.decode(token) : { id: uuid.v4(), name, teamRole, role: password ? 'admin' : 'user' }) as User;
 
     if (password && password !== '123123')
-      throw new Error('denied');
+      throw new Error('reject');
 
     client.token = token ?? jwt.sign(user, superSecretString);
     users.set(user.id, user);
@@ -154,8 +154,7 @@ export const routes: Routes = {
 function getUsers(rooms: Map<Uuid, Room>, users: Map<Uuid, User>, roomId: Uuid) {
   const room = rooms.get(roomId);
   return Array.from(users.entries()).filter(([id]) => room.connections.has(id)).map(([token, user]) => {
-    user.role = room.adminIds.has(user.id) ? 'admin' : user.role;
-    return [token, user];
+    return [token, { ...user, role: room.adminIds.has(user.id) ? 'admin' : user.role }];
   }) as [Uuid, User][];
 }
 

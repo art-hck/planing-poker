@@ -17,6 +17,28 @@ export class WsService {
 
   constructor(private authService: AuthService) {
     this.connect();
+
+    // Все эмиты разлогина (rejected)
+    const off$ = this.connected$.pipe(filter(v => !v));
+    // Все эмиты успешной авторизации (granted)
+    const on$ = this.connected$.pipe(filter(v => v));
+
+    merge(
+      this.send$.pipe(bufferToggle(off$, () => on$)),
+      this.send$.pipe(windowToggle(on$, () => off$))
+    ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
+
+
+    this.read('reject').subscribe(() => {
+      this.authService.loginAttempts++;
+      this.authService.logout$.next()
+    });
+
+    this.authService.beforeLogout$.subscribe(() => {
+      this.send('bye', {});
+      this.connected$.next(false);
+    })
+
   }
 
   private connect() {
@@ -47,30 +69,10 @@ export class WsService {
 
     this.ws$.subscribe(event => this.read$.next(event));
 
-    // Все эмиты разлогина (rejected)
-    const off$ = this.connected$.pipe(filter(v => !v));
-    // Все эмиты успешной авторизации (granted)
-    const on$ = this.connected$.pipe(filter(v => v));
-
-    merge(
-      this.send$.pipe(bufferToggle(off$, () => on$)),
-      this.send$.pipe(windowToggle(on$, () => off$))
-    ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
-
-
-    this.read('reject').subscribe(() => {
-      this.authService.loginAttempts++;
-      this.authService.logout$.next()
-    });
-
-    this.authService.beforeLogout$.subscribe(() => {
-      this.send('bye', {});
-      this.connected$.next(false);
-    })
   }
 
   public send<A extends keyof WsAction, P extends WsAction[A]>(action: A, payload: P, options?: WsSendOptions) {
-    console.log('SEND -> ', action, payload);
+    // console.log('SEND -> ', action, payload);
     const data: WsMessage = { action, payload };
     const token = window.localStorage.getItem('token');
     if (token) data.token = token;
