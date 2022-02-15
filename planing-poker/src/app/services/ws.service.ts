@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject } from "rxjs/webSocket";
-import { filter, iif, map, mergeMap, Observable, of, ReplaySubject, Subject, take, tap, timer } from "rxjs";
+import { bufferToggle, filter, map, merge, mergeMap, Observable, ReplaySubject, Subject, take, tap, timer, windowToggle } from "rxjs";
 import { AuthService } from "../components/auth/auth.service";
 import jwt_decode from "jwt-decode";
 import { WsAction, WsEvent, WsMessage } from "@common/models";
@@ -11,7 +11,8 @@ import { environment } from "../../environments/environment";
 })
 export class WsService {
   private ws$!: WebSocketSubject<WsMessage<any>>;
-  private events$ = new Subject<WsMessage<any>>();
+  private read$ = new Subject<WsMessage<any>>();
+  private send$ = new Subject<WsMessage<any>>();
   readonly connected$ = new ReplaySubject<boolean>(1);
 
   constructor(private authService: AuthService) {
@@ -44,7 +45,18 @@ export class WsService {
       }
     });
 
-    this.ws$.subscribe(event => this.events$.next(event));
+    this.ws$.subscribe(event => this.read$.next(event));
+
+    // Все эмиты разлогина (rejected)
+    const off$ = this.connected$.pipe(filter(v => !v));
+    // Все эмиты успешной авторизации (granted)
+    const on$ = this.connected$.pipe(filter(v => v));
+
+    merge(
+      this.send$.pipe(bufferToggle(off$, () => on$)),
+      this.send$.pipe(windowToggle(on$, () => off$))
+    ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
+
 
     this.read('reject').subscribe(() => {
       this.authService.loginAttempts++;
@@ -59,18 +71,16 @@ export class WsService {
 
   public send<A extends keyof WsAction, P extends WsAction[A]>(action: A, payload: P, options?: WsSendOptions) {
     // console.log('SEND -> ', action, payload);
-    iif(() => !!options?.force, of(null), this.connected$.pipe(filter(c => c))).subscribe(() => {
-      const data: WsMessage = { action, payload };
-      const token = window.localStorage.getItem('token');
-      if (token) data.token = token;
-      this.ws$.next(data)
-    });
+    const data: WsMessage = { action, payload };
+    const token = window.localStorage.getItem('token');
+    if (token) data.token = token;
+    options?.force ? this.ws$.next(data) : this.send$.next(data);
   }
 
 
   public read<E extends keyof WsEvent, P extends WsEvent[E]>(event: E): Observable<P> {
     // console.log('READ <- ', event);
-    return this.events$.pipe(filter(p => p.event === event), map(p => p.payload));
+    return this.read$.pipe(filter(p => p.event === event), map(p => p.payload));
   }
 }
 

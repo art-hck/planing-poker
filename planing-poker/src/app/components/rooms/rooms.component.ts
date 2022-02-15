@@ -3,6 +3,7 @@ import { filter, Subject, takeUntil } from "rxjs";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
 import { MatDialog } from "@angular/material/dialog";
 import { MatDialogConfig } from "@angular/material/dialog/dialog-config";
+import { AuthService } from "../auth/auth.service";
 
 @Component({
   selector: 'pp-rooms',
@@ -11,14 +12,12 @@ import { MatDialogConfig } from "@angular/material/dialog/dialog-config";
 })
 export class RoomsComponent {
   readonly destroy$ = new Subject<void>();
-  readonly rooms$ = this.pp.rooms$;
 
-  constructor(private dialog: MatDialog, private pp: PlaningPokerWsService) {
-  }
+  constructor(private dialog: MatDialog, public pp: PlaningPokerWsService, public authService: AuthService) {}
 
   ngOnInit() {
-    this.pp.rooms();
-    this.rooms$.pipe(filter(r => r.length === 0)).subscribe(() => this.newRoom({ disableClose: true }));
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe(() => this.pp.rooms());
+    this.pp.rooms$.pipe(filter(r => r.length === 0), takeUntil(this.destroy$)).subscribe(() => this.newRoom({ disableClose: true }));
   }
 
   newRoom(config: MatDialogConfig = {}) {

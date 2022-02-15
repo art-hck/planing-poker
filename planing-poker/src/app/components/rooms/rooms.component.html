@@ -1,7 +1,7 @@
 <pp-header></pp-header>
 
-<mat-drawer-container>
-  <mat-drawer-content *ngIf="rooms$ | async as rooms">
+<mat-drawer-container *ngIf="authService.user$ | async">
+  <mat-drawer-content *ngIf="pp.rooms$ | async as rooms">
     <br/>
     <mat-card *ngIf="rooms.length">
       <mat-card-header >
