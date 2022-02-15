@@ -41,7 +41,7 @@ export const routes: Routes = {
 
     votings.get(votingId).votes?.set(userId, point);
 
-    broadcast('voted', id => users.get(id)?.role === 'admin' ? { userId, votingId, point } : { userId, votingId }, roomId);
+    broadcast('voted', id => users.get(id)?.role === 'admin' || rooms.get(roomId).adminIds.has(id) ? { userId, votingId, point } : { userId, votingId }, roomId);
   },
 
   unvote: r => {
@@ -160,6 +160,6 @@ function getUsers(rooms: Map<Uuid, Room>, users: Map<Uuid, User>, roomId: Uuid) 
 
 function getVotings(room: Room, votings: Map<Uuid, Voting>, user?: User) {
   return Array.from(votings.entries()).filter(([id]) => room.votingIds.has(id)).map(([k, v]) => {
-    return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user?.role === 'admin' || v.status === 'end' ? p : null]) }];
+    return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user?.role === 'admin' || room.adminIds.has(user.id) || v.status === 'end' ? p : null]) }];
   }) as [Uuid, Voting<true>][];
 }
