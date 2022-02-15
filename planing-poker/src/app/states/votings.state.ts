@@ -68,14 +68,6 @@ export class VotingsState {
 
   @Action(Activate)
   activate({ setState, getState }: Context, { votingId }: Activate) {
-    if(['pristine', 'in-progress'].includes(getState().votings.find(v => v.id === getState().activeVotingId)?.status || "")) {
-      setState(patch<Model>({
-        votings: updateItem(item => item?.id === getState().activeVotingId, patch({
-          votes: [] as Voting<true>['votes']
-        }))
-      }));
-    }
-
     setState(patch<Model>({ activeVotingId: votingId }));
   }
 }
