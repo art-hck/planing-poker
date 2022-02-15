@@ -31,8 +31,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     return this.ws.read('handshake');
   }
 
-  bye() {
-    this.ws.send('bye', {})
+  bye(roomId?: Uuid) {
+    this.ws.send('bye', { roomId })
   }
 
   vote(votingId: Uuid, point: number) {

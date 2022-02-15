@@ -2,21 +2,20 @@ import { Voting } from "./voting";
 import { Uuid } from "./uuid";
 import { User } from "./user";
 import { Handshake } from "./handshake";
-import { Token } from "./token";
 
 export interface WsAction {
   handshake: Partial<Handshake>;
-  bye: { token?: Token };
-  vote: { point: number, votingId: Uuid, token?: string };
-  unvote: { votingId: Uuid, token?: string };
-  flip: { votingId: Uuid, token?: string };
-  restartVoting: { votingId: Uuid, token?: string };
-  activateVoting: { votingId: Uuid, token?: string }
-  newVoting: { name: string, roomId: Uuid, token?: string }
-  deleteVoting: { votingId: Uuid, roomId: Uuid, token?: string }
+  bye: { roomId?: Uuid };
+  vote: { point: number, votingId: Uuid };
+  unvote: { votingId: Uuid };
+  flip: { votingId: Uuid };
+  restartVoting: { votingId: Uuid };
+  activateVoting: { votingId: Uuid }
+  newVoting: { name: string, roomId: Uuid }
+  deleteVoting: { votingId: Uuid, roomId: Uuid }
   newRoom: { token?: string }
   rooms: { token?: string }
-  joinRoom: { roomId: Uuid, token?: string }
+  joinRoom: { roomId: Uuid }
 }
 
 export interface WsEvent<serialized = true> {

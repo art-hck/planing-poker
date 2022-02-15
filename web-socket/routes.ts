@@ -20,10 +20,10 @@ export const routes: Routes = {
   },
 
   bye: r => {
-    const { rooms, users, broadcast, ws, userId } = r;
+    const { payload: { roomId }, rooms, users, broadcast, ws, userId } = r;
 
     rooms.forEach((room) => {
-      if (!room.connections.has(userId)) return;
+      if ((roomId && room.id !== roomId) || !room.connections.has(userId)) return;
       room.connections.get(userId).delete(ws);
 
       log.normal(`${users.get(userId)?.name} отключился (${room.connections.get(userId).size} соединений)`);

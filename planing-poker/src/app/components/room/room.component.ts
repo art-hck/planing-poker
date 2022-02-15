@@ -82,5 +82,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
     this.store.dispatch(new Users.Fetch([]));
     this.store.dispatch(new Votings.Fetch([]));
+    this.pp.bye(this.route.snapshot.params['id']);
   }
 }
