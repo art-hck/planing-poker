@@ -18,7 +18,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { HeaderComponent } from './components/header/header.component';
 import { UsersComponent } from './components/users/users.component';
 import { CardsComponent } from './components/cards/cards.component';
-import { VotingsComponent, VotingDeleteConfirmComponent } from './components/votings/votings.component';
+import { VotingDeleteConfirmComponent, VotingsComponent } from './components/votings/votings.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -31,7 +31,6 @@ import { VotingsState } from "./states/votings.state";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { environment } from "../environments/environment";
-import { NgChartsModule } from 'ng2-charts';
 import { MatTableModule } from "@angular/material/table";
 import { DoughnutDirective } from './directives/doughnut.directive';
 import { PluralizePipe } from "./pipes/pluralize-pipe";
@@ -89,7 +88,6 @@ import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
     }),
     MatButtonToggleModule,
     MatTooltipModule,
-    NgChartsModule,
     MatTableModule,
     MatBadgeModule
   ],
