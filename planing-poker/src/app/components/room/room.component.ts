@@ -8,7 +8,7 @@ import { VotingsState } from "../../states/votings.state";
 import { AuthService } from "../auth/auth.service";
 import { WsService } from "../../services/ws.service";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialog, MatDialogState } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SidebarsService } from "../../services/sidebars.service";
 import { ActivatedRoute } from "@angular/router";
@@ -71,7 +71,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   openNewVotingModal() {
-    this.dialog.open(CreateVoteComponent, { width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(data => {
+    if(this.dialog.getDialogById('NewVotingModal')?.getState() === MatDialogState.OPEN) return;
+    this.dialog.open(CreateVoteComponent, { id: 'NewVotingModal', width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(data => {
       this.pp.newVoting(this.route.snapshot.params['id'], data.name);
     });
   }

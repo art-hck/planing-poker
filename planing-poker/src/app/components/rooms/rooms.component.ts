@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { filter, Subject, takeUntil } from "rxjs";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
 import { MatDialog } from "@angular/material/dialog";
+import { MatDialogConfig } from "@angular/material/dialog/dialog-config";
 
 @Component({
   selector: 'pp-rooms',
@@ -17,11 +18,11 @@ export class RoomsComponent {
 
   ngOnInit() {
     this.pp.rooms();
-    this.rooms$.pipe(filter(r => r.length === 0)).subscribe(() => this.newRoom());
+    this.rooms$.pipe(filter(r => r.length === 0)).subscribe(() => this.newRoom({ disableClose: true }));
   }
 
-  newRoom() {
-    this.dialog.open(NewRoomDialogComponent, { width: '350px', disableClose: true }).afterClosed().pipe(filter(v => !!v), takeUntil(this.destroy$))
+  newRoom(config: MatDialogConfig = {}) {
+    this.dialog.open(NewRoomDialogComponent, { ...config, width: '350px' }).afterClosed().pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(() => this.pp.newRoom())
   }
 
