@@ -5,7 +5,7 @@ import { Handshake } from "./handshake";
 import { Token } from "./token";
 
 export interface WsAction {
-  handshake: Handshake;
+  handshake: Partial<Handshake>;
   bye: { token?: Token };
   vote: { point: number, votingId: Uuid, token?: string };
   unvote: { votingId: Uuid, token?: string };

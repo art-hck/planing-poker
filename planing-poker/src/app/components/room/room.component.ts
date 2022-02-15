@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CreateVoteComponent } from "../create-vote/create-vote.component";
-import { filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, take, takeUntil, withLatestFrom } from "rxjs";
+import { filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, switchMapTo, take, takeUntil, withLatestFrom } from "rxjs";
 import { Select, Store } from "@ngxs/store";
 import { UsersState } from "../../states/users.state";
 import { User, Voting } from "@common/models";
@@ -12,6 +12,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SidebarsService } from "../../services/sidebars.service";
 import { ActivatedRoute } from "@angular/router";
+import { Users } from "../../actions/users.actions";
+import { Votings } from "../../actions/votings.actions";
 
 @Component({
   selector: 'pp-room',
@@ -62,6 +64,9 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.snackBar.open(`${user?.name} проголосовал(а)`, 'Ну ок', { duration: 4000, horizontalPosition: 'right' });
     });
 
+    this.authService.isAdmin$.pipe(filter(Boolean), switchMapTo(this.votings$), filter(v => !v.length), takeUntil(this.destroy$))
+      .subscribe(() => this.openNewVotingModal());
+
     this.sidebars.detectChanges$.subscribe(() => this.cd.detectChanges());
   }
 
@@ -74,5 +79,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.store.dispatch(new Users.Fetch([]));
+    this.store.dispatch(new Votings.Fetch([]));
   }
 }

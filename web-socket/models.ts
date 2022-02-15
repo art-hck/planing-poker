@@ -6,20 +6,22 @@ export interface Room {
   id?: Uuid;
   votingIds?: Set<Uuid>;
   adminIds: Set<Uuid>,
-  connections: Map<Token, Set<WebSocket>>; // соединений может быть несколько (зашли с двух вкладок, например)
+  connections: Map<Uuid, Set<WebSocket>>; // соединений может быть несколько (зашли с двух вкладок, например)
 }
 
 export interface RoutePayload<T = unknown> {
-  payload: T,
-  send: Send,
-  broadcast: Broadcast,
-  rooms: Map<Uuid, Room>,
-  users: Map<Uuid, User>,
-  votings: Map<Uuid, Voting>,
-  activeVoting: { id: Uuid },
-  client: { token?: Token },
-  guard: (token: string) => void,
-  ws: WebSocket
+  payload: T, // Данные
+  send: Send, // Функция отправки ответа
+  broadcast: Broadcast, // Функция рассылки
+  rooms: Map<Uuid, Room>, // Комнаты
+  users: Map<Uuid, User>, // Пользователи
+  userId: Uuid, // Id юзера совершившего запрос
+  votings: Map<Uuid, Voting>, // Голосования
+  activeVoting: { id: Uuid }, // Активное голосование
+  guard: (token: string, roomId?: Uuid) => void, // Функия проверки прав
+  ws: WebSocket // Соединение
+  client?: { token?: Token }, // Данные о пользователе (нужны в случае разрыва соединения)
+  token?: Token, // Токен пользователя
 }
 
 export type Routes = { [P in keyof WsAction]: (payload: RoutePayload<WsAction[P]>) => void; };

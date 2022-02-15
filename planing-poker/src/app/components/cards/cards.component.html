@@ -5,9 +5,11 @@
 </mat-horizontal-stepper>
 
 <ng-container *ngIf="!activeVoting">
-  <div class="mat-headline app-center">
-    Ожидаем начала голосования...
+  <div class="mat-headline app-center" *ngIf="authService.isAdmin$ | async; else waiting">
+    Выберите стори для начала голосования
   </div>
+  <ng-template #waiting><div class="mat-headline app-center" >Ожидаем начала голосования...</div></ng-template>
+
   <div class="poker-cards">
     <mat-card *ngFor="let point of points" class="mat-display-2 poker-cards__item poker-cards__item-disabled">{{point}}</mat-card>
   </div>

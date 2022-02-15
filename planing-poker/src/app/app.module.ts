@@ -41,6 +41,7 @@ import { RoomComponent } from "./components/room/room.component";
 import { NewRoomDialogComponent, RoomsComponent } from './components/rooms/rooms.component';
 import { AuthGuard } from "./components/auth/auth.guard";
 import { MatBadgeModule } from "@angular/material/badge";
+import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
 
 @NgModule({
   declarations: [
@@ -82,6 +83,9 @@ import { MatBadgeModule } from "@angular/material/badge";
     ReactiveFormsModule,
     NgxsModule.forRoot([UsersState, VotingsState], {
       developmentMode: !environment.production
+    }),
+    NgxsReduxDevtoolsPluginModule.forRoot({
+      disabled: environment.production
     }),
     MatButtonToggleModule,
     MatTooltipModule,

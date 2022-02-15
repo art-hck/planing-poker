@@ -32,19 +32,19 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   }
 
   bye() {
-    this.ws.send('bye', {}, { withCredentials: true })
+    this.ws.send('bye', {})
   }
 
   vote(votingId: Uuid, point: number) {
-    this.ws.send('vote', { point, votingId }, { withCredentials: true })
+    this.ws.send('vote', { point, votingId })
   }
 
   unvote(votingId: Uuid) {
-    this.ws.send('unvote', { votingId }, { withCredentials: true });
+    this.ws.send('unvote', { votingId });
   }
 
   flip(votingId: Uuid) {
-    this.ws.send('flip', { votingId }, { withCredentials: true });
+    this.ws.send('flip', { votingId });
   }
 
   activateVoting(votingId: Uuid) {
@@ -52,26 +52,26 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   }
 
   restartVoting(votingId: Uuid) {
-    this.ws.send('restartVoting', { votingId }, { withCredentials: true });
+    this.ws.send('restartVoting', { votingId });
   }
 
   newVoting(roomId: Uuid, name: string) {
-    this.ws.send('newVoting', { name, roomId }, { withCredentials: true });
+    this.ws.send('newVoting', { name, roomId });
   }
 
   newRoom() {
-    this.ws.send('newRoom', {}, { withCredentials: true });
+    this.ws.send('newRoom', {});
   }
 
   joinRoom(roomId: Uuid) {
-    this.ws.send('joinRoom', { roomId }, { withCredentials: true });
+    this.ws.send('joinRoom', { roomId });
   }
 
   deleteVoting(votingId: Uuid, roomId: Uuid) {
-    this.ws.send('deleteVoting', { votingId, roomId }, { withCredentials: true })
+    this.ws.send('deleteVoting', { votingId, roomId })
   }
 
   rooms() {
-    this.ws.send('rooms', {}, { withCredentials: true })
+    this.ws.send('rooms', {})
   }
 }

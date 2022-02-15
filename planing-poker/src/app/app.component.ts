@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { of, startWith, switchMap } from "rxjs";
 import { AuthService } from "./components/auth/auth.service";
 import { AuthComponent } from "./components/auth/auth.component";
-import { Handshake } from "@common/models";
 import { MatDialog } from "@angular/material/dialog";
 import { Users } from "./actions/users.actions";
 import { Votings } from "./actions/votings.actions";
@@ -28,11 +27,11 @@ export class AppComponent {
     this.authService.logout$.pipe(
       startWith(null),
       switchMap(() => {
-        const token = window.localStorage.getItem('token');
+        const hasToken = !!window.localStorage.getItem('token');
         const config = { disableClose: true, data: { loginAttempts: this.authService.loginAttempts } };
-        return token ? of({ token }) : this.dialog.open(AuthComponent, config).afterClosed()
+        return hasToken ? of({}) : this.dialog.open(AuthComponent, config).afterClosed()
       }),
-    ).subscribe((handshake: Handshake) => this.authService.login$.next(handshake));
+    ).subscribe((handshake) => this.authService.login$.next(handshake));
 
     // this.ws.connected$.pipe(skip(1), distinctUntilChanged()).subscribe(connected => {
     //   this.snackBar.open(connected ? 'Соединение восстановлено!' : 'Потеряно соединение...', "", { duration: connected ? 1000 : 0 });

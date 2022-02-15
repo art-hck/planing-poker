@@ -27,7 +27,7 @@ export class WsService {
         next: () => {
           this.authService.login$.pipe(
             mergeMap(payload => {
-              this.send('handshake', payload!, { force: true });
+              this.send('handshake', payload, { force: true });
               return this.read('handshake').pipe(take(1));
             }),
             tap(({ token }) => window.localStorage.setItem('token', token)),
@@ -52,20 +52,19 @@ export class WsService {
     });
 
     this.authService.beforeLogout$.subscribe(() => {
-      this.send('bye', {}, { withCredentials: true });
+      this.send('bye', {});
       this.connected$.next(false);
     })
   }
 
-  public send<E extends keyof WsAction, P extends WsAction[E]>(action: E, payload: P, options?: WsSendOptions) {
+  public send<A extends keyof WsAction, P extends WsAction[A]>(action: A, payload: P, options?: WsSendOptions) {
     // console.log('SEND -> ', action, payload);
     iif(() => !!options?.force, of(null), this.connected$.pipe(filter(c => c))).subscribe(() => {
-        if (options?.withCredentials) {
-          const token = window.localStorage.getItem('token');
-          payload = { ...payload, token };
-        }
-        this.ws$.next({ action, payload })
-      });
+      const data: WsMessage = { action, payload };
+      const token = window.localStorage.getItem('token');
+      if (token) data.token = token;
+      this.ws$.next(data)
+    });
   }
 
 
@@ -76,6 +75,5 @@ export class WsService {
 }
 
 type WsSendOptions = {
-  force?: boolean,
-  withCredentials?: boolean
+  force?: boolean
 }

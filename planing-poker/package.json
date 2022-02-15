@@ -35,6 +35,7 @@
     "@angular-devkit/build-angular": "~13.2.2",
     "@angular/cli": "~13.2.2",
     "@angular/compiler-cli": "~13.2.0",
+    "@ngxs/devtools-plugin": "^3.7.3",
     "@types/canvas-confetti": "^1.4.2",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
