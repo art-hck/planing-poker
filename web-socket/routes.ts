@@ -87,13 +87,13 @@ export const routes: Routes = {
   },
 
   deleteVoting: r => {
-    const { payload: { votingId, roomId }, token, guard, send, users, rooms, votings, userId } = r;
+    const { payload: { votingId, roomId }, token, guard, broadcast, users, rooms, votings, userId } = r;
     guard(token, roomId);
 
 
     votings.delete(votingId);
 
-    send('votings', getVotings(rooms.get(roomId), votings, users.get(userId)));
+    broadcast('votings', getVotings(rooms.get(roomId), votings, users.get(userId)), roomId);
   },
 
   activateVoting: r => {

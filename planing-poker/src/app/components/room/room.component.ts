@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CreateVoteComponent } from "../create-vote/create-vote.component";
-import { filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, switchMapTo, take, takeUntil, withLatestFrom } from "rxjs";
+import { filter, map, mapTo, merge, mergeMap, mergeMapTo, Observable, skip, Subject, switchMap, take, takeUntil, withLatestFrom } from "rxjs";
 import { Select, Store } from "@ngxs/store";
 import { UsersState } from "../../states/users.state";
 import { User, Voting } from "@common/models";
@@ -64,7 +64,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.snackBar.open(`${user?.name} проголосовал(а)`, 'Ну ок', { duration: 4000, horizontalPosition: 'right' });
     });
 
-    this.authService.isAdmin$.pipe(filter(Boolean), switchMapTo(this.votings$), filter(v => !v.length), takeUntil(this.destroy$))
+    this.votings$.pipe(skip(1), filter(v => !v.length), mergeMapTo(this.authService.isAdmin$), filter(Boolean), takeUntil(this.destroy$))
       .subscribe(() => this.openNewVotingModal());
 
     this.sidebars.detectChanges$.subscribe(() => this.cd.detectChanges());
