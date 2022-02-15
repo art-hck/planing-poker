@@ -16,7 +16,7 @@ export class RoomsComponent {
   constructor(private dialog: MatDialog, public pp: PlaningPokerWsService, public authService: AuthService) {}
 
   ngOnInit() {
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe(() => this.pp.rooms());
+    this.authService.user$.pipe(filter(u => !!u), takeUntil(this.destroy$)).subscribe(() => this.pp.rooms());
     this.pp.rooms$.pipe(filter(r => r.length === 0), takeUntil(this.destroy$)).subscribe(() => this.newRoom({ disableClose: true }));
   }
 
