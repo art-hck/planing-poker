@@ -30,10 +30,6 @@ export class CardsComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!this.activeVoting) {
-      this.stepper?.reset()
-    }
-
     if (this.confetti && changes['activeVoting'] && changes['activeVoting'].previousValue?.id === changes['activeVoting'].currentValue?.id) {
       if (this.groupedVotes.every(([vote], i, [[first]]) => vote === first)) {
         range(1, 10)

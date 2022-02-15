@@ -48,7 +48,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     merge(
       this.pp.restartVoting$.pipe(mapTo(1)),
-      this.activeVoting$.pipe(filter(v => !!v), map(v => v ? v?.status === "end" ? 2 : 1 : 0)),
+      this.activeVoting$.pipe(map(v => v ? v?.status === "end" ? 2 : 1 : 0)),
       this.pp.flip$.pipe(mapTo(2))
     ).pipe(takeUntil(this.destroy$)).subscribe(step => {
       this.step = step;

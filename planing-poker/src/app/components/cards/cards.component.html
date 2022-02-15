@@ -1,7 +1,7 @@
 <mat-horizontal-stepper #stepper [selectedIndex]="step" [disableRipple]="true" labelPosition="bottom">
-  <mat-step label="Подготовка"><ng-template matStepperIcon="edit"><mat-icon>check</mat-icon></ng-template></mat-step>
-  <mat-step label="Оценка" [completed]="step===2"><ng-template matStepperIcon="edit"><mat-icon>check</mat-icon></ng-template></mat-step>
-  <mat-step label="Результаты"><ng-template matStepperIcon="edit"><mat-icon>check</mat-icon></ng-template></mat-step>
+  <mat-step label="Подготовка" [completed]="false"></mat-step>
+  <mat-step label="Оценка" [completed]="false"></mat-step>
+  <mat-step label="Результаты" [completed]="false"></mat-step>
 </mat-horizontal-stepper>
 
 <ng-container *ngIf="!activeVoting">
