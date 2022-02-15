@@ -70,7 +70,7 @@ export class WsService {
   }
 
   public send<A extends keyof WsAction, P extends WsAction[A]>(action: A, payload: P, options?: WsSendOptions) {
-    // console.log('SEND -> ', action, payload);
+    console.log('SEND -> ', action, payload);
     const data: WsMessage = { action, payload };
     const token = window.localStorage.getItem('token');
     if (token) data.token = token;
