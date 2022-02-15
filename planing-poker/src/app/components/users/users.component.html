@@ -5,7 +5,7 @@
       <mat-icon *ngIf="user.role === 'admin'">grade</mat-icon>
     </div>
     <div class="overflow-hidden" matLine>{{ user.name }}</div>
-    <div class="overflow-hidden" matLine>{{ teamRole[user.teamRole] || 'PHP погромист' }}</div>
+    <div class="overflow-hidden" matLine *ngIf="teamRole[user.teamRole]">{{ teamRole[user.teamRole] }}</div>
 
     <div class="flex-space"></div>
     <mat-chip-list>

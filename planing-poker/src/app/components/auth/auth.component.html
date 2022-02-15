@@ -1,34 +1,39 @@
-<form [formGroup]="form">
-  <h1 mat-dialog-title>Let's start!</h1>
+<form [formGroup]="form" (ngSubmit)="form.valid && dialogRef.close(form.value)">
+  <h1 mat-dialog-title>Введите имя</h1>
   <div mat-dialog-content>
 
     <mat-error *ngIf="data.loginAttempts > 0"><p>Неудачная попытка входа ({{data.loginAttempts}})</p></mat-error>
     <div>
       <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
+        <mat-label>Имя</mat-label>
         <input matInput formControlName="name">
       </mat-form-field>
     </div>
-    <div>
+
+    <div *ngIf="devMode">
       <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
+        <mat-label>Пароль</mat-label>
         <input matInput formControlName="password" type="password">
       </mat-form-field>
     </div>
 
-    <div>
-      <mat-button-toggle-group formControlName="teamRole">
+    <div class="team-roles">
+      <mat-button-toggle-group formControlName="teamRole" [class.mat-error]="true">
         <mat-button-toggle *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-button-toggle>
       </mat-button-toggle-group>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Роль</mat-label>
+        <mat-select formControlName="teamRole">
+          <mat-option *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div>
-      <mat-button-toggle-group>
-      </mat-button-toggle-group>
-    </div>
+
   </div>
   <div mat-dialog-actions>
-    <mat-slide-toggle formControlName="guest" color="primary">Guest</mat-slide-toggle>
+    <mat-error *ngIf="devMode">Superuser mode activated</mat-error>
     <div class="flex-space"></div>
-    <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid" [mat-dialog-close]="form.value">Войти</button>
+    <button type="submit" mat-flat-button color="primary">Войти</button>
   </div>
 </form>

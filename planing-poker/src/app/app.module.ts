@@ -41,6 +41,7 @@ import { NewRoomDialogComponent, RoomsComponent } from './components/rooms/rooms
 import { AuthGuard } from "./components/auth/auth.guard";
 import { MatBadgeModule } from "@angular/material/badge";
 import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
+import { MatSelectModule } from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -89,7 +90,8 @@ import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
     MatButtonToggleModule,
     MatTooltipModule,
     MatTableModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatSelectModule
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

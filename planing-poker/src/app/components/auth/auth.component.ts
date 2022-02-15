@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FormBuilder, Validators } from "@angular/forms";
 import { RolesName } from "@common/models";
@@ -12,11 +12,12 @@ import { RolesName } from "@common/models";
 export class AuthComponent {
   readonly roles = Object.entries(RolesName);
   readonly form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(1)]],
-    password: { value: "", disabled: true },
-    teamRole: { value: "" },
-    guest: true
+    name: ['', [Validators.required]],
+    password: "",
+    teamRole: "",
   });
+  devMode = false;
+  private ctrlCount = 0;
 
   constructor(
     public dialogRef: MatDialogRef<AuthComponent>,
@@ -25,16 +26,14 @@ export class AuthComponent {
   ) {
   }
 
-  ngOnInit() {
-    this.form.get('guest')!.valueChanges.subscribe(guest => {
-      if (guest) {
-        this.form.get('password')?.disable()
-        this.form.get('password')?.clearValidators();
-      } else {
-        this.form.get('password')?.enable();
-        this.form.get('password')?.setValidators([Validators.required]);
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if(event.key === 'Control') {
+      if(++this.ctrlCount === 5) {
+        this.devMode = true;
       }
-      this.form.get('password')?.updateValueAndValidity({ emitEvent: false });
-    })
+    } else {
+      this.ctrlCount = 0;
+    }
   }
 }

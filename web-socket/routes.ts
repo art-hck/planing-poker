@@ -30,6 +30,7 @@ export const routes: Routes = {
 
       if (room.connections.get(userId)?.size < 1) {
         room.connections.delete(userId);
+        if(!roomId) room.adminIds.delete(userId); // Если вышел не из комнаты а полностью - убираем из админов, т.к. токен удален
         broadcast('users', getUsers(rooms, users, room.id), room.id);
       }
     });
@@ -122,13 +123,18 @@ export const routes: Routes = {
   joinRoom: r => {
     const { payload: { roomId }, send, broadcast, rooms, ws, activeVoting, users, votings, userId } = r;
     const room = rooms.get(roomId);
+    const user: User = users.get(userId);
+
     if (!room) {
       roomId && send('notFoundRoom', {});
       return;
     }
 
+    if(room.adminIds.size === 0) {
+      room.adminIds.add(user.id); // Уху, в комнате нет админов. Хапаем права себе
+    }
+
     room.connections.has(userId) ? room.connections.get(userId).add(ws) : room.connections.set(userId, new Set([ws]));
-    const user: User = users.get(userId);
 
     log.normal(`${user.name} подключился (${room.connections.get(userId).size} соединений) `);
 
