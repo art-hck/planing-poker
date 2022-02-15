@@ -1,7 +1,7 @@
 FROM node:lts-alpine AS build
 WORKDIR /usr/src/app
 COPY ./planing-poker/package.json ./planing-poker/package-lock.json ./planing-poker/
-RUN cd ./planing-poker && npm ci
+RUN cd ./planing-poker && npm ci --only=production
 COPY ./planing-poker ./planing-poker
 COPY ./common ./common
 RUN cd ./planing-poker && npm run build
