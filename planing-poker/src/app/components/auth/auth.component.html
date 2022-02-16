@@ -4,14 +4,14 @@
 
     <mat-error *ngIf="data.loginAttempts > 0"><p>Неудачная попытка входа ({{data.loginAttempts}})</p></mat-error>
     <div>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" hideRequiredMarker>
         <mat-label>Имя</mat-label>
         <input matInput formControlName="name">
       </mat-form-field>
     </div>
 
     <div *ngIf="devMode">
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" hideRequiredMarker>
         <mat-label>Пароль</mat-label>
         <input matInput formControlName="password" type="password">
       </mat-form-field>
@@ -22,7 +22,7 @@
         <mat-button-toggle *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-button-toggle>
       </mat-button-toggle-group>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" hideRequiredMarker>
         <mat-label>Роль</mat-label>
         <mat-select formControlName="teamRole">
           <mat-option *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-option>
