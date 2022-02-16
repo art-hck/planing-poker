@@ -31,7 +31,7 @@ export class CardsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.confetti && changes['activeVoting'] && changes['activeVoting'].previousValue?.id === changes['activeVoting'].currentValue?.id) {
-      if (this.groupedVotes.length > 1 && this.groupedVotes.every(([vote], i, [[first]]) => vote === first)) {
+      if (this.groupedVotes.length === 1 && this.groupedVotes[0][1] > 1) { // Если голоса в одной группе и их больше одного
         range(1, 10)
           .pipe(concatMap(() => timer(100 + (Math.random() * 700))), takeUntil(this.destroy$))
           .subscribe(() => this.confetti && this.confetti({
