@@ -112,12 +112,15 @@ export const routes: Routes = {
   },
 
   newRoom: r => {
-    const { rooms, send, userId } = r;
+    const { payload: { name }, rooms, send, userId } = r;
     const id = uuid.v4();
 
-    rooms.set(id, { id, connections: new Map(), adminIds: new Set([userId]), votingIds: new Set() });
+    rooms.set(id, { id, name, connections: new Map(), adminIds: new Set([userId]), votingIds: new Set() });
 
     send('newRoom', { roomId: id })
+    send('rooms', new Map(Array.from(rooms.entries())
+      .filter(([, room]) => room.connections.has(userId) || room.adminIds.has(userId))
+      .map(([key, { id, name }]) => ([key, { id, name }]))));
   },
 
   joinRoom: r => {
@@ -149,11 +152,10 @@ export const routes: Routes = {
 
   rooms: r => {
     const { rooms, send, userId } = r;
-    const userRooms = new Map(Array.from(rooms.entries())
-      .filter(([, room]) => room.connections.has(userId) || room.adminIds.has(userId))
-      .map(([key, { id }]) => ([key, { id }])));
 
-    send('rooms', userRooms);
+    send('rooms', new Map(Array.from(rooms.entries())
+      .filter(([, room]) => room.connections.has(userId) || room.adminIds.has(userId))
+      .map(([key, { id, name }]) => ([key, { id, name }]))));
   }
 }
 

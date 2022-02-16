@@ -4,6 +4,7 @@ import { Broadcast, Send } from "./server";
 
 export interface Room {
   id?: Uuid;
+  name: string;
   votingIds?: Set<Uuid>;
   adminIds: Set<Uuid>,
   connections: Map<Uuid, Set<WebSocket>>; // соединений может быть несколько (зашли с двух вкладок, например)

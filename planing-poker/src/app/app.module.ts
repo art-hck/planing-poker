@@ -10,12 +10,13 @@ import { VotingsState } from "./states/votings.state";
 import { environment } from "../environments/environment";
 import { UsersState } from "./states/users.state";
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { NewRoomDialogComponent, RoomsComponent } from './components/rooms/rooms.component';
+import { JoinRoomDialogComponent, NewRoomDialogComponent, RoomsComponent } from './components/rooms/rooms.component';
 import { AuthGuard } from "./components/auth/auth.guard";
 import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
 import { AppSharedModule } from "./app-shared.module";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatSelectModule } from "@angular/material/select";
+import { MatMenuModule } from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -24,7 +25,7 @@ import { MatSelectModule } from "@angular/material/select";
     NotFoundComponent,
     NewRoomDialogComponent,
     RoomsComponent,
-
+    JoinRoomDialogComponent
 
   ],
   imports: [
@@ -36,6 +37,7 @@ import { MatSelectModule } from "@angular/material/select";
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
     MatButtonToggleModule,
     MatSelectModule,
+    MatMenuModule,
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

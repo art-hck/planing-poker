@@ -1,8 +1,14 @@
+@use '@angular/material' as mat;
+
 a {
   text-decoration: none;
 }
-mat-card {
-  margin: auto;
-  max-width: 500px;
+
+mat-drawer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 300);
 }
 

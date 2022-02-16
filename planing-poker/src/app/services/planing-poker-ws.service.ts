@@ -59,8 +59,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('newVoting', { name, roomId });
   }
 
-  newRoom() {
-    this.ws.send('newRoom', {});
+  newRoom(name: string) {
+    this.ws.send('newRoom', { name });
   }
 
   joinRoom(roomId: Uuid) {

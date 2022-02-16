@@ -16,8 +16,8 @@ const users = new Map<Uuid, User>();
 const votings = new Map<Uuid, Voting>();
 const rooms = new Map<Uuid, Room>();
 
-rooms.set('spdr', { id: 'spdr', connections: new Map(), adminIds: new Set(), votingIds: new Set() });
-rooms.set('sis', { id: 'sis', connections: new Map(), adminIds: new Set(), votingIds: new Set() });
+rooms.set('spdr', { id: 'spdr', name: "SPDR Team", connections: new Map(), adminIds: new Set(), votingIds: new Set() });
+rooms.set('sis', { id: 'sis', name: "SIS Team", connections: new Map(), adminIds: new Set(), votingIds: new Set() });
 
 const activeVoting: { id: Uuid } = { id: null };
 
