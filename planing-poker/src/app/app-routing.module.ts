@@ -7,7 +7,7 @@ import { AuthGuard } from "./components/auth/auth.guard";
 const routes: Routes = [
   { path: '', component: RoomsComponent, canActivate: [AuthGuard] },
   { path: 'not-found', component: NotFoundComponent },
-  { path: ':id', loadChildren: () => import('./components/room/room.module').then(m => m.RoomModule) },
+  { path: ':id', loadChildren: () => import('./components/room/room.module').then(m => m.RoomModule), canActivate: [AuthGuard] },
   { path: '**', redirectTo: "not-found" }
 ];
 

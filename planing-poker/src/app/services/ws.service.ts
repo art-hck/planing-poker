@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject } from "rxjs/webSocket";
-import { bufferToggle, filter, map, merge, mergeMap, Observable, ReplaySubject, Subject, take, tap, timer, windowToggle } from "rxjs";
+import { BehaviorSubject, bufferToggle, filter, map, merge, mergeMap, Observable, Subject, take, tap, timer, windowToggle } from "rxjs";
 import { AuthService } from "../components/auth/auth.service";
 import jwt_decode from "jwt-decode";
 import { WsAction, WsEvent, WsMessage } from "@common/models";
@@ -11,9 +11,9 @@ import { environment } from "../../environments/environment";
 })
 export class WsService {
   private ws$!: WebSocketSubject<WsMessage<any>>;
-  private read$ = new Subject<WsMessage<any>>();
-  private send$ = new Subject<WsMessage<any>>();
-  readonly connected$ = new ReplaySubject<boolean>(1);
+  private readonly read$ = new Subject<WsMessage<any>>();
+  private readonly send$ = new Subject<WsMessage<any>>();
+  private readonly connected$ = new BehaviorSubject<boolean>(false);
 
   constructor(private authService: AuthService) {
     this.connect();
@@ -37,8 +37,7 @@ export class WsService {
     this.authService.beforeLogout$.subscribe(() => {
       this.send('bye', {});
       this.connected$.next(false);
-    })
-
+    });
   }
 
   private connect() {
