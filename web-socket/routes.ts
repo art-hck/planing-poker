@@ -74,7 +74,7 @@ export const routes: Routes = {
   },
 
   newVoting: r => {
-    const { payload: { roomId, name }, token, guard, votings, rooms, broadcast } = r;
+    const { payload: { roomId, name }, token, guard, votings, rooms, users, broadcast } = r;
     const room = rooms.get(roomId);
     guard(token, roomId);
 
@@ -84,17 +84,17 @@ export const routes: Routes = {
       room.votingIds.add(id);
     });
 
-    broadcast('votings', getVotings(room, votings), roomId);
+    broadcast('votings', id => getVotings(room, votings, users.get(id)), roomId);
   },
 
   deleteVoting: r => {
-    const { payload: { votingId, roomId }, token, guard, broadcast, users, rooms, votings, userId } = r;
+    const { payload: { votingId, roomId }, token, guard, broadcast, users, rooms, votings } = r;
     guard(token, roomId);
 
 
     votings.delete(votingId);
 
-    broadcast('votings', getVotings(rooms.get(roomId), votings, users.get(userId)), roomId);
+    broadcast('votings', id => getVotings(rooms.get(roomId), votings, users.get(id)), roomId);
   },
 
   activateVoting: r => {
@@ -168,6 +168,6 @@ function getUsers(rooms: Map<Uuid, Room>, users: Map<Uuid, User>, roomId: Uuid) 
 
 function getVotings(room: Room, votings: Map<Uuid, Voting>, user?: User) {
   return Array.from(votings.entries()).filter(([id]) => room.votingIds.has(id)).map(([k, v]) => {
-    return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user?.role === 'admin' || room.adminIds.has(user.id) || v.status === 'end' ? p : null]) }];
+    return [k, { ...v, votes: Array.from(v.votes.entries()).map(([u, p]) => [u, user?.role === 'admin' || room.adminIds.has(user?.id) || v.status === 'end' ? p : null]) }];
   }) as [Uuid, Voting<true>][];
 }
