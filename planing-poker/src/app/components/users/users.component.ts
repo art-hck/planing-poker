@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { AuthService } from "../auth/auth.service";
-import { User, Uuid, Voting } from "@common/models";
-import { RolesName } from "@common/models/role";
+import { RolesName, User, Uuid, Voting } from "@common/models";
 import { Colors } from "../../util/colors";
 
 @Component({
@@ -13,7 +12,7 @@ import { Colors } from "../../util/colors";
 export class UsersComponent implements OnChanges {
   @Input() users?: User[] | null;
   @Input() activeVoting?: Voting<true> | null;
-  @Input() showVotes = false;
+
   readonly teamRole = RolesName;
   voteColors = new Map<number | null, string>();
   votes?: Map<Uuid, number | null>;

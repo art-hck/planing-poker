@@ -1,5 +1,5 @@
 import { AfterViewInit, Directive, ElementRef, Input } from '@angular/core';
-import { Chart } from "chart.js";
+import Chart from "chart.js/auto";
 import { Colors } from "../util/colors";
 import { Voting } from "@common/models";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
