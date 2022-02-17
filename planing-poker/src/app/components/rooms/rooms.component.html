@@ -2,27 +2,25 @@
 
 <ng-container *ngIf="pp.rooms$ | async as rooms">
   <mat-drawer-container *ngIf="authService.user$ | async">
-    <mat-drawer class='app-left-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showPlayers">
-      <div>
-        <mat-selection-list [multiple]="false">
-          <a [routerLink]="room[1].id" *ngFor="let room of rooms; let i = index">
-            <mat-list-option>
-              <mat-icon color="primary" matListIcon [matMenuTriggerFor]="menu" (click)="$event.stopPropagation(); $event.preventDefault()">more_vert</mat-icon>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="inviteRoom(room[1].id)">Пригласить</button>
-                <button mat-menu-item disabled>Удалить комнату</button>
-              </mat-menu>
-              <div matLine>{{room[1].name}}</div>
-              <div matLine [style.color]="'#999'">#{{room[1].id}}</div>
-            </mat-list-option>
-            <mat-divider></mat-divider>
-          </a>
-          <mat-list-option (click)="newRoom()">
-            <mat-icon color="primary" matListIcon>add</mat-icon>
-            <div matLine><span class="app-strong"> Новая комната</span></div>
+    <mat-drawer class='app-left-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showPlayers" [autoFocus]="false">
+      <mat-selection-list [multiple]="false">
+        <a [routerLink]="room[1].id" *ngFor="let room of rooms; let i = index">
+          <mat-list-option>
+            <mat-icon color="primary" matListIcon [matMenuTriggerFor]="menu" (click)="$event.stopPropagation(); $event.preventDefault()">more_vert</mat-icon>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="inviteRoom(room[1].id)">Пригласить</button>
+              <button mat-menu-item disabled>Удалить комнату</button>
+            </mat-menu>
+            <div matLine>{{room[1].name}}</div>
+            <div matLine [style.color]="'#999'">#{{room[1].id}}</div>
           </mat-list-option>
-        </mat-selection-list>
-      </div>
+          <mat-divider></mat-divider>
+        </a>
+        <mat-list-option (click)="newRoom()">
+          <mat-icon color="primary" matListIcon>add</mat-icon>
+          <div matLine><span class="app-strong"> Новая комната</span></div>
+        </mat-list-option>
+      </mat-selection-list>
     </mat-drawer>
     <mat-drawer-content>
       <h1 class="mat-display-3 app-strong">

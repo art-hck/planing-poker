@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDrawerMode } from "@angular/material/sidenav/drawer";
 import { debounceTime, filter, fromEvent, map, startWith, Subject } from "rxjs";
+import { NavigationEnd, Router } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +45,11 @@ export class SidebarsService {
     }
   }
 
-  constructor() {
+  constructor(private router: Router) {
+    router.events.pipe(filter(e => e instanceof NavigationEnd)).pipe(
+      filter(() => (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) <= 1000),
+    ).subscribe(() => this.showPlayers = this.showVotings = false);
+
     fromEvent(window, 'resize').pipe(
       debounceTime(200),
       startWith(null),
