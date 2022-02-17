@@ -29,9 +29,9 @@ export class AppComponent {
     this.authService.logout$.pipe(
       startWith(null),
       switchMap(() => {
-        const hasToken = !!window.localStorage.getItem('token');
+        const token = window.localStorage.getItem('token');
         const config = { disableClose: true, data: { loginAttempts: this.authService.loginAttempts } };
-        return hasToken ? of({}) : this.dialog.open(AuthComponent, config).afterClosed()
+        return token ? of({ token }) : this.dialog.open(AuthComponent, config).afterClosed()
       }),
     ).subscribe((handshake) => this.authService.login$.next(handshake));
 
@@ -52,6 +52,8 @@ export class AppComponent {
       restartVoting: voting => this.store.dispatch(new Votings.Restart(voting)),
       newRoom: ({ roomId }) => this.router.navigate([roomId]),
       notFoundRoom: () => this.router.navigate(['not-found'], { skipLocationChange: true }),
+      reject: () => {this.authService.loginAttempts++; this.authService.logout$.next()},
+      invalidToken: () => this.authService.logout$.next(),
       feedback: ({success}) => {
         if(success) {
           this.snackBar.open('Большое спасибо за обратную связь!', undefined, { duration: 1000 });

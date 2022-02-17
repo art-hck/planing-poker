@@ -4,7 +4,7 @@ import { User } from "./user";
 import { Handshake } from "./handshake";
 
 export interface WsAction {
-  handshake: Partial<Handshake>;
+  handshake: Handshake;
   bye: { roomId?: Uuid };
   vote: { point: number, votingId: Uuid };
   unvote: { votingId: Uuid };
@@ -35,4 +35,5 @@ export interface WsEvent<serialized = true> {
   rooms: [string, { id: Uuid, name: string }][]
   room: { id: Uuid, name: string }
   feedback: { success: boolean }
+  invalidToken: {}
 }

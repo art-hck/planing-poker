@@ -1,5 +1,5 @@
 import { WebSocketServer } from 'ws'
-import { Token, Uuid } from "@common/models";
+import { Token, Uuid, WsMessage } from "@common/models";
 import { routes } from "./routes";
 import { log } from "./utils/log";
 import * as dotenv from 'dotenv'
@@ -7,6 +7,7 @@ import { getUserId } from "./utils/get-user-id";
 import { Broadcast, RoutePayload, Routes, Send } from "./models";
 import { repository } from "./repository";
 import { NotFoundError } from "./models/not-found-error";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 dotenv.config({ path: "../.env" })
 
@@ -37,14 +38,20 @@ new WebSocketServer({ port }).on('connection', ws => {
 
   ws.on('message', (message: string) => {
     try {
-      const { action, payload, token } = JSON.parse(message);
-      routes[action as keyof Routes]({ ...routePayloadPart, payload, userId: getUserId(token), token });
+      type Message = WsMessage<Routes[keyof Routes] extends (arg: RoutePayload<infer R>) => any ? R : never>;
+
+      const { action, payload }: Message = JSON.parse(message);
+      const userId = getUserId((payload.token ?? client.token)!); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
+      routes[action!]({ ...routePayloadPart, payload, userId });
     } catch (e) {
       if (e instanceof Error && ['reject', 'denied'].includes(e.message)) {
         log.error(`Доступ запрещен`, message);
         send(e.message as 'reject' | 'denied', {});
       } else if (e instanceof NotFoundError) {
         log.error(`Сущность не найдена`, e.message);
+      } else if (e instanceof JsonWebTokenError) {
+        send('invalidToken', {});
+        log.error(`Недействительный токен`);
       } else {
         log.error(e instanceof TypeError ? e.stack : e);
       }

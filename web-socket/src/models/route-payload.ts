@@ -9,6 +9,5 @@ export interface RoutePayload<T = {}> {
   broadcast: Broadcast, // Функция рассылки
   userId: Uuid, // Id юзера совершившего запрос
   ws: WebSocket // Соединение
-  client: { token?: Token }, // Данные о пользователе (нужны в случае разрыва соединения)
-  token?: Token, // Токен пользователя
+  client: { token?: Token }, // Токен пользователя
 }

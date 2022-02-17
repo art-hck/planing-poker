@@ -3,5 +3,5 @@ import * as jwt from "jsonwebtoken";
 
 export function getUserId(token: Token): Uuid {
   const user = jwt.decode(token) as User;
-  return token && user.id;
+  return user?.id;
 }

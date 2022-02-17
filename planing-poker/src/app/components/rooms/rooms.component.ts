@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { filter, Subject, takeUntil } from "rxjs";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialog, MatDialogRef, MatDialogState } from "@angular/material/dialog";
 import { MatDialogConfig } from "@angular/material/dialog/dialog-config";
 import { AuthService } from "../auth/auth.service";
 import { SidebarsService } from "../../services/sidebars.service";
@@ -30,12 +30,18 @@ export class RoomsComponent {
 
   ngOnInit() {
     this.authService.user$.pipe(filter(u => !!u), takeUntil(this.destroy$)).subscribe(() => this.pp.rooms());
-    this.pp.rooms$.pipe(filter(r => r.length === 0), takeUntil(this.destroy$)).subscribe(() => this.newRoom());
+    this.pp.rooms$.pipe(
+      filter(r => r.length === 0),
+      filter(() => this.dialog.getDialogById('new_room')?.getState() !== MatDialogState.OPEN),
+      takeUntil(this.destroy$)
+    ).subscribe(() => this.newRoom());
+
     this.sidebars.detectChanges$.pipe(takeUntil(this.destroy$)).subscribe(() => this.cd.detectChanges());
   }
 
   newRoom(config: MatDialogConfig = {}) {
-    this.dialog.open(NewRoomDialogComponent, { ...config, width: '350px' }).afterClosed().pipe(filter(v => !!v), takeUntil(this.destroy$))
+    this.dialog.open(NewRoomDialogComponent, { ...config, id:'new_room', width: '350px' }).afterClosed()
+      .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name, code }) => {
         code ? this.router.navigate([code]) : name ? this.pp.newRoom(name) : null;
       })

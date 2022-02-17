@@ -11,13 +11,13 @@ export namespace Votings {
   export class Vote {
     static readonly type = '[Votings] Voted';
 
-    constructor(public userId: string, public votingId: string, public point?: number) {}
+    constructor(public userId: Uuid, public votingId: Uuid, public point?: number) {}
   }
 
   export class Unvote {
     static readonly type = '[Votings] Unvoted';
 
-    constructor(public userId: string, public votingId: string) {}
+    constructor(public userId: Uuid, public votingId: Uuid) {}
   }
 
   export class Flip {

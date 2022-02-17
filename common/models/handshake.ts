@@ -4,4 +4,5 @@ export interface Handshake {
   name: string;
   teamRole: Role;
   password: string;
+  token: string;
 }

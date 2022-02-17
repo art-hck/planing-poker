@@ -28,12 +28,6 @@ export class WsService {
       this.send$.pipe(windowToggle(on$, () => off$))
     ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
 
-
-    this.read('reject').subscribe(() => {
-      this.authService.loginAttempts++;
-      this.authService.logout$.next()
-    });
-
     this.authService.beforeLogout$.subscribe(() => {
       this.send('bye', {});
       this.connected$.next(false);
@@ -73,8 +67,6 @@ export class WsService {
   public send<A extends keyof WsAction, P extends WsAction[A]>(action: A, payload: P, options?: WsSendOptions) {
     // console.log('SEND -> ', action, payload);
     const data: WsMessage = { action, payload };
-    const token = window.localStorage.getItem('token');
-    if (token) data.token = token;
     options?.force ? this.ws$.next(data) : this.send$.next(data);
   }
 
