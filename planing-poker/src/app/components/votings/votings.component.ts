@@ -38,8 +38,10 @@ export class VotingsComponent {
 
 
 @Component({
-  template: `<h2 mat-dialog-title>Удалить стори <span class="app-strong">{{data.voting.name}}?</span></h2>
-<div mat-dialog-actions [align]="'end'">
+  template: `
+<br/>
+<h2>Удалить стори <span class="app-strong">{{data.voting.name}}?</span></h2>
+<div [align]="'end'">
   <button mat-flat-button (click)="ref.dismiss(false)">Отмена</button>
   <button mat-flat-button color="primary" (click)="ref.dismiss(true)">Удалить</button>
 </div>`

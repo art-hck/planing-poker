@@ -96,14 +96,6 @@ export class NewRoomDialogComponent {
 }
 
 @Component({
-  styles: [`
-    :host {
-      display: block;
-      width: 576px
-    }
-    mat-form-field {
-      width: 100%;
-    }`],
   template: `
 <!--      <div class="mat-body">-->
 <!--        Для получения доступа к комнате достаточно просто перейти по ссылке. Скопируйте и отправте её всем участникам.-->

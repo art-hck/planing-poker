@@ -11,7 +11,6 @@
     <mat-icon>logout</mat-icon>
   </button>
   <button mat-icon-button (click)="showVotingsChange.emit(!showVotings)"  *ngIf="showVotingsChange.observed && !showVotings">
-    <mat-icon *ngIf="!showVotings">description</mat-icon>
-    <mat-icon *ngIf="showVotings">chevron_right</mat-icon>
+    <mat-icon>chevron_left</mat-icon>
   </button>
 </mat-toolbar>
