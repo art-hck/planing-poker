@@ -6,12 +6,16 @@ services:
     build:
       context: .
       dockerfile: ./planing-poker/Dockerfile
+    env_file:
+      - .env
   ws:
     ports:
-      - "${WS_PORT:-9000}:9000"
+      - "${WS_PORT:-9000}:${WS_PORT:-9000}"
     build:
       context: .
       dockerfile: ./web-socket/Dockerfile
+    env_file:
+      - .env
 #  mongo:
 #    image: mongo
 #    restart: always
