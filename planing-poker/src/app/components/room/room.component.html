@@ -7,7 +7,7 @@
 <mat-drawer-container *ngIf="authService.user$ | async">
   <mat-drawer class='app-left-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showPlayers">
     <!--- USERS --->
-    <pp-users [users]="users$ | async" [activeVoting]="activeVoting$ | async"></pp-users>
+    <pp-users [users]="users$ | async" [activeVoting]="activeVoting$ | async" [room]="pp.room$ | async"></pp-users>
   </mat-drawer>
 
   <mat-drawer-content>
@@ -15,8 +15,11 @@
     <pp-cards [activeVoting]="activeVoting$ | async" [step]="step"></pp-cards>
 
     <!--- CREATE --->
-    <div class="new-voting-button-wrap">
-      <button mat-fab color="primary" class="new-voting-button" (click)="openNewVotingModal()" *ngIf="authService.isAdmin$ | async">
+    <div class="new-voting-button-wrap" *ngIf="authService.isAdmin$ | async">
+      <div class="new-voting-button-tooltip" *ngIf="!(votings$ | async)?.length" style="">
+        <div>Для начала добавьте стори</div>
+      </div>
+      <button mat-fab color="primary" class="new-voting-button" (click)="openNewVotingModal()">
         <mat-icon>add</mat-icon>
       </button>
     </div>

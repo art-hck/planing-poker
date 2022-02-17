@@ -11,9 +11,9 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatRippleModule } from "@angular/material/core";
 import { MatStepperModule } from "@angular/material/stepper";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatBadgeModule } from "@angular/material/badge";
+import { MatBottomSheetModule } from "@angular/material/bottom-sheet";
 
 
 @NgModule({
@@ -34,9 +34,9 @@ import { MatBadgeModule } from "@angular/material/badge";
     MatRippleModule,
     MatStepperModule,
     MatChipsModule,
-    MatSnackBarModule,
     MatTooltipModule,
     MatBadgeModule,
+    MatBottomSheetModule
   ]
 })
 export class RoomModule { }

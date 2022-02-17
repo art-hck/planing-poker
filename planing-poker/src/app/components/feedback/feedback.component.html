@@ -1,0 +1,30 @@
+<form [formGroup]="form" (ngSubmit)="form.valid && dialogRef.close(form.value)">
+  <h1 mat-dialog-title>Обратная связь</h1>
+  <div mat-dialog-content>
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Тема обращения</mat-label>
+        <mat-select formControlName="subject">
+          <mat-option [value]="'Предложение'">Предложение</mat-option>
+          <mat-option [value]="'Ошибка'">Ошибка</mat-option>
+          <mat-option [value]="'Баг'">Баг</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div>
+    <mat-form-field appearance="outline" hideRequiredMarker>
+      <mat-label>Сообщение</mat-label>
+      <textarea matInput
+                formControlName="message"
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="3"
+                cdkAutosizeMaxRows="10"></textarea>
+    </mat-form-field>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <div class="flex-space"></div>
+    <button mat-flat-button color="primary" >Создать</button>
+  </div>
+</form>

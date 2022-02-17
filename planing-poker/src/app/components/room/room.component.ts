@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CreateVoteComponent } from "../create-vote/create-vote.component";
-import { filter, map, mapTo, merge, mergeMap, mergeMapTo, Observable, skip, Subject, switchMap, take, takeUntil, withLatestFrom } from "rxjs";
+import { filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, take, takeUntil, withLatestFrom } from "rxjs";
 import { Select, Store } from "@ngxs/store";
 import { UsersState } from "../../states/users.state";
 import { User, Voting } from "@common/models";
@@ -64,14 +64,11 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.snackBar.open(`${user?.name} проголосовал(а)`, 'Ну ок', { duration: 4000, horizontalPosition: 'right' });
     });
 
-    this.votings$.pipe(skip(1), filter(v => !v.length), mergeMapTo(this.authService.isAdmin$), filter(Boolean), takeUntil(this.destroy$))
-      .subscribe(() => this.openNewVotingModal());
-
     this.sidebars.detectChanges$.subscribe(() => this.cd.detectChanges());
   }
 
   openNewVotingModal() {
-    if(this.dialog.getDialogById('NewVotingModal')?.getState() === MatDialogState.OPEN) return;
+    if (this.dialog.getDialogById('NewVotingModal')?.getState() === MatDialogState.OPEN) return;
     this.dialog.open(CreateVoteComponent, { id: 'NewVotingModal', width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(data => {
       this.pp.newVoting(this.route.snapshot.params['id'], data.name);
     });

@@ -16,6 +16,7 @@ export interface WsAction {
   newRoom: { name: string }
   rooms: {}
   joinRoom: { roomId: Uuid }
+  feedback: { message: string, subject: string }
 }
 
 export interface WsEvent<serialized = true> {
@@ -32,4 +33,6 @@ export interface WsEvent<serialized = true> {
   newRoom: { roomId: Uuid },
   notFoundRoom: {},
   rooms: [string, { id: Uuid, name: string }][]
+  room: { id: Uuid, name: string }
+  feedback: { success: boolean }
 }

@@ -10,22 +10,24 @@ import { VotingsState } from "./states/votings.state";
 import { environment } from "../environments/environment";
 import { UsersState } from "./states/users.state";
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { JoinRoomDialogComponent, NewRoomDialogComponent, RoomsComponent } from './components/rooms/rooms.component';
+import { ShareRoomDialogComponent, NewRoomDialogComponent, RoomsComponent } from './components/rooms/rooms.component';
 import { AuthGuard } from "./components/auth/auth.guard";
 import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
 import { AppSharedModule } from "./app-shared.module";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatSelectModule } from "@angular/material/select";
 import { MatMenuModule } from "@angular/material/menu";
+import { FeedbackComponent } from "./components/feedback/feedback.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
+    FeedbackComponent,
     NotFoundComponent,
     NewRoomDialogComponent,
     RoomsComponent,
-    JoinRoomDialogComponent
+    ShareRoomDialogComponent
 
   ],
   imports: [

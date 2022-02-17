@@ -8,6 +8,19 @@ mat-drawer-content {
   .new-voting-button {
     position: fixed;
 
+    &-tooltip {
+      position: absolute;
+      top: 50%;
+      text-align: center;
+      transform: translate(-8px, -50%);
+      right: 100%;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      border-radius: 4px;
+      width: 200px;
+    }
+
     &-wrap {
       position: absolute;
       bottom: 16px;

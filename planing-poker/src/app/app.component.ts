@@ -8,6 +8,7 @@ import { Users } from "./actions/users.actions";
 import { Votings } from "./actions/votings.actions";
 import { PlaningPokerWsService } from "./services/planing-poker-ws.service";
 import { Store } from "@ngxs/store";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ export class AppComponent {
     private dialog: MatDialog,
     private store: Store,
     private pp: PlaningPokerWsService,
+    private snackBar: MatSnackBar,
   ) {
     this.authService.logout$.pipe(
       startWith(null),
@@ -49,7 +51,12 @@ export class AppComponent {
       activateVoting: ({ votingId }) => this.store.dispatch(new Votings.Activate(votingId)),
       restartVoting: voting => this.store.dispatch(new Votings.Restart(voting)),
       newRoom: ({ roomId }) => this.router.navigate([roomId]),
-      notFoundRoom: () => this.router.navigate(['not-found'], { skipLocationChange: true })
+      notFoundRoom: () => this.router.navigate(['not-found'], { skipLocationChange: true }),
+      feedback: ({success}) => {
+        if(success) {
+          this.snackBar.open('Большое спасибо за обратную связь!', undefined, { duration: 1000 });
+        }
+      }
     }).subscribe()
   }
 }

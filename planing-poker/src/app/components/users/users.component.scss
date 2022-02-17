@@ -1,9 +1,25 @@
-@use "@angular/material/theming" as mat;
+@use '@angular/material' as mat;
+
+:host {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+
+  mat-list {
+    overflow: auto;
+  }
+
+  .footer-actions {
+    mat-selection-list {
+      padding-top: 0;
+    }
+  }
+}
 
 .mat-list-icon.avatar {
   font-size: 14px!important;
   font-weight: 500;
-  background: #3f51b5;
+  background: mat.get-color-from-palette(mat.define-palette(mat.$indigo-palette), 500);
   color: #fff;
   display: flex;
   align-items: center;

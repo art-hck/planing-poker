@@ -18,3 +18,14 @@
     </mat-chip-list>
   </mat-list-item>
 </mat-list>
+<div class="flex-space"></div>
+<div class="footer-actions" *ngIf="room">
+  <mat-selection-list [multiple]="false">
+    <mat-divider></mat-divider>
+    <mat-list-option (click)="inviteRoom(room.id); item.selected = false" #item>
+      <mat-icon matListIcon>share</mat-icon>
+      <div class="overflow-hidden" matLine>{{room.name}}</div>
+      <div class="overflow-hidden" matLine [style.color]="'#999'">#{{room.id}}</div>
+    </mat-list-option>
+  </mat-selection-list>
+</div>

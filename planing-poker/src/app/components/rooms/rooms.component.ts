@@ -1,12 +1,14 @@
-import { ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { filter, Subject, takeUntil } from "rxjs";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MatDialogConfig } from "@angular/material/dialog/dialog-config";
 import { AuthService } from "../auth/auth.service";
 import { SidebarsService } from "../../services/sidebars.service";
 import { FormBuilder, Validators } from "@angular/forms";
 import { Uuid } from "@common/models";
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from "@angular/material/bottom-sheet";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'pp-rooms',
@@ -18,6 +20,7 @@ export class RoomsComponent {
 
   constructor(
     private dialog: MatDialog,
+    private router: Router,
     public pp: PlaningPokerWsService,
     public authService: AuthService,
     public cd: ChangeDetectorRef,
@@ -33,11 +36,13 @@ export class RoomsComponent {
 
   newRoom(config: MatDialogConfig = {}) {
     this.dialog.open(NewRoomDialogComponent, { ...config, width: '350px' }).afterClosed().pipe(filter(v => !!v), takeUntil(this.destroy$))
-      .subscribe(({ name }) => this.pp.newRoom(name))
+      .subscribe(({ name, code }) => {
+        code ? this.router.navigate([code]) : name ? this.pp.newRoom(name) : null;
+      })
   }
 
   inviteRoom(roomId: Uuid) {
-    this.dialog.open(JoinRoomDialogComponent, { width: '470px', data: { roomId } });
+    this.dialog.open(ShareRoomDialogComponent, { width: '470px', data: { roomId } });
   }
 
   ngOnDestroy() {
@@ -51,7 +56,8 @@ export class RoomsComponent {
     mat-form-field {
       width: 100%;
     }`],
-  template: `<h1 mat-dialog-title>Создать новую комнату</h1>
+  template: `
+    <h1 mat-dialog-title>Создать новую комнату</h1>
   <form [formGroup]="form" (ngSubmit)="form.valid && matDialogRef.close(form.value)">
     <div mat-dialog-content>
 
@@ -59,48 +65,70 @@ export class RoomsComponent {
         <mat-label>Название</mat-label>
         <input matInput formControlName="name">
       </mat-form-field>
+      <h4 mat-dialog-title [align]="'center'" [style.color]="'#999'">или войдите с помощью кода</h4>
+      <mat-form-field appearance="outline" hideRequiredMarker>
+        <mat-label>Код для входа в комнату</mat-label>
+        <input matInput formControlName="code">
+      </mat-form-field>
 
     </div>
     <div mat-dialog-actions [align]="'end'">
       <button mat-flat-button [mat-dialog-close]="false" *ngIf="!matDialogRef.disableClose">Отмена</button>
-      <button mat-flat-button color="primary">Создать</button>
+      <button mat-flat-button color="primary">Присоединиться</button>
     </div>
   </form>`
 })
 export class NewRoomDialogComponent {
+  readonly codeValidators = [Validators.required, Validators.minLength(36), Validators.maxLength(36)];
   readonly form = this.fb.group({
-    name: ['', [Validators.required]],
+    name: ['', Validators.required],
+    code: ['', this.codeValidators],
   });
 
   constructor(private fb: FormBuilder, public matDialogRef: MatDialogRef<NewRoomDialogComponent>) {
+    this.form.valueChanges.subscribe((v) => {
+      this.form.get('name')?.setValidators(v.code ? null : Validators.required);
+      this.form.get('code')?.setValidators(v.name ? null : this.codeValidators);
+      this.form.get('code')?.updateValueAndValidity({ emitEvent: false })
+      this.form.get('name')?.updateValueAndValidity({ emitEvent: false })
+    })
   }
 }
 
 @Component({
   styles: [`
+    :host {
+      display: block;
+      width: 576px
+    }
     mat-form-field {
       width: 100%;
     }`],
-  template: `<h1 mat-dialog-title>Пригласить участников</h1>
-    <div mat-dialog-content>
-      <div class="mat-body">
-        Для получения доступа к комнате достаточно просто перейти по ссылке. Скопируйте и отправте её всем участникам.
-      </div>
+  template: `
+<!--      <div class="mat-body">-->
+<!--        Для получения доступа к комнате достаточно просто перейти по ссылке. Скопируйте и отправте её всем участникам.-->
+<!--      </div>-->
       <br/>
 
       <mat-form-field appearance="outline" hideRequiredMarker>
-        <mat-label>Ссылка на комнату</mat-label>
+        <mat-label>Код для входа в комнату</mat-label>
         <input matInput [value]="location" #input (focus)="input.select()">
       </mat-form-field>
-
-    </div>
-    <div mat-dialog-actions [align]="'end'">
-      <button mat-flat-button color="primary" mat-dialog-close="">Закрыть</button>
+    <div [align]="'end'">
+        <button mat-flat-button color="primary" (click)="ref.dismiss()">Закрыть</button>
     </div>
   `
 })
-export class JoinRoomDialogComponent {
-  location = window.location.href + this.data.roomId;
-  constructor(@Inject(MAT_DIALOG_DATA) public data: {roomId: Uuid}, public matDialogRef: MatDialogRef<NewRoomDialogComponent>) {
+export class ShareRoomDialogComponent {
+  location = this.data.roomId;
+  @ViewChild('input') input?: ElementRef<HTMLInputElement>;
+  constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: {roomId: Uuid}, public ref: MatBottomSheetRef) {
   }
+  //
+  // copy() {
+  //   this.input?.nativeElement.focus();
+  //   this.input?.nativeElement.select();
+  //   document.execCommand('copy');
+  //   this.ref.dismiss();
+  // }
 }

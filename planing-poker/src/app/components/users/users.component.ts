@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } f
 import { AuthService } from "../auth/auth.service";
 import { RolesName, User, Uuid, Voting } from "@common/models";
 import { Colors } from "../../util/colors";
+import { ShareRoomDialogComponent } from "../rooms/rooms.component";
+import { MatDialog } from "@angular/material/dialog";
+import { MatBottomSheet } from "@angular/material/bottom-sheet";
 
 @Component({
   selector: 'pp-users',
@@ -11,13 +14,14 @@ import { Colors } from "../../util/colors";
 })
 export class UsersComponent implements OnChanges {
   @Input() users?: User[] | null;
+  @Input() room?: { name: string, id: Uuid } | null;
   @Input() activeVoting?: Voting<true> | null;
 
   readonly teamRole = RolesName;
   voteColors = new Map<number | null, string>();
   votes?: Map<Uuid, number | null>;
 
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService, private dialog: MatDialog, private bottomSheet: MatBottomSheet) {}
 
   ngOnChanges(c: SimpleChanges) {
     if(c['activeVoting']) {
@@ -26,6 +30,11 @@ export class UsersComponent implements OnChanges {
       Array.from(new Set(this.votes.values())).sort().forEach(vote => this.voteColors.set(vote, Colors[this.voteColors.size]));
     }
   }
+
+  inviteRoom(roomId: Uuid) {
+    this.bottomSheet.open(ShareRoomDialogComponent, { data: { roomId } });
+  }
+
 
   isVoted(user: User): boolean {
     return this.votes?.get(user.id) !== undefined;

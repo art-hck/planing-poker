@@ -7,7 +7,6 @@ import { take } from "rxjs";
 @Component({
   selector: 'pp-create',
   templateUrl: './create-vote.component.html',
-  styleUrls: ['./create-vote.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateVoteComponent {

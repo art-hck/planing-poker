@@ -13,6 +13,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { PluralizePipe } from "./pipes/pluralize-pipe";
 import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { CommonModule } from "@angular/common";
     FormsModule,
     ReactiveFormsModule,
 
+    MatSnackBarModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
