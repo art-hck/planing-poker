@@ -1,5 +1,5 @@
 import { WebSocketServer } from 'ws'
-import { Token, Uuid, WsMessage } from "@common/models";
+import { Uuid, WsMessage } from "@common/models";
 import { routes } from "./routes";
 import { log } from "./utils/log";
 import * as dotenv from 'dotenv'
@@ -8,6 +8,7 @@ import { Broadcast, RoutePayload, Routes, Send } from "./models";
 import { repository } from "./repository";
 import { NotFoundError } from "./models/not-found-error";
 import { JsonWebTokenError } from "jsonwebtoken";
+import { Client } from "./models/client";
 
 dotenv.config({ path: "../.env" })
 
@@ -16,7 +17,7 @@ const replacer = (k: unknown, v: unknown) => v instanceof Map ? Array.from(v.ent
 const port = (Number(process.env['WS_PORT']) || 9000);
 
 new WebSocketServer({ port }).on('connection', ws => {
-  const client: { token?: Token } = {}
+  const client: Client = {}
   const send: Send = (event, payload) => ws.send(JSON.stringify({ event, payload }, replacer));
   const broadcast: Broadcast = (event, payloadOrFn, roomId: Uuid) => {
     rooms.get(roomId)?.connections.forEach((clients, userId) => {
@@ -37,11 +38,11 @@ new WebSocketServer({ port }).on('connection', ws => {
   });
 
   ws.on('message', (message: string) => {
-    try {
-      type Message = WsMessage<Routes[keyof Routes] extends (arg: RoutePayload<infer R>) => any ? R : never>;
+    type Message = WsMessage<Routes[keyof Routes] extends (arg: RoutePayload<infer R>) => any ? R : never>;
+    const { action, payload }: Message = JSON.parse(message);
+    const userId = getUserId((payload.token ?? client.token)!); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
 
-      const { action, payload }: Message = JSON.parse(message);
-      const userId = getUserId((payload.token ?? client.token)!); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
+    try {
       routes[action!]({ ...routePayloadPart, payload, userId });
     } catch (e) {
       if (e instanceof Error && ['reject', 'denied'].includes(e.message)) {
@@ -50,7 +51,9 @@ new WebSocketServer({ port }).on('connection', ws => {
       } else if (e instanceof NotFoundError) {
         log.error(`Сущность не найдена`, e.message);
       } else if (e instanceof JsonWebTokenError) {
+        client.token = client.refreshToken = undefined;
         send('invalidToken', {});
+        routes.bye({ ...routePayloadPart, userId })
         log.error(`Недействительный токен`);
       } else {
         log.error(e instanceof TypeError ? e.stack : e);

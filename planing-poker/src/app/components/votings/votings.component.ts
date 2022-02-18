@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output
 import { Voting } from "@common/models";
 import { AuthService } from "../auth/auth.service";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
-import { ActivatedRoute } from "@angular/router";
 import { filter, Subject, takeUntil } from "rxjs";
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetRef } from "@angular/material/bottom-sheet";
 
@@ -17,8 +16,7 @@ export class VotingsComponent {
   @Output() select = new EventEmitter<Voting<true>>();
   readonly destroy$ = new Subject<void>();
 
-  constructor(private sheet: MatBottomSheet, public authService: AuthService, private pp: PlaningPokerWsService, private route: ActivatedRoute) {
-  }
+  constructor(private sheet: MatBottomSheet, public authService: AuthService, private pp: PlaningPokerWsService) {}
 
   trackByFn = (index: number, item: Voting<true>) => item.id;
 
@@ -27,7 +25,7 @@ export class VotingsComponent {
     e.preventDefault();
     e.stopPropagation();
     this.sheet.open(VotingDeleteConfirmComponent, { data: { voting } }).afterDismissed().pipe(filter(v => !!v), takeUntil(this.destroy$))
-      .subscribe(() => this.pp.deleteVoting(voting.id, this.route.snapshot.params['id']))
+      .subscribe(() => this.pp.deleteVoting(voting.id))
   }
 
   ngOnDestroy() {

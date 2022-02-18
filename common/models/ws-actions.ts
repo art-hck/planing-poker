@@ -12,7 +12,7 @@ export interface WsAction {
   restartVoting: { votingId: Uuid };
   activateVoting: { votingId: Uuid }
   newVoting: { name: string, roomId: Uuid }
-  deleteVoting: { votingId: Uuid, roomId: Uuid }
+  deleteVoting: { votingId: Uuid }
   newRoom: { name: string }
   rooms: {}
   joinRoom: { roomId: Uuid }
@@ -20,7 +20,7 @@ export interface WsAction {
 }
 
 export interface WsEvent<serialized = true> {
-  handshake: { token: string };
+  handshake: Pick<Handshake, 'token' | 'refreshToken'>;
   restartVoting: Voting<serialized>;
   flip: Voting<serialized>;
   users: [Uuid, User][]
@@ -32,7 +32,7 @@ export interface WsEvent<serialized = true> {
   denied: {},
   newRoom: { roomId: Uuid },
   notFoundRoom: {},
-  rooms: [string, { id: Uuid, name: string }][]
+  rooms: [Uuid, { id: Uuid, name: string }][]
   room: { id: Uuid, name: string }
   feedback: { success: boolean }
   invalidToken: {}

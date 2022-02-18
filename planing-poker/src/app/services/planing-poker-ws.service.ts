@@ -68,8 +68,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('joinRoom', { roomId });
   }
 
-  deleteVoting(votingId: Uuid, roomId: Uuid) {
-    this.ws.send('deleteVoting', { votingId, roomId })
+  deleteVoting(votingId: Uuid) {
+    this.ws.send('deleteVoting', { votingId })
   }
 
   rooms() {

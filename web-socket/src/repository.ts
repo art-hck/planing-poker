@@ -1,10 +1,11 @@
-import { User, Uuid, Voting } from "@common/models";
+import { Token, User, Uuid, Voting } from "@common/models";
 import { Room } from "./models";
 
 export class Repository {
   readonly users = new Map<Uuid, User>();
   readonly votings = new Map<Uuid, Voting>();
   readonly rooms = new Map<Uuid, Room>();
+  readonly refreshTokens = new Set<Token>();
   activeVotingId: Uuid | null = null;
 
   /**

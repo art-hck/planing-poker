@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject } from "rxjs/webSocket";
-import { BehaviorSubject, bufferToggle, filter, map, merge, mergeMap, Observable, Subject, take, tap, timer, windowToggle } from "rxjs";
+import { BehaviorSubject, bufferToggle, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from "rxjs";
 import { AuthService } from "../components/auth/auth.service";
 import jwt_decode from "jwt-decode";
 import { WsAction, WsEvent, WsMessage } from "@common/models";
@@ -28,10 +28,18 @@ export class WsService {
       this.send$.pipe(windowToggle(on$, () => off$))
     ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
 
-    this.authService.beforeLogout$.subscribe(() => {
-      this.send('bye', {});
+    this.authService.beforeLogout$.subscribe(options => {
+      if (!options || options.emitEvent) this.send('bye', {});
       this.connected$.next(false);
     });
+
+    this.authService.login$.subscribe(payload => this.send('handshake', payload, { force: true }))
+    this.read('handshake').subscribe(({ refreshToken, token }) => {
+      window.localStorage.setItem('token', token)
+      window.localStorage.setItem('refreshToken', refreshToken)
+      this.authService.user$.next(jwt_decode(token))
+      this.connected$.next(true)
+    })
   }
 
   private connect() {
@@ -39,19 +47,6 @@ export class WsService {
     this.ws$?.complete();
     this.ws$ = new WebSocketSubject<WsMessage>({
       url: environment.websocketHost || `ws://${window?.location.hostname}:9000`,
-      openObserver: {
-        next: () => {
-          this.authService.login$.pipe(
-            mergeMap(payload => {
-              this.send('handshake', payload, { force: true });
-              return this.read('handshake').pipe(take(1));
-            }),
-            tap(({ token }) => window.localStorage.setItem('token', token)),
-            tap(({ token }) => this.authService.user$.next(jwt_decode(token))),
-            tap(() => this.connected$.next(true))
-          ).subscribe()
-        }
-      },
       closeObserver: {
         next: () => {
           this.connected$.next(false);
@@ -72,8 +67,10 @@ export class WsService {
 
 
   public read<E extends keyof WsEvent, P extends WsEvent[E]>(event: E): Observable<P> {
-    // console.log('READ <- ', event);
-    return this.read$.pipe(filter(p => p.event === event), map(p => p.payload));
+    return this.read$.pipe(
+      filter(p => p.event === event), map(p => p.payload),
+      // tap((p) => console.log('READ <- ', event, p)),
+    );
   }
 }
 

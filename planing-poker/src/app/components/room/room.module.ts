@@ -14,6 +14,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatBottomSheetModule } from "@angular/material/bottom-sheet";
+import { UsersPipe } from "../users/users.pipe";
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { MatBottomSheetModule } from "@angular/material/bottom-sheet";
     DoughnutDirective,
     CreateVoteComponent,
     VotingDeleteConfirmComponent,
-    CardsComponent
+    CardsComponent,
+    UsersPipe
   ],
   imports: [
     RoomRoutingModule,

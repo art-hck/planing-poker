@@ -9,8 +9,8 @@ import { UsersState } from "../../states/users.state";
 })
 export class AuthService {
   @Select(UsersState.users) users$!: Observable<User[]>;
-  readonly beforeLogout$ = new Subject<void>();
-  readonly logout$ = new Subject<void>();
+  readonly beforeLogout$ = new Subject<{ emitEvent?: boolean} | void>();
+  readonly logout$ = new Subject<{ emitEvent?: boolean } | void>();
   readonly login$ = new ReplaySubject<Handshake>(1);
   readonly user$ = new ReplaySubject<User | null>(1);
   readonly isAdmin$ = this.users$.pipe(
@@ -21,9 +21,10 @@ export class AuthService {
   loginAttempts = 0;
 
   constructor() {
-    this.logout$.subscribe(() => {
-      this.beforeLogout$.next();
+    this.logout$.subscribe(d => {
+      this.beforeLogout$.next(d);
       window.localStorage.removeItem('token');
+      window.localStorage.removeItem('refreshToken');
       this.user$.next(null);
     });
   }

@@ -30,8 +30,10 @@ export class AppComponent {
       startWith(null),
       switchMap(() => {
         const token = window.localStorage.getItem('token');
+        const refreshToken = window.localStorage.getItem('refreshToken');
+
         const config = { disableClose: true, data: { loginAttempts: this.authService.loginAttempts } };
-        return token ? of({ token }) : this.dialog.open(AuthComponent, config).afterClosed()
+        return token ? of({ token, refreshToken }) : this.dialog.open(AuthComponent, config).afterClosed()
       }),
     ).subscribe((handshake) => this.authService.login$.next(handshake));
 
@@ -53,7 +55,7 @@ export class AppComponent {
       newRoom: ({ roomId }) => this.router.navigate([roomId]),
       notFoundRoom: () => this.router.navigate(['not-found'], { skipLocationChange: true }),
       reject: () => {this.authService.loginAttempts++; this.authService.logout$.next()},
-      invalidToken: () => this.authService.logout$.next(),
+      invalidToken: () => this.authService.logout$.next({ emitEvent: false }),
       feedback: ({success}) => {
         if(success) {
           this.snackBar.open('Большое спасибо за обратную связь!', undefined, { duration: 1000 });
