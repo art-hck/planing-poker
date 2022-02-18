@@ -24,7 +24,7 @@ export const routes: Routes = {
     client.token = token ?? (newUser ? jwt.sign(newUser, secret, { expiresIn: exp }) : client.token);
     client.refreshToken = refreshToken ?? (newUser ? jwt.sign(newUser, refreshSecret, { expiresIn: refreshExp }) : client.refreshToken);
 
-    guard(r);
+    guard(r, { forceHandshake: true });
   },
 
   bye: r => {
@@ -70,7 +70,7 @@ export const routes: Routes = {
     const roomId = repo.getRoomByVotingId(votingId)?.id;
     const voting = repo.votings.get(votingId);
     if (!roomId || !voting) throw new NotFoundError(`roomId: ${roomId} or roomId: ${votingId}`);
-    guard(r, roomId);
+    guard(r, { roomId });
     voting?.votes.clear();
     voting.status = 'in-progress';
     broadcast('restartVoting', voting, roomId);
@@ -82,7 +82,7 @@ export const routes: Routes = {
     const voting = repo.votings.get(votingId);
     if (!roomId || !voting) throw new NotFoundError(`roomId: ${roomId} or roomId: ${votingId}`);
 
-    guard(r, roomId);
+    guard(r, { roomId });
     voting.status = 'end';
 
     broadcast('flip', voting, roomId);
@@ -92,7 +92,7 @@ export const routes: Routes = {
     const { payload: { roomId, name }, broadcast} = r;
     const room = repo.rooms.get(roomId);
     if (!room) throw new NotFoundError(`roomId: ${roomId}`);
-    guard(r, roomId);
+    guard(r, { roomId });
 
     name.split('\n').filter(Boolean).forEach(name => {
       const id = uuid.v4();
@@ -107,7 +107,7 @@ export const routes: Routes = {
     const { payload: { votingId }, broadcast} = r;
     const roomId = repo.getRoomByVotingId(votingId)?.id;
     if (!roomId) throw new NotFoundError(`room by votingId: ${votingId}`);
-    guard(r, roomId);
+    guard(r, { roomId });
 
 
     repo.votings.delete(votingId);
@@ -120,7 +120,7 @@ export const routes: Routes = {
     const roomId = repo.getRoomByVotingId(votingId)?.id;
     const voting = repo.votings.get(votingId);
     if (!voting || !roomId) throw new NotFoundError(`roomId: ${roomId} or roomId: ${votingId}`);
-    guard(r, roomId);
+    guard(r, { roomId });
 
     repo.activeVotingId = votingId;
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CreateVoteComponent } from "../create-vote/create-vote.component";
-import { filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, take, takeUntil, withLatestFrom } from "rxjs";
+import { distinctUntilChanged, filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, take, takeUntil, withLatestFrom } from "rxjs";
 import { Select, Store } from "@ngxs/store";
 import { UsersState } from "../../states/users.state";
 import { User, Voting } from "@common/models";
@@ -43,7 +43,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.params // проверить работает ли переход по урлам без дестроя компонента
-      .pipe(mergeMap(p => this.authService.user$.pipe(filter(u => !!u), mapTo(p))), takeUntil(this.destroy$))
+      .pipe(mergeMap(p => this.authService.user$.pipe(
+        distinctUntilChanged((p, c) => p?.id === c?.id),
+        filter(u => !!u), mapTo(p))), takeUntil(this.destroy$)
+      )
       .subscribe(param => this.pp.joinRoom(param['id']))
 
     merge(

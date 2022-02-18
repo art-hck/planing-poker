@@ -4,12 +4,13 @@ import { TokenExpiredError } from "jsonwebtoken";
 import { repository as repo } from "../repository";
 import { RoutePayload } from "../models";
 
-export function guard(r: RoutePayload, roomId?: Uuid) {
+export function guard(r: RoutePayload, options: { roomId?: Uuid, forceHandshake?: boolean } = {}) {
   const { send, client: c } = r;
   const secret = process.env['JWT_SECRET'] || 'JWT_SECRET';
   const refreshSecret = process.env['JWT_RT_SECRET'] || 'JWT_RT_SECRET';
   const expiresIn = process.env['JWT_EXP'];
   const rtExpiresIn = process.env['JWT_RT_EXP'];
+  let { roomId, forceHandshake } = options;
   let user: User;
 
   try {
@@ -21,6 +22,7 @@ export function guard(r: RoutePayload, roomId?: Uuid) {
       user = jwt.verify(c.refreshToken, refreshSecret) as User; // проверяем и декодируем рефреш токен
       delete user.iat; delete user.exp; // удаляем данные старого токена
       c.token = c.refreshToken = undefined; // удаляем данные клиента, т.к. ниже их нужно перезаписать
+      forceHandshake = true;
     } else throw e;
   }
 
@@ -28,7 +30,10 @@ export function guard(r: RoutePayload, roomId?: Uuid) {
   c.refreshToken = c.refreshToken ?? jwt.sign(user, refreshSecret, { expiresIn: rtExpiresIn });
   repo.refreshTokens.add(c.refreshToken);
   repo.users.set(user.id, user);
-  send('handshake', { token: c.token, refreshToken: c.refreshToken });
+
+  if(forceHandshake) {
+    send('handshake', { token: c.token, refreshToken: c.refreshToken });
+  }
 
   if (roomId && user?.role !== 'admin' && !repo.rooms.get(roomId)?.adminIds.has(user.id)) {
     throw new Error('denied');

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject } from "rxjs/webSocket";
-import { BehaviorSubject, bufferToggle, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from "rxjs";
+import { BehaviorSubject, bufferToggle, distinctUntilChanged, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from "rxjs";
 import { AuthService } from "../components/auth/auth.service";
 import jwt_decode from "jwt-decode";
 import { WsAction, WsEvent, WsMessage } from "@common/models";
@@ -19,9 +19,9 @@ export class WsService {
     this.connect();
 
     // Все эмиты разлогина (rejected)
-    const off$ = this.connected$.pipe(filter(v => !v));
+    const off$ = this.connected$.pipe(distinctUntilChanged(), filter(v => !v));
     // Все эмиты успешной авторизации (granted)
-    const on$ = this.connected$.pipe(filter(v => v));
+    const on$ = this.connected$.pipe(distinctUntilChanged(), filter(v => v));
 
     merge(
       this.send$.pipe(bufferToggle(off$, () => on$)),
