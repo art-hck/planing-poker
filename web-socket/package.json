@@ -1,9 +1,10 @@
 {
   "name": "web-socket",
   "scripts": {
-    "prestart": "rm -rf dist && tsc -b",
-    "start": "tsc-watch --outDir ./dist --onSuccess 'node ./dist/server.js'",
-    "build": "rm -rf dist && tsc -b"
+    "prestart": "rm -rf dist",
+    "prebuild": "rm -rf dist",
+    "start": "tsc-watch --onSuccess 'node ./dist/server.js'",
+    "build": "tsc -b"
   },
   "version": "1.0.0",
   "description": "",

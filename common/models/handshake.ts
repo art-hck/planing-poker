@@ -3,7 +3,7 @@ import { Token } from "./token";
 
 export interface Handshake {
   name: string;
-  teamRole: Role;
+  role: Role;
   password: string;
   token: Token;
   refreshToken: Token;

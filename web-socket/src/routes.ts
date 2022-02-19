@@ -1,11 +1,12 @@
 import * as uuid from "uuid";
 import * as jwt from "jsonwebtoken";
-import { log } from "./utils/log";
+import { RoomRole, Uuid } from "../../common/models";
+
 import { Telegraf } from "telegraf";
-import { Routes } from "./models";
+import { NotFoundError, Routes } from "./models";
 import { repository as repo } from "./repository";
-import { NotFoundError } from "./models/not-found-error";
-import { guard } from "./utils/guard";
+import { log } from "./utils/log";
+import { verifyToken } from "./utils/token-utils";
 
 export const routes: Routes = {
   handshake: r => {
@@ -14,32 +15,36 @@ export const routes: Routes = {
     const exp = process.env['JWT_EXP'];
     const refreshExp = process.env['JWT_RT_EXP'];
 
-    const { payload: { name, teamRole, password, token, refreshToken }, client } = r;
+    const { payload: { name, role, password, token, refreshToken }, client } = r;
 
     if (password && password !== '123123')
       throw new Error('reject');
 
-    const newUser = name && { id: uuid.v4(), name, teamRole, role: password ? 'admin' : 'user' };
+    const newUser = name && { id: uuid.v4(), name, role, su: !!password };
 
     client.token = token ?? (newUser ? jwt.sign(newUser, secret, { expiresIn: exp }) : client.token);
     client.refreshToken = refreshToken ?? (newUser ? jwt.sign(newUser, refreshSecret, { expiresIn: refreshExp }) : client.refreshToken);
 
-    guard(r, { forceHandshake: true });
+    verifyToken(r, true);
   },
 
   bye: r => {
     const { payload: { roomId }, broadcast, userId, ws } = r;
 
     repo.rooms.forEach(room => {
-      const connections = room.connections.get(userId);
+      const connections = room.connections?.get(userId);
       if ((roomId && room.id !== roomId) || !connections) return;
       connections.delete(ws);
       log.normal(`${repo.users.get(userId)?.name} отключился (${connections.size} соединений)`);
 
-      if (room.id && connections.size < 1) {
-        room.connections.delete(userId);
-        if (!roomId) room.adminIds.delete(userId); // Если вышел не из комнаты, а полностью - убираем из админов, т.к. токен удален
+      if (connections.size < 1) {
+        room.connections?.delete(userId);
         broadcast('users', repo.getUsers(room.id), room.id);
+        if (!roomId) {
+          // Если вышел не из комнаты, а полностью - удаляем из комнат, т.к. токен (а следовательно и юзер) удален
+          room.users.delete(userId)
+          broadcast('room', repo.cleanRoom(room), room.id);
+        }
       }
     });
   },
@@ -52,7 +57,7 @@ export const routes: Routes = {
 
     voting.votes.set(userId, point);
 
-    broadcast('voted', id => repo.isAdmin(roomId, id) ? { userId, votingId, point } : { userId, votingId }, roomId);
+    broadcast('voted', id => repo.canViewVotes(roomId, id) ? { userId, votingId, point } : { userId, votingId }, roomId);
   },
 
   unvote: r => {
@@ -66,33 +71,33 @@ export const routes: Routes = {
   },
 
   restartVoting: r => {
-    const { payload: { votingId }, broadcast} = r;
+    const { payload: { votingId }, broadcast, userId } = r;
     const roomId = repo.getRoomByVotingId(votingId)?.id;
     const voting = repo.votings.get(votingId);
     if (!roomId || !voting) throw new NotFoundError(`roomId: ${roomId} or roomId: ${votingId}`);
-    guard(r, { roomId });
+    repo.verifyRoomAdmin(roomId, userId);
     voting?.votes.clear();
     voting.status = 'in-progress';
     broadcast('restartVoting', voting, roomId);
   },
 
   flip: r => {
-    const { payload: { votingId }, broadcast} = r;
+    const { payload: { votingId }, broadcast, userId } = r;
     const roomId = repo.getRoomByVotingId(votingId)?.id;
     const voting = repo.votings.get(votingId);
     if (!roomId || !voting) throw new NotFoundError(`roomId: ${roomId} or roomId: ${votingId}`);
 
-    guard(r, { roomId });
+    repo.verifyRoomAdmin(roomId, userId);
     voting.status = 'end';
 
     broadcast('flip', voting, roomId);
   },
 
   newVoting: r => {
-    const { payload: { roomId, name }, broadcast} = r;
+    const { payload: { roomId, name }, broadcast, userId } = r;
     const room = repo.rooms.get(roomId);
     if (!room) throw new NotFoundError(`roomId: ${roomId}`);
-    guard(r, { roomId });
+    repo.verifyRoomAdmin(roomId, userId);
 
     name.split('\n').filter(Boolean).forEach(name => {
       const id = uuid.v4();
@@ -104,10 +109,10 @@ export const routes: Routes = {
   },
 
   deleteVoting: r => {
-    const { payload: { votingId }, broadcast} = r;
+    const { payload: { votingId }, broadcast, userId } = r;
     const roomId = repo.getRoomByVotingId(votingId)?.id;
     if (!roomId) throw new NotFoundError(`room by votingId: ${votingId}`);
-    guard(r, { roomId });
+    repo.verifyRoomAdmin(roomId, userId);
 
 
     repo.votings.delete(votingId);
@@ -116,11 +121,11 @@ export const routes: Routes = {
   },
 
   activateVoting: r => {
-    const { payload: { votingId }, broadcast} = r;
+    const { payload: { votingId }, broadcast, userId } = r;
     const roomId = repo.getRoomByVotingId(votingId)?.id;
     const voting = repo.votings.get(votingId);
     if (!voting || !roomId) throw new NotFoundError(`roomId: ${roomId} or roomId: ${votingId}`);
-    guard(r, { roomId });
+    repo.verifyRoomAdmin(roomId, userId);
 
     repo.activeVotingId = votingId;
 
@@ -135,7 +140,12 @@ export const routes: Routes = {
     const { payload: { name }, send, userId } = r;
     const id = uuid.v4();
 
-    repo.rooms.set(id, { id, name, connections: new Map(), adminIds: new Set([userId]), votingIds: new Set() });
+    repo.rooms.set(id, {
+      id, name,
+      connections: new Map(),
+      votingIds: new Set(),
+      users: (new Map<Uuid, Set<RoomRole>>()).set(userId, new Set([RoomRole.admin, RoomRole.user])),
+    });
 
     send('newRoom', { roomId: id })
     send('rooms', repo.getAvailableRooms(userId));
@@ -150,22 +160,50 @@ export const routes: Routes = {
       throw new NotFoundError(`roomId: ${roomId}`);
     }
 
-    if (room.adminIds.size === 0) {
-      room.adminIds.add(userId); // Уху, в комнате нет админов. Хапаем права себе
+    if (!room.users.has(userId)) {
+      room.users.set(userId, new Set([RoomRole.user]));
     }
 
-    room.connections.has(userId) ? room.connections.get(userId)!.add(ws) : room.connections.set(userId, new Set([ws]));
+    if (!repo.hasAdmins(room)) {
+      room.users.get(userId)?.add(RoomRole.admin) // Уху, в комнате нет админов. Хапаем права себе
+    }
 
-    log.normal(`${repo.users.get(userId)?.name} подключился (${room.connections.get(userId)?.size} соединений) `);
+    room.connections?.has(userId) ? room.connections?.get(userId)!.add(ws) : room.connections?.set(userId, new Set([ws]));
 
+    log.normal(`${repo.users.get(userId)?.name} подключился (${room.connections?.get(userId)?.size} соединений) `);
     send('votings', repo.getVotings(roomId, userId));
-    send('room', { id: room.id!, name: room.name });
 
     if (repo.activeVotingId && repo.votings.has(repo.activeVotingId)) {
       send('activateVoting', { votingId: repo.activeVotingId })
     }
 
+    broadcast('room', repo.cleanRoom(room), roomId);
     broadcast('users', repo.getUsers(roomId), roomId);
+  },
+
+  setRole: r => {
+    const { payload: { roomId, userId, role }, userId: ownUserId, broadcast } = r;
+    const room = repo.rooms.get(roomId);
+    if (!room) throw new NotFoundError(`roomId: ${roomId}`);
+
+    repo.verifyRoomAdmin(roomId, ownUserId);
+
+    switch (role) {
+      case RoomRole.admin:
+        room.users.get(ownUserId)?.delete(RoomRole.admin);
+        room.users.get(userId)?.add(RoomRole.admin);
+        break;
+      case RoomRole.observer:
+        room.users.get(userId)?.delete(RoomRole.user)
+        room.users.get(userId)?.add(RoomRole.observer)
+        break;
+      case RoomRole.user:
+        room.users.get(userId)?.delete(RoomRole.observer)
+        room.users.get(userId)?.add(RoomRole.user)
+        break;
+    }
+
+    broadcast('room', repo.cleanRoom(room), roomId);
   },
 
   rooms: ({ send, userId }) => send('rooms', repo.getAvailableRooms(userId)),
@@ -177,7 +215,7 @@ export const routes: Routes = {
 
     if (!botToken || !chatId) throw new Error('Telegram token or chat id not provided');
     const bot = new Telegraf(botToken);
-    bot.telegram.sendMessage(chatId, `<b>${subject}</b>\nОт: <b>${repo.users.get(userId)?.name}</b>\n${message}`, { parse_mode: "HTML" })
+    bot.telegram.sendMessage(chatId, `<b>${subject}</b>\nОт: <b>${repo.users.get(userId)?.name}</b>\n${message}`, { parse_mode: 'HTML' })
       .then(() => send('feedback', { success: true }))
       .catch(() => send('feedback', { success: false }));
   }

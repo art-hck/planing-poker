@@ -1,4 +1,4 @@
-import { Uuid, WsEvent } from "@common/models";
+import { Uuid, WsEvent } from "../../../common/models";
 import { MappablePayload } from "./mappable-payload";
 
 export type Broadcast = <E extends keyof WsEvent, P extends WsEvent<false>[E] | WsEvent[E]>

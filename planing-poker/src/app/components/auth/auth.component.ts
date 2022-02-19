@@ -14,7 +14,7 @@ export class AuthComponent {
   readonly form = this.fb.group({
     name: ['', [Validators.required]],
     password: "",
-    teamRole: "",
+    role: "",
   });
   devMode = false;
   private ctrlCount = 0;

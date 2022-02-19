@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { WsService } from "./ws.service";
 import { Handshake, Uuid, WsAction, WsEvent } from "@common/models";
 import { merge, Observable, tap } from "rxjs";
+import { RoomRole } from "@common/models";
 
 type PlaningPokerWsServiceEventsType = { [K in keyof WsEvent as K extends string ? `${K}$` : never]: Observable<WsEvent[K]> };
 type PlaningPokerWsServiceActionsType = Record<keyof WsAction, Function>;
@@ -74,6 +75,10 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
   rooms() {
     this.ws.send('rooms', {})
+  }
+
+  setRole(userId: Uuid, roomId: Uuid, role: RoomRole) {
+    this.ws.send('setRole', {userId, role, roomId})
   }
 
   feedback(subject: string, message: string) {

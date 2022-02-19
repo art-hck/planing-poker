@@ -6,6 +6,6 @@ export interface User {
   name: string;
   iat?: number;
   exp?: number;
-  role: 'user' | 'admin' | 'observer';
-  teamRole: Role;
+  su: boolean;
+  role: Role;
 }

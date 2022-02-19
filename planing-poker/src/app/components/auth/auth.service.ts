@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, map, Observable, ReplaySubject, Subject, withLatestFrom } from "rxjs";
-import { Handshake, User } from "@common/models";
+import { Observable, ReplaySubject, Subject } from "rxjs";
+import { Handshake, Room, RoomRole, User } from "@common/models";
 import { Select } from "@ngxs/store";
 import { UsersState } from "../../states/users.state";
 
@@ -13,11 +13,6 @@ export class AuthService {
   readonly logout$ = new Subject<{ emitEvent?: boolean } | void>();
   readonly login$ = new ReplaySubject<Handshake>(1);
   readonly user$ = new ReplaySubject<User | null>(1);
-  readonly isAdmin$ = this.users$.pipe(
-    withLatestFrom(this.user$),
-    map(([users, user]) => user?.role === 'admin' || users.find(({ id }) => id === user?.id)?.role === 'admin'),
-    distinctUntilChanged()
-  );
   loginAttempts = 0;
 
   constructor() {
@@ -27,5 +22,13 @@ export class AuthService {
       window.localStorage.removeItem('refreshToken');
       this.user$.next(null);
     });
+  }
+
+  hasRole(user: User, role: RoomRole, room?: Room<true>, ): boolean {
+    return !!room?.users.find(([id]) => id === user.id)?.[1].includes(role);
+  }
+
+  isAdmin(user: User, room?: Room<true>): boolean {
+    return this.hasRole(user, RoomRole.admin, room);
   }
 }

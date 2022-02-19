@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
-import { Voting } from "@common/models";
+import { Room, Voting } from "@common/models";
 import { AuthService } from "../auth/auth.service";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
 import { filter, Subject, takeUntil } from "rxjs";
@@ -13,6 +13,7 @@ import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetRef } from "@angul
 })
 export class VotingsComponent {
   @Input() votings?: Voting<true>[] | null;
+  @Input() room?: Room<true>;
   @Output() select = new EventEmitter<Voting<true>>();
   readonly destroy$ = new Subject<void>();
 

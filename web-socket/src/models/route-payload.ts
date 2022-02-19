@@ -1,4 +1,4 @@
-import { Uuid } from "@common/models";
+import { Uuid } from "../../../common/models";
 import { WebSocket } from "ws";
 import { Send } from "./send";
 import { Broadcast } from "./broadcast";

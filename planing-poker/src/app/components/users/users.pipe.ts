@@ -1,14 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Role, User } from "@common/models";
+import { Room, RoomRole, User } from "@common/models";
 
 @Pipe({
   name: 'users'
 })
 export class UsersPipe implements PipeTransform {
 
-  transform(users: User[] | null, roles: Role[], allowAnonymous = false): User[] {
-    // return users?.filter(({role}) => roles.includes(role)) || [];
-    return users?.filter(({ teamRole }) => roles.includes(teamRole) || teamRole.length === 0 && allowAnonymous).sort() || [];
+  transform(users: User[], room: Room<true>, roles: RoomRole[]): User[] {
+    return users.filter((u) => roles.every(role => room.users.find(([id]) => u.id === id)?.[1].includes(role))).sort() || [];
   }
-
 }

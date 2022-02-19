@@ -18,13 +18,13 @@
     </div>
 
     <div class="team-roles">
-      <mat-button-toggle-group formControlName="teamRole" [class.mat-error]="true">
+      <mat-button-toggle-group formControlName="role" [class.mat-error]="true">
         <mat-button-toggle *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-button-toggle>
       </mat-button-toggle-group>
 
       <mat-form-field appearance="outline" hideRequiredMarker>
         <mat-label>Роль</mat-label>
-        <mat-select formControlName="teamRole">
+        <mat-select formControlName="role">
           <mat-option *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-option>
         </mat-select>
       </mat-form-field>

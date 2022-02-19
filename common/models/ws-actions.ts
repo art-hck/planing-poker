@@ -2,6 +2,8 @@ import { Voting } from "./voting";
 import { Uuid } from "./uuid";
 import { User } from "./user";
 import { Handshake } from "./handshake";
+import { RoomRole } from "./room-role";
+import { Room } from "./room";
 
 export interface WsAction {
   handshake: Handshake;
@@ -16,6 +18,7 @@ export interface WsAction {
   newRoom: { name: string }
   rooms: {}
   joinRoom: { roomId: Uuid }
+  setRole: { userId: Uuid, roomId: Uuid, role: RoomRole }
   feedback: { message: string, subject: string }
 }
 
@@ -33,7 +36,7 @@ export interface WsEvent<serialized = true> {
   newRoom: { roomId: Uuid },
   notFoundRoom: {},
   rooms: [Uuid, { id: Uuid, name: string }][]
-  room: { id: Uuid, name: string }
+  room: Room<serialized>
   feedback: { success: boolean }
   invalidToken: {}
 }

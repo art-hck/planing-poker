@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { AuthService } from "../auth/auth.service";
-import { RolesName, User, Uuid, Voting } from "@common/models";
+import { Room, RoomRole, User, Uuid, Voting } from "@common/models";
 import { Colors } from "../../util/colors";
 import { ShareRoomDialogComponent } from "../rooms/rooms.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
+import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
 
 @Component({
   selector: 'pp-users',
@@ -14,14 +15,14 @@ import { MatBottomSheet } from "@angular/material/bottom-sheet";
 })
 export class UsersComponent implements OnChanges {
   @Input() users?: User[] | null;
-  @Input() room?: { name: string, id: Uuid } | null;
+  @Input() room?: Room<true> | null;
   @Input() activeVoting?: Voting<true> | null;
 
-  readonly teamRole = RolesName;
-  voteColors = new Map<number | null, string>();
+  readonly systemRole = RoomRole;
+  readonly voteColors = new Map<number | null, string>();
   votes?: Map<Uuid, number | null>;
 
-  constructor(public authService: AuthService, private dialog: MatDialog, private bottomSheet: MatBottomSheet) {}
+  constructor(public authService: AuthService, private dialog: MatDialog, private bottomSheet: MatBottomSheet, public pp: PlaningPokerWsService) {}
 
   ngOnChanges(c: SimpleChanges) {
     if(c['activeVoting']) {
@@ -33,19 +34,6 @@ export class UsersComponent implements OnChanges {
 
   inviteRoom(roomId: Uuid) {
     this.bottomSheet.open(ShareRoomDialogComponent, { data: { roomId } });
-  }
-
-
-  isVoted(user: User): boolean {
-    return this.votes?.get(user.id) !== undefined;
-  }
-
-  getUserInitials(user: User): string {
-    return user.name.split(" ").map(n => n[0]).slice(0,2).join("");
-  }
-
-  stringToColor(string: string) {
-    return Colors[string.split("").map(char => +char.charCodeAt(0)).reduce((a, b) => a + b, 0) % Colors.length];
   }
 
   trackByFn = (index: number, item: User) => item.id;

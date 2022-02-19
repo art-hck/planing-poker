@@ -1,12 +1,11 @@
 import { WebSocketServer } from 'ws'
-import { Uuid, WsMessage } from "@common/models";
+import { Handshake, Uuid, WsMessage } from "../../common/models";
 import { routes } from "./routes";
 import { log } from "./utils/log";
 import * as dotenv from 'dotenv'
-import { getUserId } from "./utils/get-user-id";
-import { Broadcast, RoutePayload, Routes, Send } from "./models";
+import { getUserId, verifyToken } from "./utils/token-utils";
+import { Broadcast, NotFoundError, RoutePayload, Routes, Send } from "./models";
 import { repository } from "./repository";
-import { NotFoundError } from "./models/not-found-error";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { Client } from "./models/client";
 
@@ -20,7 +19,7 @@ new WebSocketServer({ port }).on('connection', ws => {
   const client: Client = {}
   const send: Send = (event, payload) => ws.send(JSON.stringify({ event, payload }, replacer));
   const broadcast: Broadcast = (event, payloadOrFn, roomId: Uuid) => {
-    rooms.get(roomId)?.connections.forEach((clients, userId) => {
+    rooms.get(roomId)?.connections?.forEach((clients, userId) => {
       clients.forEach(client => {
         const payload = typeof payloadOrFn === 'function' ? payloadOrFn(userId) : payloadOrFn;
         client.send(JSON.stringify({ event, payload }, replacer));
@@ -38,11 +37,12 @@ new WebSocketServer({ port }).on('connection', ws => {
   });
 
   ws.on('message', (message: string) => {
-    type Message = WsMessage<Routes[keyof Routes] extends (arg: RoutePayload<infer R>) => any ? R : never>;
-    const { action, payload }: Message = JSON.parse(message);
-    const userId = getUserId((payload.token ?? client.token)!); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
+    type Payload = Routes[keyof Routes] extends (arg: RoutePayload<infer R>) => any ? R : never;
+    const { action, payload }: WsMessage<Payload> = JSON.parse(message);
+    const userId = getUserId(((payload as Handshake).token ?? client.token)!); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
 
     try {
+      if(action !== 'handshake') verifyToken({ ...routePayloadPart, payload, userId })
       routes[action!]({ ...routePayloadPart, payload, userId });
     } catch (e) {
       if (e instanceof Error && ['reject', 'denied'].includes(e.message)) {

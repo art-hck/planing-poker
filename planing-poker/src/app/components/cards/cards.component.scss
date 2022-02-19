@@ -44,6 +44,7 @@ mat-horizontal-stepper {
     &-disabled {
       color: #ccc;
       cursor: default;
+      pointer-events: none;
     }
   }
 
