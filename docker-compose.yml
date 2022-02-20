@@ -14,6 +14,8 @@ services:
     build:
       context: .
       dockerfile: ./web-socket/Dockerfile
+    depends_on:
+      - mongo
     env_file:
       - .env
 #  certbot:
