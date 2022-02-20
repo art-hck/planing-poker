@@ -1,22 +1,22 @@
-<mat-list *ngIf="users">
-  <mat-list-item *ngFor="let user of users; index as i; trackBy: trackByFn">
-    <div class="avatar" matListIcon [style.background-color]="stringToColor(user.name)">
-      {{ getUserInitials(user) }}
-      <mat-icon *ngIf="user.role === 'admin'">grade</mat-icon>
-    </div>
-    <div class="overflow-hidden" matLine>{{ user.name }}</div>
-    <div class="overflow-hidden" matLine *ngIf="teamRole[user.teamRole]">{{ teamRole[user.teamRole] }}</div>
-
-    <div class="flex-space"></div>
-    <mat-chip-list>
-      <mat-chip *ngIf="user.id === (authService.user$ | async)?.id"><small>Вы</small></mat-chip>
-      <ng-container *ngIf="isVoted(user)">
-        <mat-chip [style.background]="voteColors?.get(votes?.get(user.id) || 0)" [selected]="true">
-          <small>{{ votes?.get(user.id) ?? "?" }}</small>
-        </mat-chip>
+<mat-list>
+  <ng-container *ngIf="users && room && (users | users: room :[systemRole.user]) as users">
+    <ng-container *ngIf="users.length">
+      <div mat-subheader>Голосующие ({{users.length}})</div>
+      <ng-container *ngFor="let user of users">
+        <pp-user [room]="room" [user]="user" [votes]="votes" [voteColors]="voteColors"></pp-user>
       </ng-container>
-    </mat-chip-list>
-  </mat-list-item>
+      <mat-divider></mat-divider>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="users && room && (users | users: room :[systemRole.observer]) as users">
+    <ng-container *ngIf="users.length">
+      <div mat-subheader>Наблюдатели ({{users.length}})</div>
+      <ng-container *ngFor="let user of users; index as i; trackBy: trackByFn">
+        <pp-user [room]="room" [user]="user" [votes]="votes" [voteColors]="voteColors"></pp-user>
+      </ng-container>
+    </ng-container>
+  </ng-container>
 </mat-list>
 <div class="flex-space"></div>
 <div class="footer-actions" *ngIf="room">
