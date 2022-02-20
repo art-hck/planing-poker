@@ -7,5 +7,5 @@ export * from "./voting";
 export * from "./token";
 export * from "./role";
 export * from "./roles-name";
-export *  from "./room-role";
+export * from "./room-role";
 export * from "./room";

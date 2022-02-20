@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "baseUrl": "./src",
-    "sourceRoot": "./src",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
@@ -13,6 +11,7 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
+    "importHelpers": true,
 //    "paths": {
 //      "@common/*": [
 //        "../../../common/*"
