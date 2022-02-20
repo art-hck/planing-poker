@@ -1,8 +1,15 @@
 import { User, Uuid } from "../../../common/models";
-import { roomRepo } from "../server";
+import { roomRepo } from "../mongo";
+import { Collection } from "mongodb";
+import { Repository } from "../models/repository";
 
-export class UserRepository {
+export class UserRepository implements Repository<User> {
+  readonly repositoryName = 'user';
   readonly users = new Map<Uuid, User>();
+  collection?: Collection<User>;
+
+  init(collection: Collection<User>) {
+  }
 
   /**
    * Список пользователей в комнате

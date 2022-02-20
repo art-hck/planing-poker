@@ -1,14 +1,16 @@
 import { Collection } from "mongodb";
-// import { Room, RoomRole, Uuid } from "../../../common";
 import { Room, RoomRole, Uuid } from "../../../common/models";
 import { deserialize, serialize } from "../utils/set-map-utils";
-import { roomRepo, usersRepo } from "../server";
+import { roomRepo, usersRepo } from "../mongo";
 import { WebSocket } from "ws";
+import { Repository } from "../models/repository";
 
-export class RoomRepository {
+export class RoomRepository implements Repository<Room> {
+  readonly repositoryName = 'room';
   readonly rooms = new Map<Uuid, Room>();
+  collection?: Collection<Room>;
 
-  constructor(private collection: Collection<Room>) {
+  init(collection: Collection<Room>) {
     collection.find({}).toArray().then(rooms => rooms
       .map(({ _id, ...room }) => room)
       .forEach(room => this.rooms.set(room.id, deserialize(room))));
@@ -27,18 +29,18 @@ export class RoomRepository {
     };
     this.rooms.set(room.id, room);
 
-    await this.collection.insertOne(serialize(this.clean(room)))
+    await this.collection?.insertOne(serialize(this.clean(room)))
   }
 
   async update(room: Room) {
     this.rooms.set(room.id, room);
 
-    await this.collection.updateOne({ id: room.id }, { $set: serialize(this.clean(room)) }, { upsert: true })
+    await this.collection?.updateOne({ id: room.id }, { $set: serialize(this.clean(room)) }, { upsert: true })
   }
 
   async delete(room: Room) {
     this.rooms.delete(room.id);
-    await this.collection.deleteOne({ id: room.id })
+    await this.collection?.deleteOne({ id: room.id })
   }
 
   /**

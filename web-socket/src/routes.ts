@@ -5,7 +5,7 @@ import { Telegraf } from "telegraf";
 import { NotFoundError, Routes } from "./models";
 import { log } from "./utils/log";
 import { verifyToken } from "./utils/token-utils";
-import { roomRepo, usersRepo, votingRepo } from "./server";
+import { roomRepo, usersRepo, votingRepo } from "./mongo";
 import { Config } from "./config";
 
 export const routes: Routes = {
@@ -31,7 +31,7 @@ export const routes: Routes = {
       const connections = room.connections?.get(userId);
       if ((roomId && room.id !== roomId) || !connections) return;
       connections.delete(ws);
-      log.normal(`${usersRepo.users.get(userId)?.name} отключился (${connections.size} соединений)`);
+      log.normal('WebSocket', `${usersRepo.users.get(userId)?.name} отключился (${connections.size} соединений)`);
 
       if (connections.size < 1) {
         room.connections?.delete(userId);
@@ -142,7 +142,7 @@ export const routes: Routes = {
     }
 
     roomRepo.join(room, userId, ws).then(() => {
-      log.normal(`${usersRepo.users.get(userId)?.name} подключился (${room.connections?.get(userId)?.size} соединений) `);
+      log.normal('WebSocket', `${usersRepo.users.get(userId)?.name} подключился (${room.connections?.get(userId)?.size} соединений) `);
       send('votings', votingRepo.list(roomId, userId));
       if (room.activeVotingId && votingRepo.votings.has(room.activeVotingId)) {
         send('activateVoting', { votingId: room.activeVotingId })

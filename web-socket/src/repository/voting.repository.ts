@@ -1,12 +1,15 @@
 import { Collection } from "mongodb";
 import { Room, RoomRole, Uuid, Voting } from "../../../common/models";
 import { deserialize, serialize } from "../utils/set-map-utils";
-import { roomRepo, usersRepo, votingRepo } from "../server";
+import { roomRepo, usersRepo, votingRepo } from "../mongo";
+import { Repository } from "../models/repository";
 
-export class VotingRepository {
+export class VotingRepository implements Repository<Voting> {
+  readonly repositoryName = 'voting';
   readonly votings = new Map<Uuid, Voting>();
+  collection?: Collection<Voting>;
 
-  constructor(private collection: Collection<Voting>) {
+  init(collection: Collection<Voting>) {
     collection.find({}).toArray().then(votings => votings
       .map(({ _id, ...votings }) => votings)
       .forEach(voting => this.votings.set(voting.id, deserialize(voting))));
@@ -17,12 +20,12 @@ export class VotingRepository {
     room.votingIds.add(voting.id);
     roomRepo.update(room);
 
-    await this.collection.insertOne(serialize(voting));
+    await this.collection?.insertOne(serialize(voting));
   }
 
   async update(voting: Voting) {
     this.votings.set(voting.id, voting);
-    await this.collection.updateOne({ id: voting.id }, { $set: serialize(voting) }, { upsert: true })
+    await this.collection?.updateOne({ id: voting.id }, { $set: serialize(voting) }, { upsert: true })
   }
 
   async delete(id: Uuid) {
@@ -33,7 +36,7 @@ export class VotingRepository {
       roomRepo.update(room);
     }
 
-    await this.collection.deleteOne({ id })
+    await this.collection?.deleteOne({ id })
   }
 
   async vote(voting: Voting, userId: Uuid, point: number) {

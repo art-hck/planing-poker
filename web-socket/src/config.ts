@@ -9,6 +9,8 @@ export const Config = {
   dbHost: process.env['MONGO_HOST'],
   dbPort: process.env['MONGO_PORT'],
   wsPort: process.env['WS_PORT'] || 9000,
+  wsCert: process.env['WS_CERT'],
+  wsKey: process.env['WS_KEY'],
   jwtSecret: process.env['JWT_SECRET'] || 'JWT_SECRET',
   jwtRtSecret: process.env['JWT_RT_SECRET'] || 'JWT_RT_SECRET',
   jwtExp: process.env['JWT_EXP'],

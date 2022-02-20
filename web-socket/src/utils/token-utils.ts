@@ -2,7 +2,7 @@ import { RoutePayload } from "../models";
 import { Token, User, Uuid } from "../../../common/models";
 import * as jwt from "jsonwebtoken";
 import { TokenExpiredError } from "jsonwebtoken";
-import { refreshTokenRepo, usersRepo } from "../server";
+import { refreshTokenRepo, usersRepo } from "../mongo";
 import { Config } from "../config";
 
 export function verifyToken(r: RoutePayload<any>, sendHandshake?: boolean) {

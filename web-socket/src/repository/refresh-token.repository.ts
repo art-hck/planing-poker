@@ -1,10 +1,13 @@
 import { Collection } from "mongodb";
 import { Token } from "../../../common/models";
+import { Repository } from "../models/repository";
 
-export class RefreshTokenRepository {
+export class RefreshTokenRepository implements Repository<{ refreshToken: Token }> {
+  readonly repositoryName = 'refreshToken';
   readonly refreshTokens = new Set<Token>();
+  collection?: Collection<{ refreshToken: Token }>
 
-  constructor(private collection: Collection<{ refreshToken: Token }>) {
+  init(collection: Collection<{ refreshToken: Token }>) {
     collection.find({}).toArray().then(refreshTokens => refreshTokens.forEach(({ refreshToken }) => this.refreshTokens.add(refreshToken)));
   }
 
@@ -12,12 +15,12 @@ export class RefreshTokenRepository {
     if (!this.refreshTokens.has(refreshToken)) {
       this.refreshTokens.add(refreshToken);
       console.log('add refreshToken!');
-      await this.collection.updateOne({ refreshToken }, { $set: { refreshToken } }, { upsert: true })
+      await this.collection?.updateOne({ refreshToken }, { $set: { refreshToken } }, { upsert: true })
     }
   }
 
   async delete(refreshToken: Token) {
     this.refreshTokens.delete(refreshToken);
-    await this.collection.deleteOne({ refreshToken })
+    await this.collection?.deleteOne({ refreshToken })
   }
 }
