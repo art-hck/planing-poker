@@ -19,8 +19,8 @@ export let roomRepo: RoomRepository;
 export let votingRepo: VotingRepository;
 export let usersRepo: UserRepository;
 
-const { dbName, dbPassword, dbUsername, wsPort } = Config;
-const mongo = new MongoClient(`mongodb://${dbUsername}:${dbPassword}@localhost:27017`);
+const { dbName, dbPassword, dbUsername, dbHost, dbPort, wsPort } = Config;
+const mongo = new MongoClient(`mongodb://${dbUsername}:${dbPassword}@${dbHost}:${dbPort}`);
 const replacer = (k: unknown, v: unknown) => v instanceof Map ? Array.from(v.entries()) : v instanceof Set ? Array.from(v) : v;
 
 mongo.connect().then(() => {
