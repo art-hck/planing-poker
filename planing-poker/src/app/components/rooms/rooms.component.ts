@@ -9,6 +9,7 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { Uuid } from "@common/models";
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from "@angular/material/bottom-sheet";
 import { Router } from "@angular/router";
+import { ResolutionService } from "../../services/resolution.service";
 
 @Component({
   selector: 'pp-rooms',
@@ -24,9 +25,9 @@ export class RoomsComponent {
     public pp: PlaningPokerWsService,
     public authService: AuthService,
     public cd: ChangeDetectorRef,
-    public sidebars: SidebarsService
-  ) {
-  }
+    public sidebars: SidebarsService,
+    public resolutionService: ResolutionService
+  ) {}
 
   ngOnInit() {
     this.authService.user$.pipe(filter(u => !!u), takeUntil(this.destroy$)).subscribe(() => this.pp.rooms());
@@ -37,6 +38,7 @@ export class RoomsComponent {
     ).subscribe(() => this.newRoom());
 
     this.sidebars.detectChanges$.pipe(takeUntil(this.destroy$)).subscribe(() => this.cd.detectChanges());
+    this.resolutionService.isMobile$.pipe(filter(Boolean), takeUntil(this.destroy$)).subscribe(isMobile => this.sidebars.showPlayers = isMobile);
   }
 
   newRoom(config: MatDialogConfig = {}) {

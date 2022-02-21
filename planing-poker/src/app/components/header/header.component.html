@@ -1,8 +1,8 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button (click)="showPlayersChange.emit(!showPlayers)" *ngIf="showPlayersChange.observed && showButtons">
+  <button mat-icon-button (click)="showPlayersChange.emit(!showPlayers)" *ngIf="showPlayersChange.observed && (resolution.isMobile$ | async)">
     <mat-icon>menu</mat-icon>
   </button>
-  <a mat-button routerLink="/"><h1>Planing Poker {{showButtons}}</h1></a>
+  <a mat-button routerLink="/"><h1>Planing Poker</h1></a>
   <div class="flex-space"></div>
   <button mat-icon-button (click)="feedback()">
     <mat-icon>feedback</mat-icon>
@@ -10,7 +10,7 @@
   <button mat-icon-button (click)="authService.logout$.next(undefined)">
     <mat-icon>logout</mat-icon>
   </button>
-  <button mat-icon-button (click)="showVotingsChange.emit(!showVotings)"  *ngIf="showVotingsChange.observed && showButtons">
+  <button mat-icon-button (click)="showVotingsChange.emit(!showVotings)"  *ngIf="showVotingsChange.observed && (resolution.isMobile$ | async)">
     <mat-icon>chevron_left</mat-icon>
   </button>
 </mat-toolbar>

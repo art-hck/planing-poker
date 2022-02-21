@@ -126,10 +126,10 @@ export const routes: Routes = {
     const { payload: { name }, send, userId } = r;
     const roomId = uuid.v4();
 
-    roomRepo.add(roomId, name, userId);
-
-    send('newRoom', { roomId })
-    send('rooms', roomRepo.availableRooms(userId));
+    roomRepo.add(roomId, name, userId).then(() => {
+      send('newRoom', { roomId })
+      send('rooms', roomRepo.availableRooms(userId));
+    });
   },
 
   joinRoom: r => {
