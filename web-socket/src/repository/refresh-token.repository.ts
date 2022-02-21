@@ -14,7 +14,6 @@ export class RefreshTokenRepository implements Repository<{ refreshToken: Token 
   async add(refreshToken: Token) {
     if (!this.refreshTokens.has(refreshToken)) {
       this.refreshTokens.add(refreshToken);
-      console.log('add refreshToken!');
       await this.collection?.updateOne({ refreshToken }, { $set: { refreshToken } }, { upsert: true })
     }
   }
