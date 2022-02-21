@@ -8,6 +8,7 @@ export class RefreshTokenRepository implements Repository<{ refreshToken: Token 
   collection?: Collection<{ refreshToken: Token }>
 
   init(collection: Collection<{ refreshToken: Token }>) {
+    this.collection = collection;
     collection.find({}).toArray().then(refreshTokens => refreshTokens.forEach(({ refreshToken }) => this.refreshTokens.add(refreshToken)));
   }
 

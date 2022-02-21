@@ -9,6 +9,7 @@ export class UserRepository implements Repository<User> {
   collection?: Collection<User>;
 
   init(collection: Collection<User>) {
+    this.collection = collection;
   }
 
   /**

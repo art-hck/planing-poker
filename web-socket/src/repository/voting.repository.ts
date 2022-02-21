@@ -11,6 +11,7 @@ export class VotingRepository implements Repository<Voting> {
   collection?: Collection<Voting>;
 
   init(collection: Collection<Voting>) {
+    this.collection = collection;
     collection.find({}).toArray().then(votings => votings
       .map(({ _id, ...votings }) => votings)
       .forEach(voting => this.votings.set(voting.id, deserialize(voting))));

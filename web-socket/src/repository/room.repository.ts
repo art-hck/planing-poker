@@ -12,6 +12,7 @@ export class RoomRepository implements Repository<Room> {
   collection?: Collection<Room>;
 
   init(collection: Collection<Room>) {
+    this.collection = collection;
     collection.find({}).toArray().then(rooms => rooms
       .map(({ _id, ...room }) => room)
       .forEach(room => this.rooms.set(room.id, deserialize(room))));
