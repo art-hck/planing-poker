@@ -1,8 +1,9 @@
 import { Collection } from "mongodb";
-import { Room, RoomRole, Uuid, Voting } from "../../../common/models";
+import { RoomRole, Uuid, Voting } from "../../../common/models";
 import { deserialize, serialize } from "../utils/set-map-utils";
 import { roomRepo, usersRepo, votingRepo } from "../mongo";
 import { Repository } from "../models/repository";
+import { Room } from "../models/room";
 
 export class VotingRepository implements Repository<Voting> {
   readonly repositoryName = 'voting';

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatDrawerMode } from "@angular/material/sidenav/drawer";
-import { debounceTime, filter, fromEvent, map, startWith, Subject } from "rxjs";
+import { filter, map, Subject, switchMapTo } from "rxjs";
 import { NavigationEnd, Router } from "@angular/router";
+import { ResolutionService } from "./resolution.service";
 
 @Injectable({
   providedIn: 'root'
@@ -45,21 +46,20 @@ export class SidebarsService {
     }
   }
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private resolutionService: ResolutionService) {
     router.events.pipe(filter(e => e instanceof NavigationEnd)).pipe(
-      filter(() => (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) <= 1000),
+      switchMapTo(this.resolutionService.isMobile$),
+      filter(isMobile => isMobile)
     ).subscribe(() => this.showPlayers = this.showVotings = false);
 
-    fromEvent(window, 'resize').pipe(
-      debounceTime(200),
-      startWith(null),
-      map(() => (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) > 1000 ? 'side' : 'over'),
+    this.resolutionService.isMobile$.pipe(
+      map(isMobile => isMobile ? 'over' : 'side'),
       filter(sidenavMode => sidenavMode !== this.sidenavMode)
-    ).subscribe(sidenavMode => {
+    ).subscribe((sidenavMode) => {
       this.sidenavMode = sidenavMode;
       this.showVotings = sidenavMode === 'side' ? (window.localStorage.getItem('showVotings') || 'true') === 'true' : false;
       this.showPlayers = sidenavMode === 'side' ? (window.localStorage.getItem('showPlayers') || 'true') === 'true' : false;
       this.detectChanges$.next();
-    });
+    })
   }
 }

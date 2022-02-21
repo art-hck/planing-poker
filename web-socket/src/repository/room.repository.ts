@@ -1,9 +1,10 @@
 import { Collection } from "mongodb";
-import { Room, RoomRole, Uuid } from "../../../common/models";
+import { RoomRole, Uuid } from "../../../common/models";
 import { deserialize, serialize } from "../utils/set-map-utils";
 import { roomRepo, usersRepo } from "../mongo";
 import { WebSocket } from "ws";
 import { Repository } from "../models/repository";
+import { Room } from "../models/room";
 
 export class RoomRepository implements Repository<Room> {
   readonly repositoryName = 'room';
