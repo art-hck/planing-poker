@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build:stats": "ng build --stats-json",
-    "analyze": "webpack-bundle-analyzer dist/planing-poker/stats.json"
+    "analyze": "webpack-bundle-analyzer dist/planing-poker/stats.json",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -34,12 +35,20 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.2.2",
+    "@angular-eslint/builder": "13.1.0",
+    "@angular-eslint/eslint-plugin": "13.1.0",
+    "@angular-eslint/eslint-plugin-template": "13.1.0",
+    "@angular-eslint/schematics": "13.1.0",
+    "@angular-eslint/template-parser": "13.1.0",
     "@angular/cli": "~13.2.2",
     "@angular/compiler-cli": "~13.2.0",
     "@ngxs/devtools-plugin": "^3.7.3",
     "@types/canvas-confetti": "^1.4.2",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
+    "@typescript-eslint/eslint-plugin": "5.11.0",
+    "@typescript-eslint/parser": "5.11.0",
+    "eslint": "^8.2.0",
     "jasmine-core": "~4.0.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",

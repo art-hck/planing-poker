@@ -11,5 +11,5 @@ export class ResolutionService {
     map(() => window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth),
     shareReplay(1)
   );
-  readonly isMobile$ = this.resize$.pipe(map(w => w <= 1000))
+  readonly isMobile$ = this.resize$.pipe(map(w => w <= 1000));
 }

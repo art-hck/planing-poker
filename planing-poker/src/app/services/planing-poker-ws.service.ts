@@ -5,7 +5,7 @@ import { merge, Observable, tap } from "rxjs";
 import { RoomRole } from "@common/models";
 
 type PlaningPokerWsServiceEventsType = { [K in keyof WsEvent as K extends string ? `${K}$` : never]: Observable<WsEvent[K]> };
-type PlaningPokerWsServiceActionsType = Record<keyof WsAction, Function>;
+type PlaningPokerWsServiceActionsType = Record<keyof WsAction, (...args: any[]) => unknown>;
 type PlaningPokerWsServiceEventsArrType = { events: Partial<{ [K in keyof WsEvent]: (payload: WsEvent[K]) => any | (keyof WsEvent)[] }> };
 
 type PlaningPokerWsServiceType = Partial<PlaningPokerWsServiceEventsType> & PlaningPokerWsServiceActionsType & PlaningPokerWsServiceEventsArrType;
@@ -34,11 +34,11 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   }
 
   bye(roomId?: Uuid) {
-    this.ws.send('bye', { roomId })
+    this.ws.send('bye', { roomId });
   }
 
   vote(votingId: Uuid, point: number) {
-    this.ws.send('vote', { point, votingId })
+    this.ws.send('vote', { point, votingId });
   }
 
   unvote(votingId: Uuid) {
@@ -50,7 +50,7 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   }
 
   activateVoting(votingId: Uuid) {
-    this.ws.send('activateVoting', { votingId })
+    this.ws.send('activateVoting', { votingId });
   }
 
   restartVoting(votingId: Uuid) {
@@ -70,15 +70,15 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   }
 
   deleteVoting(votingId: Uuid) {
-    this.ws.send('deleteVoting', { votingId })
+    this.ws.send('deleteVoting', { votingId });
   }
 
   rooms() {
-    this.ws.send('rooms', {})
+    this.ws.send('rooms', {});
   }
 
   setRole(userId: Uuid, roomId: Uuid, role: RoomRole) {
-    this.ws.send('setRole', {userId, role, roomId})
+    this.ws.send('setRole', {userId, role, roomId});
   }
 
   feedback(subject: string, message: string) {

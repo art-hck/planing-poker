@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { concatMap, range, Subject, takeUntil, timer } from "rxjs";
 import { AuthService } from "../auth/auth.service";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
@@ -13,14 +24,16 @@ import { CreateTypes as Confetti } from "canvas-confetti";
   styleUrls: ['./cards.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CardsComponent implements OnChanges {
+export class CardsComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('stepper') stepper?: MatStepper;
   @Input() step?: number;
   @Input() room?: Room<true>;
   @Input() activeVoting?: Voting<true> | null;
+
   @ViewChild('confettiCanvas') set confettiCanvas(el: ElementRef<HTMLCanvasElement>) {
-    this.confetti = el ? confetti.create(el.nativeElement, {resize: true}) : undefined;
-  };
+    this.confetti = el ? confetti.create(el.nativeElement, { resize: true }) : undefined;
+  }
+
   readonly roomRole = RoomRole;
   readonly points = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40];
   readonly destroy$ = new Subject<void>();
@@ -71,7 +84,7 @@ export class CardsComponent implements OnChanges {
   }
 
   vote(point: number) {
-    if(this.activeVoting) {
+    if (this.activeVoting) {
       if (this.active !== point) {
         this.active = point;
         this.pp.vote(this.activeVoting.id, point);

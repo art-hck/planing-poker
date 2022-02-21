@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { filter, Subject, takeUntil } from "rxjs";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
 import { MatDialog, MatDialogRef, MatDialogState } from "@angular/material/dialog";
@@ -16,7 +16,7 @@ import { ResolutionService } from "../../services/resolution.service";
   templateUrl: './rooms.component.html',
   styleUrls: ['./rooms.component.scss']
 })
-export class RoomsComponent {
+export class RoomsComponent implements OnInit, OnDestroy {
   readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -46,7 +46,7 @@ export class RoomsComponent {
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name, code }) => {
         code ? this.router.navigate([code]) : name ? this.pp.newRoom(name) : null;
-      })
+      });
   }
 
   inviteRoom(roomId: Uuid) {
@@ -97,9 +97,9 @@ export class NewRoomDialogComponent {
     this.form.valueChanges.subscribe((v) => {
       this.form.get('name')?.setValidators(v.code ? null : Validators.required);
       this.form.get('code')?.setValidators(v.name ? null : this.codeValidators);
-      this.form.get('code')?.updateValueAndValidity({ emitEvent: false })
-      this.form.get('name')?.updateValueAndValidity({ emitEvent: false })
-    })
+      this.form.get('code')?.updateValueAndValidity({ emitEvent: false });
+      this.form.get('name')?.updateValueAndValidity({ emitEvent: false });
+    });
   }
 }
 

@@ -13,32 +13,31 @@ export class VotingRepository implements Repository<Voting> {
   init(collection: Collection<Voting>) {
     this.collection = collection;
     collection.find({}).toArray().then(votings => votings
-      .map(({ _id, ...votings }) => votings)
+      .map(({ _id: {}, ...votings }) => votings)
       .forEach(voting => this.votings.set(voting.id, deserialize(voting))));
   }
 
   async add(voting: Voting, room: Room) {
     this.votings.set(voting.id, voting);
     room.votingIds.add(voting.id);
-    roomRepo.update(room);
-
+    await roomRepo.update(room);
     await this.collection?.insertOne(serialize(voting));
   }
 
   async update(voting: Voting) {
     this.votings.set(voting.id, voting);
-    await this.collection?.updateOne({ id: voting.id }, { $set: serialize(voting) }, { upsert: true })
+    await this.collection?.updateOne({ id: voting.id }, { $set: serialize(voting) }, { upsert: true });
   }
 
   async delete(id: Uuid) {
     this.votings.delete(id);
     const room = roomRepo.getByVotingId(id);
     if (room) {
-      room.votingIds.delete(id)
-      roomRepo.update(room);
+      room.votingIds.delete(id);
+      await roomRepo.update(room);
     }
 
-    await this.collection?.deleteOne({ id })
+    await this.collection?.deleteOne({ id });
   }
 
   async vote(voting: Voting, userId: Uuid, point: number) {
@@ -48,7 +47,7 @@ export class VotingRepository implements Repository<Voting> {
 
   async unvote(voting: Voting, userId: Uuid) {
     voting.votes.delete(userId);
-    this.update(voting);
+    await this.update(voting);
   }
 
   get(id: Uuid) {
@@ -73,10 +72,10 @@ export class VotingRepository implements Repository<Voting> {
    * @param voting
    */
   async activate(room: Room, voting: Voting) {
-    room.activeVotingId = voting.id
+    room.activeVotingId = voting.id;
 
     if (voting.status === 'pristine') {
-      voting.status = 'in-progress'
+      voting.status = 'in-progress';
       return this.update(voting);
     }
   }
@@ -110,7 +109,7 @@ export class VotingRepository implements Repository<Voting> {
     const user = usersRepo.users.get(userId);
     const room = roomRepo.getByVotingId(votingId);
     return new Map(Array.from(voting?.votes.entries() || [])
-      .map(([u, p]) => [u, (user && room && this.canViewVotes(room.id, user.id)) || voting?.status === 'end' ? p : null]))
+      .map(([u, p]) => [u, (user && room && this.canViewVotes(room.id, user.id)) || voting?.status === 'end' ? p : null]));
   }
 
   /**

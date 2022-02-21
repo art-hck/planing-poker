@@ -34,8 +34,8 @@ export class SidebarsService {
     this.detectChanges$.next();
   }
 
-  private _showVotings: boolean = false;
-  private _showPlayers: boolean = false;
+  private _showVotings = false;
+  private _showPlayers = false;
   private _sidenavMode: MatDrawerMode = 'over';
   public detectChanges$ = new Subject<void>();
 
@@ -60,6 +60,6 @@ export class SidebarsService {
       this.showVotings = sidenavMode === 'side' ? (window.localStorage.getItem('showVotings') || 'true') === 'true' : false;
       this.showPlayers = sidenavMode === 'side' ? (window.localStorage.getItem('showPlayers') || 'true') === 'true' : false;
       this.detectChanges$.next();
-    })
+    });
   }
 }

@@ -33,13 +33,13 @@ export class WsService {
       this.connected$.next(false);
     });
 
-    this.authService.login$.subscribe(payload => this.send('handshake', payload, { force: true }))
+    this.authService.login$.subscribe(payload => this.send('handshake', payload, { force: true }));
     this.read('handshake').subscribe(({ refreshToken, token }) => {
-      window.localStorage.setItem('token', token)
-      window.localStorage.setItem('refreshToken', refreshToken)
-      this.authService.user$.next(jwt_decode(token))
-      this.connected$.next(true)
-    })
+      window.localStorage.setItem('token', token);
+      window.localStorage.setItem('refreshToken', refreshToken);
+      this.authService.user$.next(jwt_decode(token));
+      this.connected$.next(true);
+    });
   }
 
   private connect() {
@@ -50,7 +50,7 @@ export class WsService {
       closeObserver: {
         next: () => {
           this.connected$.next(false);
-          timer(2000).subscribe(() => this.connect())
+          timer(2000).subscribe(() => this.connect());
         }
       }
     });

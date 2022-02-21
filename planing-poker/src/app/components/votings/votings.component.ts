@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, OnDestroy, Output } from '@angular/core';
 import { Room, Voting } from "@common/models";
 import { AuthService } from "../auth/auth.service";
 import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
@@ -11,10 +11,10 @@ import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetRef } from "@angul
   styleUrls: ['./votings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VotingsComponent {
+export class VotingsComponent implements OnDestroy {
   @Input() votings?: Voting<true>[] | null;
   @Input() room?: Room<true>;
-  @Output() select = new EventEmitter<Voting<true>>();
+  @Output() choose = new EventEmitter<Voting<true>>();
   readonly destroy$ = new Subject<void>();
 
   constructor(private sheet: MatBottomSheet, public authService: AuthService, private pp: PlaningPokerWsService) {}
@@ -26,7 +26,7 @@ export class VotingsComponent {
     e.preventDefault();
     e.stopPropagation();
     this.sheet.open(VotingDeleteConfirmComponent, { data: { voting } }).afterDismissed().pipe(filter(v => !!v), takeUntil(this.destroy$))
-      .subscribe(() => this.pp.deleteVoting(voting.id))
+      .subscribe(() => this.pp.deleteVoting(voting.id));
   }
 
   ngOnDestroy() {

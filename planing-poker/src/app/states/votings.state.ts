@@ -67,7 +67,7 @@ export class VotingsState {
   }
 
   @Action(Activate)
-  activate({ setState, getState }: Context, { votingId }: Activate) {
+  activate({ setState }: Context, { votingId }: Activate) {
     setState(patch<Model>({ activeVotingId: votingId }));
   }
 }

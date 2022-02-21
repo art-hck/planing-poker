@@ -1,7 +1,7 @@
 <ng-container *ngIf="authService.user$ | async as me">
   <mat-selection-list [multiple]="false" *ngIf="votings?.length">
     <div *ngFor="let voting of votings; trackBy: trackByFn" [matTooltip]="voting.name" matTooltipClass="voting-tooltip" matTooltipShowDelay="500">
-      <mat-list-option (click)="select.emit(voting)" [class.disabled]="!authService.isAdmin(me, room)">
+      <mat-list-option (click)="choose.emit(voting)" [class.disabled]="!authService.isAdmin(me, room)">
         <mat-icon matBadge="✓" [matBadgeHidden]="voting.status !== 'end'" matBadgeSize="small" matListIcon>description</mat-icon>
         <h3 matLine>{{voting.name}}</h3>
         <div matListIcon *ngIf="authService.isAdmin(me, room)" class="delete">

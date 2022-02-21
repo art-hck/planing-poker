@@ -28,7 +28,7 @@
 
     <mat-drawer class='app-right-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showVotings" position="end" [autoFocus]="false">
       <!--- VOTINGS --->
-      <pp-votings [votings]="votings$ | async" [room]="room" (select)="pp.activateVoting(($event.id))"></pp-votings>
+      <pp-votings [votings]="votings$ | async" [room]="room" (choose)="pp.activateVoting(($event.id))"></pp-votings>
     </mat-drawer>
   </mat-drawer-container>
 </ng-container>

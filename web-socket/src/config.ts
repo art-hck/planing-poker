@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 
-dotenv.config({ path: "../.env" })
+dotenv.config({ path: "../.env" });
 
 export const Config = {
   dbUsername: process.env['MONGO_INITDB_ROOT_USERNAME'],
@@ -17,4 +17,4 @@ export const Config = {
   jwtRtExp: process.env['JWT_RT_EXP'],
   tmBotToken: process.env['TELEGRAM_BOT_TOKEN'],
   tmChatId: process.env['TELEGRAM_CHAT_ID'],
-}
+};

@@ -26,7 +26,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   @Select(UsersState.users) users$!: Observable<User[]>;
   @Select(VotingsState.votings) votings$!: Observable<Voting<true>[]>;
   @Select(VotingsState.activeVoting) activeVoting$!: Observable<Voting<true>>;
-  step: number = 0;
+  step = 0;
   readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -47,7 +47,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         distinctUntilChanged((p, c) => p?.id === c?.id),
         filter(u => !!u), mapTo(p))), takeUntil(this.destroy$)
       )
-      .subscribe(param => this.pp.joinRoom(param['id']))
+      .subscribe(param => this.pp.joinRoom(param['id']));
 
     merge(
       this.pp.restartVoting$.pipe(mapTo(1)),

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { of, startWith, switchMap } from "rxjs";
 import { AuthService } from "./components/auth/auth.service";
@@ -11,12 +11,12 @@ import { Store } from "@ngxs/store";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
-  selector: 'app-root',
+  selector: 'pp-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -33,7 +33,7 @@ export class AppComponent {
         const refreshToken = window.localStorage.getItem('refreshToken');
 
         const config = { disableClose: true, data: { loginAttempts: this.authService.loginAttempts } };
-        return token ? of({ token, refreshToken }) : this.dialog.open(AuthComponent, config).afterClosed()
+        return token ? of({ token, refreshToken }) : this.dialog.open(AuthComponent, config).afterClosed();
       }),
     ).subscribe((handshake) => this.authService.login$.next(handshake));
 
@@ -54,13 +54,13 @@ export class AppComponent {
       restartVoting: voting => this.store.dispatch(new Votings.Restart(voting)),
       newRoom: ({ roomId }) => this.router.navigate([roomId]),
       notFoundRoom: () => this.router.navigate(['not-found'], { skipLocationChange: true }),
-      reject: () => {this.authService.loginAttempts++; this.authService.logout$.next()},
+      reject: () => {this.authService.loginAttempts++; this.authService.logout$.next();},
       invalidToken: () => this.authService.logout$.next({ emitEvent: false }),
       feedback: ({success}) => {
         if(success) {
           this.snackBar.open('Большое спасибо за обратную связь!', undefined, { duration: 1000 });
         }
       }
-    }).subscribe()
+    }).subscribe();
   }
 }

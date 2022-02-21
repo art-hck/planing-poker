@@ -14,22 +14,18 @@ export const usersRepo = new UserRepository();
 const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo];
 const { dbName, dbPassword, dbUsername, dbHost, dbPort } = Config;
 const mongo = new MongoClient(`mongodb://${dbUsername}:${dbPassword}@${dbHost}:${dbPort}`);
-let state: 'connected' | 'disconnected' | 'connecting' = 'disconnected';
 
 
 connect(mongo);
 
 function connect(mongo: MongoClient) {
-  state = 'connecting';
   log.normal('MongoDB', 'Connecting...');
   mongo.connect().then(() => {
     log.success('MongoDB', `Started at ${dbPort} port`);
-    state = 'connected';
     const db = mongo.db(dbName);
-    repoDeclaration.forEach(instance => instance.init(db.collection(instance.repositoryName) as Collection<any>))
+    repoDeclaration.forEach(instance => instance.init(db.collection(instance.repositoryName) as Collection<any>));
     mongo.on('serverHeartbeatFailed', () => log.error('MongoDB', 'ServerHeartbeatFailed. Сервис продолжит работать но данные не будут записаны в базу.'));
   }).catch(e => {
-    state = 'disconnected';
     if(e instanceof MongoServerSelectionError) {
       log.error('MongoDB', 'MongoServerSelectionError. Сервис продолжит работать но данные не будут записаны в базу.');
     } else {

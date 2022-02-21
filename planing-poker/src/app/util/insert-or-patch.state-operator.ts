@@ -9,7 +9,7 @@ export function insertOrPatch<T>(searchFn: (a: T, b: T) => boolean, arr: T[], ke
         if (i !== -1) {
           return updateItem<T>(u => searchFn(u as T, curr), patch(curr))(acc as RepairType<T>[]) as T[];
         } else {
-          return insertItem<T>(curr)(acc as RepairType<T>[]) as T[]
+          return insertItem<T>(curr)(acc as RepairType<T>[]) as T[];
         }
       },
       arrState.filter(userState => arr.some(user => keepOld || searchFn(userState, user))) // фильтруем (удаляем то чего нет в новом массиве)

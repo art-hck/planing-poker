@@ -19,7 +19,7 @@ export class UserRepository implements Repository<User> {
   list(roomId: Uuid): Map<Uuid, User> {
     const room = roomRepo.rooms.get(roomId);
     return new Map(Array.from(this.users.entries())
-      .filter(([id]) => room && room.connections?.has(id))
+      .filter(([id]) => room && room.connections.has(id))
       .map(([token, user]) => [token, user]));
   }
 }

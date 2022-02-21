@@ -11,15 +11,15 @@ import { Config } from "./config";
 export const routes: Routes = {
   handshake: r => {
     const { jwtSecret, jwtRtSecret, jwtExp, jwtRtExp } = Config;
-    const { payload: { name, role, password, token, refreshToken }, client } = r;
+    const { payload: { name, role, password, token, refreshToken }, session } = r;
 
     if (password && password !== '123123')
       throw new Error('reject');
 
     const newUser = name && { id: uuid.v4(), name, role, su: !!password };
 
-    client.token = token ?? (newUser ? jwt.sign(newUser, jwtSecret, { expiresIn: jwtExp }) : client.token);
-    client.refreshToken = refreshToken ?? (newUser ? jwt.sign(newUser, jwtRtSecret, { expiresIn: jwtRtExp }) : client.refreshToken);
+    session.token = token ?? (newUser ? jwt.sign(newUser, jwtSecret, { expiresIn: jwtExp }) : session.token);
+    session.refreshToken = refreshToken ?? (newUser ? jwt.sign(newUser, jwtRtSecret, { expiresIn: jwtRtExp }) : session.refreshToken);
 
     verifyToken(r, true);
   },
@@ -28,13 +28,13 @@ export const routes: Routes = {
     const { payload: { roomId }, broadcast, userId, ws } = r;
 
     roomRepo.rooms.forEach(room => {
-      const connections = room.connections?.get(userId);
+      const connections = room.connections.get(userId);
       if ((roomId && room.id !== roomId) || !connections) return;
       connections.delete(ws);
       log.normal('WebSocket', `${usersRepo.users.get(userId)?.name} отключился (${connections.size} соединений)`);
 
       if (connections.size < 1) {
-        room.connections?.delete(userId);
+        room.connections.delete(userId);
         broadcast('users', usersRepo.list(room.id), room.id);
         // if (!roomId) { // @TODO: надо различать когда закрывается вкладка и когда разлогин. Удалять только при разлогине
         // Если вышел не из комнаты, а полностью - удаляем из комнат, т.к. токен (а следовательно и юзер) удален
@@ -127,7 +127,7 @@ export const routes: Routes = {
     const roomId = uuid.v4();
 
     roomRepo.add(roomId, name, userId).then(() => {
-      send('newRoom', { roomId })
+      send('newRoom', { roomId });
       send('rooms', roomRepo.availableRooms(userId));
     });
   },
@@ -142,10 +142,10 @@ export const routes: Routes = {
     }
 
     roomRepo.join(room, userId, ws).then(() => {
-      log.normal('WebSocket', `${usersRepo.users.get(userId)?.name} подключился (${room.connections?.get(userId)?.size} соединений) `);
+      log.normal('WebSocket', `${usersRepo.users.get(userId)?.name} подключился (${room.connections.get(userId)?.size} соединений) `);
       send('votings', votingRepo.list(roomId, userId));
       if (room.activeVotingId && votingRepo.votings.has(room.activeVotingId)) {
-        send('activateVoting', { votingId: room.activeVotingId })
+        send('activateVoting', { votingId: room.activeVotingId });
       }
       broadcast('room', roomRepo.clean(room), roomId);
       broadcast('users', usersRepo.list(roomId), roomId);
@@ -175,4 +175,4 @@ export const routes: Routes = {
       .then(() => send('feedback', { success: true }))
       .catch(() => send('feedback', { success: false }));
   }
-}
+};
