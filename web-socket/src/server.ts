@@ -50,14 +50,14 @@ new WebSocketServer(server ? { server } : { port: Number(wsPort) }).on('connecti
       action && routes[action]({ ...routePayloadPart, payload, userId });
     } catch (e: unknown) {
       if (e instanceof Error) {
-        switch (e.constructor) {
-          case DeniedError:
+        switch (true) {
+          case e instanceof DeniedError:
             log.error('WebSocket', `Доступ запрещен`, action, userId);
             break;
-          case NotFoundError:
+          case e instanceof NotFoundError:
             log.error('WebSocket', `Сущность не найдена`, e.message);
             break;
-          case JsonWebTokenError:
+          case e instanceof JsonWebTokenError:
             session.token = session.refreshToken = undefined;
             send('invalidToken', {});
             routes.bye({ ...routePayloadPart, userId });
@@ -65,6 +65,7 @@ new WebSocketServer(server ? { server } : { port: Number(wsPort) }).on('connecti
             break;
           default:
             log.error('WebSocket', e.stack);
+            throw e;
         }
       } else throw e;
     }
