@@ -1,4 +1,4 @@
-import { StateOperator } from "@ngxs/store";
+import { StateOperator } from '@ngxs/store';
 
 export function mapItems<T>(func: (item: T) => T): StateOperator<T[]> {
   return (items: Readonly<T[]>) => {

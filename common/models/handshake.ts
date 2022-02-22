@@ -1,5 +1,5 @@
-import { Role } from "./role";
-import { Token } from "./token";
+import { Role } from './role';
+import { Token } from './token';
 
 export interface Handshake {
   name: string;

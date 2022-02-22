@@ -1,58 +1,46 @@
-import { Collection } from "mongodb";
-import { RoomRole, Uuid } from "../../../common/models";
-import { deserialize, serialize } from "../utils/set-map-utils";
-import { roomRepo, usersRepo } from "../mongo";
-import { WebSocket } from "ws";
-import { Repository } from "../models/repository";
-import { Room } from "../models/room";
+import { Collection } from 'mongodb';
+import { WebSocket } from 'ws';
+import { Room, RoomRole, Uuid } from '../../../common/models';
+import { DeniedError } from '../models/denied-error.ts';
+import { Repository } from '../models/repository';
+import { roomRepo, usersRepo } from '../mongo';
+import { deserialize, serialize } from '../utils/set-map-utils';
+import { connections } from './connections.repository';
 
 export class RoomRepository implements Repository<Room> {
   readonly repositoryName = 'room';
   readonly rooms = new Map<Uuid, Room>();
-  collection?: Collection<Room>;
+  private collection?: Collection<Room>;
 
   init(collection: Collection<Room>) {
     this.collection = collection;
-    collection.find({}).toArray().then(rooms => rooms
-      .map(({ _id: {}, ...room }) => room)
-      .forEach(room => this.rooms.set(room.id, deserialize(room))));
+    collection
+      .find({})
+      .toArray()
+      .then(rooms => rooms.map(({ _id: {}, ...room }) => room).forEach(room => this.rooms.set(room.id, deserialize(room))));
   }
 
   get(id: Uuid) {
     return this.rooms.get(id);
   }
 
-  async add(id: Uuid, name: string, userId: Uuid) {
-    const room: Room = {
-      id, name,
-      connections: new Map(),
-      votingIds: new Set(),
-      users: (new Map<Uuid, Set<RoomRole>>()).set(userId, new Set([RoomRole.admin, RoomRole.user])),
-    };
+  async create(id: Uuid, name: string, userId: Uuid) {
+    const users = new Map<Uuid, Set<RoomRole>>().set(userId, new Set([RoomRole.admin, RoomRole.user]));
+    const room: Room = { id, name, votingIds: new Set(), users };
     this.rooms.set(room.id, room);
 
-    await this.collection?.insertOne(serialize(this.clean(room)));
+    await this.collection?.insertOne(serialize(room));
   }
 
   async update(room: Room) {
     this.rooms.set(room.id, room);
 
-    await this.collection?.updateOne({ id: room.id }, { $set: serialize(this.clean(room)) }, { upsert: true });
+    await this.collection?.updateOne({ id: room.id }, { $set: serialize(room) }, { upsert: true });
   }
 
   async delete(room: Room) {
     this.rooms.delete(room.id);
     await this.collection?.deleteOne({ id: room.id });
-  }
-
-  /**
-   * Выйти из комнаты
-   * @param room
-   * @param userId
-   */
-  async leave(room: Room, userId: Uuid) {
-    room.users.delete(userId);
-    return this.update(room);
   }
 
   /**
@@ -70,7 +58,7 @@ export class RoomRepository implements Repository<Room> {
       room.users.get(userId)?.add(RoomRole.admin); // Уху, в комнате нет админов. Хапаем права себе
     }
 
-    room.connections.has(userId) ? room.connections.get(userId)?.add(ws) : room.connections.set(userId, new Set([ws]));
+    connections.add(room.id, userId, ws);
     return this.update(room);
   }
 
@@ -94,22 +82,15 @@ export class RoomRepository implements Repository<Room> {
   }
 
   /**
-   * Комната без данных о соединениях
-   * @TODO вынести соединения в отдельную сущность
-   */
-  clean(room: Room): Room {
-    const { connections: {}, ...data } = room;
-    return { ...data, connections: new Map() };
-  }
-
-  /**
    * Список комнат доступных для пользователя
    * @param userId
    */
-  availableRooms(userId: Uuid): Map<Uuid, { id: Uuid, name: string }> {
-    return new Map(Array.from(this.rooms.values())
-      .filter((room) => room.users.has(userId))
-      .map(({ id, name }) => ([id, { id, name }])));
+  availableRooms(userId: Uuid): Map<Uuid, { id: Uuid; name: string }> {
+    return new Map(
+      Array.from(this.rooms.values())
+        .filter(room => room.users.has(userId))
+        .map(({ id, name }) => [id, { id, name }]),
+    );
   }
 
   /**
@@ -130,7 +111,7 @@ export class RoomRepository implements Repository<Room> {
     const room = this.rooms.get(roomId);
 
     if (user && !user?.su && !room?.users.get(user.id)?.has(RoomRole.admin)) {
-      throw new Error('denied');
+      throw new DeniedError();
     }
   }
 
@@ -139,6 +120,6 @@ export class RoomRepository implements Repository<Room> {
    * @param room
    */
   hasAdmins(room: Room): boolean {
-    return Array.from(room.users.entries()).some(([id, roles]) => roles.has(RoomRole.admin) && room.connections.get(id));
+    return Array.from(room.users.entries()).some(([id, roles]) => roles.has(RoomRole.admin) && connections.hasUser(room.id, id));
   }
 }

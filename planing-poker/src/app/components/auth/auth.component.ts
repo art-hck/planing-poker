@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, HostListener, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormBuilder, Validators } from "@angular/forms";
-import { RolesName } from "@common/models";
+import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { RolesName } from '@common/models';
 
 @Component({
   selector: 'pp-auth',
@@ -19,12 +19,7 @@ export class AuthComponent {
   devMode = false;
   private ctrlCount = 0;
 
-  constructor(
-    public dialogRef: MatDialogRef<AuthComponent>,
-    private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { loginAttempts: number },
-  ) {
-  }
+  constructor(public dialogRef: MatDialogRef<AuthComponent>, private fb: FormBuilder) {}
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {

@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Room, RoomRole, User } from "@common/models";
+import { Room, RoomRole, User } from '@common/models';
 
 @Pipe({
-  name: 'users'
+  name: 'users',
 })
 export class UsersPipe implements PipeTransform {
 

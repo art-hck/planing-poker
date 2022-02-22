@@ -1,19 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatCardModule } from "@angular/material/card";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatListModule } from "@angular/material/list";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatDialogModule } from "@angular/material/dialog";
-import { PluralizePipe } from "./pipes/pluralize-pipe";
-import { RouterModule } from "@angular/router";
-import { CommonModule } from "@angular/common";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { PluralizePipe } from './pipes/pluralize-pipe';
 
 @NgModule({
   declarations: [
@@ -44,8 +44,8 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
     MatSidenavModule,
     MatFormFieldModule,
     MatInputModule,
-    MatListModule
-  ]
+    MatListModule,
+  ],
 })
 export class AppSharedModule {
 }

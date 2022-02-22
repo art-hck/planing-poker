@@ -1,4 +1,4 @@
-import { Uuid } from "./uuid";
+import { Uuid } from './uuid';
 
 export interface Voting<serialized = false> {
   id: Uuid;

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RoomRoutingModule } from "./room/room-routing.module";
+import { RoomRoutingModule } from "./room-routing.module";
 import { RoomComponent } from "./room/room.component";
 import { VotingDeleteConfirmComponent, VotingsComponent } from "./votings/votings.component";
 import { UsersComponent } from "./users/users.component";

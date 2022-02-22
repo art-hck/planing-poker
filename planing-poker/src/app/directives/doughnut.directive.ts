@@ -1,8 +1,8 @@
 import { AfterViewInit, Directive, ElementRef, Input, OnChanges } from '@angular/core';
-import Chart from "chart.js/auto";
-import { Colors } from "../util/colors";
-import { Voting } from "@common/models";
+import { Voting } from '@common/models';
+import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Colors } from '../util/colors';
 
 @Directive({ selector: 'canvas[ppDoughnut]' })
 export class DoughnutDirective implements AfterViewInit, OnChanges {
@@ -18,7 +18,7 @@ export class DoughnutDirective implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges() {
-    if(this.chart && this.sortedGroupedVotes) {
+    if (this.chart && this.sortedGroupedVotes) {
       this.chart.config.data.datasets[0].data = this.sortedGroupedVotes;
       this.chart.update();
     }
@@ -37,11 +37,11 @@ export class DoughnutDirective implements AfterViewInit, OnChanges {
           hoverBackgroundColor: Colors,
           hoverBorderColor: 'white',
           hoverOffset: 20,
-        }]
+        }],
       },
       options: {
         layout: {
-          padding: 20
+          padding: 20,
         },
         // events: [],
         plugins: {
@@ -49,9 +49,9 @@ export class DoughnutDirective implements AfterViewInit, OnChanges {
             formatter: (votesCount, { dataIndex }) => this.groupedVotes?.[dataIndex][0],
             color: 'white',
             font: { size: 14, weight: 'bold' },
-          }
+          },
         },
-      }
+      },
     });
   }
 }

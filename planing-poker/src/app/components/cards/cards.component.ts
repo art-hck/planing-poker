@@ -8,21 +8,21 @@ import {
   OnDestroy,
   OnInit,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
-import { concatMap, range, Subject, takeUntil, timer } from "rxjs";
-import { AuthService } from "../auth/auth.service";
-import { PlaningPokerWsService } from "../../services/planing-poker-ws.service";
-import { Room, RoomRole, Voting } from "@common/models";
-import { MatStepper } from "@angular/material/stepper";
-import * as confetti from "canvas-confetti";
-import { CreateTypes as Confetti } from "canvas-confetti";
+import { MatStepper } from '@angular/material/stepper';
+import { Room, RoomRole, Voting } from '@common/models';
+import * as confetti from 'canvas-confetti';
+import { CreateTypes as Confetti } from 'canvas-confetti';
+import { concatMap, range, Subject, takeUntil, timer } from 'rxjs';
+import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'pp-cards',
   templateUrl: './cards.component.html',
   styleUrls: ['./cards.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardsComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('stepper') stepper?: MatStepper;
@@ -52,7 +52,7 @@ export class CardsComponent implements OnInit, OnChanges, OnDestroy {
             particleCount: 100,
             spread: 90,
             angle: Math.random() * (45 - (135)) + (135),
-            scalar: .7
+            scalar: .7,
           }));
       }
     }
@@ -73,7 +73,7 @@ export class CardsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   get winner(): string {
-    return this.groupedVotes.filter((v, i, [f]) => v[1] === f[1]).map(v => v[0]).join(" или ");
+    return this.groupedVotes.filter((v, i, [f]) => v[1] === f[1]).map(v => v[0]).join(' или ');
   }
 
   ngOnInit() {

@@ -1,27 +1,35 @@
-import { Collection } from "mongodb";
-import { RoomRole, Uuid, Voting } from "../../../common/models";
-import { deserialize, serialize } from "../utils/set-map-utils";
-import { roomRepo, usersRepo, votingRepo } from "../mongo";
-import { Repository } from "../models/repository";
-import { Room } from "../models/room";
+import { Collection } from 'mongodb';
+import { Room, RoomRole, Uuid, Voting } from '../../../common/models';
+import { Repository } from '../models/repository';
+import { roomRepo, usersRepo, votingRepo } from '../mongo';
+import { deserialize, serialize } from '../utils/set-map-utils';
 
 export class VotingRepository implements Repository<Voting> {
   readonly repositoryName = 'voting';
   readonly votings = new Map<Uuid, Voting>();
-  collection?: Collection<Voting>;
+  private collection?: Collection<Voting>;
 
   init(collection: Collection<Voting>) {
     this.collection = collection;
-    collection.find({}).toArray().then(votings => votings
-      .map(({ _id: {}, ...votings }) => votings)
-      .forEach(voting => this.votings.set(voting.id, deserialize(voting))));
+    collection
+      .find({})
+      .toArray()
+      .then(votings => votings.map(({ _id: {}, ...votings }) => votings).forEach(voting => this.votings.set(voting.id, deserialize(voting))));
   }
 
-  async add(voting: Voting, room: Room) {
+  get(id: Uuid) {
+    return this.votings.get(id);
+  }
+
+  async create(voting: Voting, room: Room) {
     this.votings.set(voting.id, voting);
     room.votingIds.add(voting.id);
     await roomRepo.update(room);
     await this.collection?.insertOne(serialize(voting));
+  }
+
+  async createMultiple(votings: Voting[], room: Room) {
+    await votings.forEach(voting => this.create(voting, room));
   }
 
   async update(voting: Voting) {
@@ -50,10 +58,6 @@ export class VotingRepository implements Repository<Voting> {
     await this.update(voting);
   }
 
-  get(id: Uuid) {
-    return this.votings.get(id);
-  }
-
   /**
    * Список голосований в комнате
    * @param roomId
@@ -61,9 +65,11 @@ export class VotingRepository implements Repository<Voting> {
    */
   list(roomId: Uuid, userId: Uuid): Map<Uuid, Voting> {
     const room = roomRepo.rooms.get(roomId);
-    return new Map(Array.from(this.votings.entries())
-      .filter(([id]) => room && room.votingIds.has(id))
-      .map(([k, v]) => [k, { ...v, votes: this.votes(v.id, userId) }]));
+    return new Map(
+      Array.from(this.votings.entries())
+        .filter(([id]) => room && room.votingIds.has(id))
+        .map(([k, v]) => [k, { ...v, votes: this.votes(v.id, userId) }]),
+    );
   }
 
   /**
@@ -108,8 +114,7 @@ export class VotingRepository implements Repository<Voting> {
     const voting = this.votings.get(votingId);
     const user = usersRepo.users.get(userId);
     const room = roomRepo.getByVotingId(votingId);
-    return new Map(Array.from(voting?.votes.entries() || [])
-      .map(([u, p]) => [u, (user && room && this.canViewVotes(room.id, user.id)) || voting?.status === 'end' ? p : null]));
+    return new Map(Array.from(voting?.votes.entries() || []).map(([u, p]) => [u, (user && room && this.canViewVotes(room.id, user.id)) || voting?.status === 'end' ? p : null]));
   }
 
   /**

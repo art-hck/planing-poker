@@ -1,5 +1,5 @@
-import { Uuid } from "./uuid";
-import { Role } from "./role";
+import { Role } from './role';
+import { Uuid } from './uuid';
 
 export interface User {
   id: Uuid;

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { WebSocketSubject } from "rxjs/webSocket";
-import { BehaviorSubject, bufferToggle, distinctUntilChanged, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from "rxjs";
-import { AuthService } from "../components/auth/auth.service";
-import jwt_decode from "jwt-decode";
-import { WsAction, WsEvent, WsMessage } from "@common/models";
-import { environment } from "../../environments/environment";
+import { WsAction, WsEvent, WsMessage } from '@common/models';
+import jwt_decode from 'jwt-decode';
+import { BehaviorSubject, bufferToggle, distinctUntilChanged, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from 'rxjs';
+import { WebSocketSubject } from 'rxjs/webSocket';
+import { environment } from '../../environments/environment';
+import { AuthService } from '../components/auth/auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WsService {
   private ws$!: WebSocketSubject<WsMessage<any>>;
@@ -25,7 +25,7 @@ export class WsService {
 
     merge(
       this.send$.pipe(bufferToggle(off$, () => on$)),
-      this.send$.pipe(windowToggle(on$, () => off$))
+      this.send$.pipe(windowToggle(on$, () => off$)),
     ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
 
     this.authService.beforeLogout$.subscribe(options => {
@@ -51,8 +51,8 @@ export class WsService {
         next: () => {
           this.connected$.next(false);
           timer(2000).subscribe(() => this.connect());
-        }
-      }
+        },
+      },
     });
 
     this.ws$.subscribe(event => this.read$.next(event));

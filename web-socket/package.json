@@ -4,7 +4,8 @@
     "prestart": "npm run clean && npm run build",
     "start": "tsc-watch --onSuccess 'node ./dist/server.js'",
     "build": "tsc -b",
-    "clean": "tsc -b --clean"
+    "clean": "tsc -b --clean",
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "version": "1.0.0",
   "description": "",
@@ -28,6 +29,7 @@
     "@types/ws": "^8.2.2",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
-    "eslint": "^8.9.0"
+    "eslint": "^8.9.0",
+    "prettier": "^2.5.1"
   }
 }

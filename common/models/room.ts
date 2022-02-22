@@ -1,5 +1,5 @@
-import { Uuid } from "./uuid";
-import { RoomRole } from "./room-role";
+import { RoomRole } from './room-role';
+import { Uuid } from './uuid';
 
 export interface Room<serialized = false> {
   id: Uuid;

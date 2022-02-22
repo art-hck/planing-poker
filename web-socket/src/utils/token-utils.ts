@@ -1,27 +1,27 @@
-import { RoutePayload } from "../models";
-import { Token, User, Uuid } from "../../../common/models";
-import * as jwt from "jsonwebtoken";
-import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
-import { refreshTokenRepo, usersRepo } from "../mongo";
-import { Config } from "../config";
+import * as jwt from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
+import { Token, User, Uuid } from '../../../common/models';
+import { Config } from '../config';
+import { RoutePayload } from '../models';
+import { refreshTokenRepo, usersRepo } from '../mongo';
 
-export function verifyToken(r: RoutePayload<unknown>, sendHandshake?: boolean) {
+export function verifyToken(r: RoutePayload, sendHandshake?: boolean) {
   const { jwtSecret, jwtRtSecret, jwtExp, jwtRtExp } = Config;
   const { send, session: s } = r;
   const rtRepo = refreshTokenRepo;
   let user: User;
 
-  if(!s.token || !s.refreshToken)
-    throw new JsonWebTokenError("");
+  if (!s.token || !s.refreshToken) throw new JsonWebTokenError('');
 
   try {
     user = jwt.verify(s.token, jwtSecret) as User; // проверяем и декодируем токен
   } catch (e) {
     // Если токен протух, но есть рефреш токен который еще не использовался
-    if (e instanceof TokenExpiredError && rtRepo.refreshTokens.has(s.refreshToken)) {
+    if (e instanceof TokenExpiredError && rtRepo.has(s.refreshToken)) {
       rtRepo.delete(s.refreshToken).then(); // использованый токен удаляем
       user = jwt.verify(s.refreshToken, jwtRtSecret) as User; // проверяем и декодируем рефреш токен
-      delete user.iat; delete user.exp; // удаляем данные старого токена
+      delete user.iat;
+      delete user.exp; // удаляем данные старого токена
       s.token = s.refreshToken = undefined; // удаляем данные клиента, т.к. ниже их нужно перезаписать
       sendHandshake = true;
     } else throw e;
@@ -30,11 +30,11 @@ export function verifyToken(r: RoutePayload<unknown>, sendHandshake?: boolean) {
   s.token = s.token ?? jwt.sign(user, jwtSecret, { expiresIn: jwtExp });
   s.refreshToken = s.refreshToken ?? jwt.sign(user, jwtRtSecret, { expiresIn: jwtRtExp });
 
-  rtRepo.add(s.refreshToken).then();
+  rtRepo.create(s.refreshToken).then();
 
   usersRepo.users.set(user.id, user);
 
-  if(sendHandshake) {
+  if (sendHandshake) {
     send('handshake', { token: s.token, refreshToken: s.refreshToken });
   }
 }

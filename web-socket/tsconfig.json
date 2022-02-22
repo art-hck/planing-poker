@@ -11,7 +11,9 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "importHelpers": true,
+    "target": "ES5"
 //    "paths": {
 //      "@common/*": [
 //        "../../../common/*"

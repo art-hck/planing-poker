@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from "rxjs";
-import { Handshake, Room, RoomRole, User } from "@common/models";
-import { Select } from "@ngxs/store";
-import { UsersState } from "../../states/users.state";
+import { Handshake, Room, RoomRole, User } from '@common/models';
+import { Select } from '@ngxs/store';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { UsersState } from '../../states/users.state';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   @Select(UsersState.users) users$!: Observable<User[]>;
-  readonly beforeLogout$ = new Subject<{ emitEvent?: boolean} | void>();
+  readonly beforeLogout$ = new Subject<{ emitEvent?: boolean } | void>();
   readonly logout$ = new Subject<{ emitEvent?: boolean } | void>();
   readonly login$ = new ReplaySubject<Handshake>(1);
   readonly user$ = new ReplaySubject<User | null>(1);
-  loginAttempts = 0;
 
   constructor() {
     this.logout$.subscribe(d => {
@@ -24,7 +23,7 @@ export class AuthService {
     });
   }
 
-  hasRole(user: User, role: RoomRole, room?: Room<true>, ): boolean {
+  hasRole(user: User, role: RoomRole, room?: Room<true>): boolean {
     return !!room?.users.find(([id]) => id === user.id)?.[1].includes(role);
   }
 
