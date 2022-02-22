@@ -1,5 +1,5 @@
 import * as uuid from 'uuid';
-import { Voting } from '../../../common/models';
+import { Uuid, Voting } from '../../../common/models';
 import { NotFoundError, RoutePayload } from '../models';
 import { roomRepo, votingRepo } from '../mongo';
 
@@ -9,7 +9,7 @@ export class VotingController {
     const voting = votingRepo.get(votingId);
     if (!room || !voting) throw new NotFoundError(`room or voting by votingId: ${votingId}`);
 
-    const payloadFn = id => (votingRepo.canViewVotes(room.id, id) ? { userId, votingId, point } : { userId, votingId });
+    const payloadFn = (id: Uuid) => (votingRepo.canViewVotes(room.id, id) ? { userId, votingId, point } : { userId, votingId });
     votingRepo.vote(voting, userId, point).then(() => broadcast('voted', payloadFn, room.id));
   }
 
