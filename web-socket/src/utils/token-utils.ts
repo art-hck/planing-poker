@@ -43,10 +43,5 @@ export function verifyToken(r: RoutePayload, sendHandshake?: boolean): User {
 }
 
 export function getUserId(token: Token): Uuid {
-  const tokenPayload = jwt.decode(token) as TokenPayload;
-
-  if(!tokenPayload.user)
-    throw new JsonWebTokenError('');
-
-  return tokenPayload.user.id;
+  return jwt.decode(token, { json: true })?.['user']?.id ?? ''; // Проверки на случай старого формата токена
 }
