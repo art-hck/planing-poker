@@ -15,6 +15,10 @@
   }
 }
 
+.mat-headline {
+  max-width: 660px;
+}
+
 mat-horizontal-stepper {
   width: 100%;
   max-width: 660px;
@@ -50,12 +54,14 @@ mat-horizontal-stepper {
 
 
 }
+
 @media screen and (max-width: 1200px) {
   mat-horizontal-stepper {
     max-width: 460px;
   }
   .poker-cards {
     max-width: 460px;
+
     &__item {
       width: 50px;
       height: 100px;
@@ -68,9 +74,12 @@ mat-horizontal-stepper {
   .mat-headline {
     font-size: 18px;
     line-height: normal;
+    max-width: 420px;
   }
+
   .poker-cards {
     max-width: 420px;
+
     &__item {
       width: 90px;
       height: 60px;

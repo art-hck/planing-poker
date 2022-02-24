@@ -50,7 +50,6 @@ export class RoomRepository implements Repository<Room> {
    * @param ws
    */
   async join(room: Room, userId: Uuid, ws: WebSocket) {
-    console.log('JOIN', room.users, userId);
     if (!room.users.has(userId)) {
       room.users.set(userId, new Set([RoomRole.user]));
     }
