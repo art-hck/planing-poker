@@ -11,3 +11,7 @@ export function deserialize<T = unknown>(object: T) {
     return typeof v === 'object' && v !== null ? (v.dataType === 'Map' ? new Map(v.value) : v.dataType === 'Set' ? new Set(v.value) : v) : v;
   });
 }
+
+export function replacer(k: unknown, v: unknown) {
+  return v instanceof Map ? Array.from(v.entries()) : v instanceof Set ? Array.from(v) : v;
+}

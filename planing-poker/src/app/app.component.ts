@@ -7,7 +7,7 @@ import { of, startWith, switchMap } from 'rxjs';
 import { Users } from './actions/users.actions';
 import { Votings } from './actions/votings.actions';
 import { AuthComponent } from './components/auth/auth.component';
-import { AuthService } from './components/auth/auth.service';
+import { AuthService } from './services/auth.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
 
 @Component({
@@ -36,11 +36,6 @@ export class AppComponent implements OnInit {
         return token ? of({ token, refreshToken }) : this.dialog.open(AuthComponent, config).afterClosed();
       }),
     ).subscribe((handshake) => this.authService.login$.next(handshake));
-
-    // this.ws.connected$.pipe(skip(1), distinctUntilChanged()).subscribe(connected => {
-    //   this.snackBar.open(connected ? 'Соединение восстановлено!' : 'Потеряно соединение...', "", { duration: connected ? 1000 : 0 });
-    // });
-
   }
 
   ngOnInit() {
@@ -54,7 +49,10 @@ export class AppComponent implements OnInit {
       restartVoting: voting => this.store.dispatch(new Votings.Restart(voting)),
       newRoom: ({ roomId }) => this.router.navigate([roomId]),
       notFound: () => this.router.navigate(['not-found'], { skipLocationChange: true }),
-      // reject: () => { this.authService.loginAttempts++; this.authService.logout$.next(); },
+      denied: () => {
+        this.router.navigate(['forbidden'], { skipLocationChange: true });
+        this.authService.logout$.next();
+      },
       invalidToken: () => this.authService.logout$.next({ emitEvent: false }),
       bye: () => this.authService.logout$.next({ emitEvent: false }),
       feedback: ({ success }) => {

@@ -15,8 +15,8 @@ import { Room, RoomRole, Voting } from '@common/models';
 import * as confetti from 'canvas-confetti';
 import { CreateTypes as Confetti } from 'canvas-confetti';
 import { concatMap, range, Subject, takeUntil, timer } from 'rxjs';
-import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../../services/auth.service';
+import { PlaningPokerWsService } from '../../../services/planing-poker-ws.service';
 
 @Component({
   selector: 'pp-cards',

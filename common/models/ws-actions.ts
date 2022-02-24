@@ -21,6 +21,7 @@ export interface WsAction {
   leaveRoom: { roomId: Uuid };
   setRole: { userId: Uuid, roomId: Uuid, role: RoomRole };
   feedback: { message: string, subject: string };
+  linkTelegram: { code: number };
 }
 
 export interface WsEvent<serialized = true> {
@@ -40,4 +41,5 @@ export interface WsEvent<serialized = true> {
   feedback: { success: boolean }
   invalidToken: {}
   bye: {};
+  linkTelegram: { success: boolean };
 }

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { WsAction, WsEvent, WsMessage } from '@common/models';
+import { TokenPayload } from '@common/models/token-payload';
 import jwt_decode from 'jwt-decode';
 import { BehaviorSubject, bufferToggle, distinctUntilChanged, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../../environments/environment';
-import { AuthService } from '../components/auth/auth.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,7 @@ export class WsService {
     this.read('handshake').subscribe(({ refreshToken, token }) => {
       window.localStorage.setItem('token', token);
       window.localStorage.setItem('refreshToken', refreshToken);
-      this.authService.user$.next(jwt_decode(token));
+      this.authService.user$.next(jwt_decode<TokenPayload>(token)?.user || null);
       this.connected$.next(true);
     });
   }

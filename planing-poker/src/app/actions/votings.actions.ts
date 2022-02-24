@@ -1,5 +1,5 @@
-import { Uuid } from "@common/models";
-import { Voting } from "@common/models/voting";
+import { Uuid } from '@common/models';
+import { Voting } from '@common/models/voting';
 
 export namespace Votings {
   export class Fetch {

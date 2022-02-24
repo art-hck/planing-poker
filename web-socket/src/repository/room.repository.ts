@@ -50,6 +50,7 @@ export class RoomRepository implements Repository<Room> {
    * @param ws
    */
   async join(room: Room, userId: Uuid, ws: WebSocket) {
+    console.log('JOIN', room.users, userId);
     if (!room.users.has(userId)) {
       room.users.set(userId, new Set([RoomRole.user]));
     }
@@ -58,7 +59,7 @@ export class RoomRepository implements Repository<Room> {
       room.users.get(userId)?.add(RoomRole.admin); // Уху, в комнате нет админов. Хапаем права себе
     }
 
-    connections.add(room.id, userId, ws);
+    connections.connect(room.id, userId, ws);
     return this.update(room);
   }
 
@@ -89,7 +90,7 @@ export class RoomRepository implements Repository<Room> {
     return new Map(
       Array.from(this.rooms.values())
         .filter(room => room.users.has(userId))
-        .map(({ id, name }) => [id, { id, name }]),
+        .map(({ id, name }) => [id, { id, name }])
     );
   }
 
@@ -107,7 +108,7 @@ export class RoomRepository implements Repository<Room> {
    * @param userId
    */
   verifyAdmin(roomId: Uuid, userId: Uuid) {
-    const user = usersRepo.users.get(userId);
+    const user = usersRepo.get(userId);
     const room = this.rooms.get(roomId);
 
     if (user && !user?.su && !room?.users.get(user.id)?.has(RoomRole.admin)) {
@@ -120,6 +121,6 @@ export class RoomRepository implements Repository<Room> {
    * @param room
    */
   hasAdmins(room: Room): boolean {
-    return Array.from(room.users.entries()).some(([id, roles]) => roles.has(RoomRole.admin) && connections.hasUser(room.id, id));
+    return Array.from(room.users.entries()).some(([id, roles]) => roles.has(RoomRole.admin) && connections.isConnected(room.id, id));
   }
 }

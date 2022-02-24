@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { RolesName, Room, RoomRole, User, Uuid } from "@common/models";
-import { AuthService } from "../../auth/auth.service";
-import { PlaningPokerWsService } from "../../../services/planing-poker-ws.service";
-import { Colors } from "../../../util/colors";
-import { filter } from "rxjs";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { RolesName, Room, RoomRole, User, Uuid } from '@common/models';
+import { filter } from 'rxjs';
+import { AuthService } from '../../../../services/auth.service';
+import { PlaningPokerWsService } from '../../../../services/planing-poker-ws.service';
+import { Colors } from '../../../../util/colors';
 
 @Component({
   selector: 'pp-user',

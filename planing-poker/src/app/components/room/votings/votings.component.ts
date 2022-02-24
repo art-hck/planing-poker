@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, OnDest
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { Room, Voting } from '@common/models';
 import { filter, Subject, takeUntil } from 'rxjs';
-import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
-import { AuthService } from '../auth/auth.service';
+import { PlaningPokerWsService } from '../../../services/planing-poker-ws.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'pp-votings',

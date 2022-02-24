@@ -4,6 +4,9 @@ import { roomRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 
 export class RoomController {
+  /**
+   * Присоединиться к комнате
+   */
   static join({ payload: { roomId }, send, broadcast, userId, ws }: RoutePayload<'joinRoom'>) {
     const room = roomRepo.get(roomId);
 
@@ -22,16 +25,22 @@ export class RoomController {
     });
   }
 
+  /**
+   * Покинуть комнату
+   */
   static leave({ payload: { roomId }, broadcast, userId, ws }: RoutePayload<'leaveRoom'>) {
     const room = roomRepo.rooms.get(roomId);
     if (!room) throw new NotFoundError(`roomId: ${roomId}`);
 
-    connections.deleteUserConnections(room.id, userId, ws);
-    if (!connections.hasUser(room.id, userId)) {
+    connections.disconnectUser(room.id, userId, ws);
+    if (!connections.isConnected(room.id, userId)) {
       broadcast('users', usersRepo.list(room.id), room.id);
     }
   }
 
+  /**
+   * Создать комнату
+   */
   static create({ payload: { name }, send, userId }: RoutePayload<'newRoom'>) {
     const roomId = uuid.v4();
 

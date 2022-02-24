@@ -8,7 +8,7 @@ export class FeedbackController {
     const { tmChatId } = Config;
     if (!tmChatId) throw new Error('Chat id not provided');
     bot?.telegram
-      .sendMessage(tmChatId, `<b>${subject}</b>\nОт: <b>${usersRepo.users.get(userId)?.name}</b>\n${message}`, { parse_mode: 'HTML' })
+      .sendMessage(tmChatId, `<b>${subject}</b>\nОт: <b>${usersRepo.get(userId)?.name}</b>\n${message}`, { parse_mode: 'HTML' })
       .then(() => send('feedback', { success: true }))
       .catch(() => send('feedback', { success: false }));
   }

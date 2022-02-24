@@ -1,9 +1,12 @@
 FROM node:lts-alpine AS build
 WORKDIR /usr/src/app
-COPY ./planing-poker/package.json ./planing-poker/package-lock.json ./planing-poker/
-RUN cd ./planing-poker && npm ci
+
 COPY ./planing-poker ./planing-poker
+RUN cd ./planing-poker && npm ci
+
 COPY ./common ./common
+RUN cd ./common && npm ci
+
 RUN cd ./planing-poker && npm run build
 
 FROM nginx:stable

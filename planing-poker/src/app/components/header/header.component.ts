@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { ResolutionService } from '../../services/resolution.service';
-import { AuthService } from '../auth/auth.service';
-import { FeedbackComponent } from '../feedback/feedback.component';
+import { FeedbackComponent } from './feedback/feedback.component';
+import { TelegramLinkComponent } from './telegram-link/telegram-link.component';
 
 @Component({
   selector: 'pp-header',
@@ -29,5 +30,9 @@ export class HeaderComponent {
     this.dialog.open(FeedbackComponent, { width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(({ subject, message }) => {
       this.pp.feedback(subject, message);
     });
+  }
+
+  telegramLink() {
+    this.dialog.open(TelegramLinkComponent, { width: '300px' });
   }
 }

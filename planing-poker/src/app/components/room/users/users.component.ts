@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } f
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { Room, RoomRole, User, Uuid, Voting } from '@common/models';
-import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
-import { Colors } from '../../util/colors';
-import { AuthService } from '../auth/auth.service';
-import { ShareRoomDialogComponent } from '../rooms/rooms.component';
+import { AuthService } from '../../../services/auth.service';
+import { PlaningPokerWsService } from '../../../services/planing-poker-ws.service';
+import { Colors } from '../../../util/colors';
+import { ShareRoomDialogComponent } from '../../rooms/rooms.component';
 
 @Component({
   selector: 'pp-users',

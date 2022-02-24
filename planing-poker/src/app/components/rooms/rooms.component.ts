@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
+import { MatDialog, MatDialogState } from '@angular/material/dialog';
 import { MatDialogConfig } from '@angular/material/dialog/dialog-config';
 import { Router } from '@angular/router';
 import { Uuid } from '@common/models';
@@ -9,7 +8,8 @@ import { filter, Subject, takeUntil } from 'rxjs';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { ResolutionService } from '../../services/resolution.service';
 import { SidebarsService } from '../../services/sidebars.service';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../services/auth.service';
+import { RoomCreateComponent } from './room-create/room-create.component';
 
 @Component({
   selector: 'pp-rooms',
@@ -43,7 +43,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
   }
 
   newRoom(config: MatDialogConfig = {}) {
-    this.dialog.open(NewRoomDialogComponent, { ...config, id: 'new_room', width: '350px' }).afterClosed()
+    this.dialog.open(RoomCreateComponent, { ...config, id: 'new_room', width: '350px' }).afterClosed()
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name, code }) => {
         code ? this.router.navigate([code]) : name ? this.pp.newRoom(name) : null;
@@ -57,50 +57,6 @@ export class RoomsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-}
-
-@Component({
-  styles: [`
-    mat-form-field {
-      width: 100%;
-    }`],
-  template: `
-    <h1 mat-dialog-title>Создать новую комнату</h1>
-    <form [formGroup]='form' (ngSubmit)='form.valid && matDialogRef.close(form.value)'>
-      <div mat-dialog-content>
-
-        <mat-form-field appearance='outline' hideRequiredMarker>
-          <mat-label>Название</mat-label>
-          <input matInput formControlName='name'>
-        </mat-form-field>
-        <h4 mat-dialog-title [align]="'center'" [style.color]="'#999'">или войдите с помощью кода</h4>
-        <mat-form-field appearance='outline' hideRequiredMarker>
-          <mat-label>Код для входа в комнату</mat-label>
-          <input matInput formControlName='code'>
-        </mat-form-field>
-
-      </div>
-      <div mat-dialog-actions [align]="'end'">
-        <button mat-flat-button [mat-dialog-close]='false' *ngIf='!matDialogRef.disableClose'>Отмена</button>
-        <button mat-flat-button color='primary'>Присоединиться</button>
-      </div>
-    </form>`,
-})
-export class NewRoomDialogComponent {
-  readonly codeValidators = [Validators.required, Validators.minLength(36), Validators.maxLength(36)];
-  readonly form = this.fb.group({
-    name: ['', Validators.required],
-    code: ['', this.codeValidators],
-  });
-
-  constructor(private fb: FormBuilder, public matDialogRef: MatDialogRef<NewRoomDialogComponent>) {
-    this.form.valueChanges.subscribe((v) => {
-      this.form.get('name')?.setValidators(v.code ? null : Validators.required);
-      this.form.get('code')?.setValidators(v.name ? null : this.codeValidators);
-      this.form.get('code')?.updateValueAndValidity({ emitEvent: false });
-      this.form.get('name')?.updateValueAndValidity({ emitEvent: false });
-    });
   }
 }
 

@@ -12,8 +12,8 @@ import { SidebarsService } from '../../services/sidebars.service';
 import { WsService } from '../../services/ws.service';
 import { UsersState } from '../../states/users.state';
 import { VotingsState } from '../../states/votings.state';
-import { AuthService } from '../auth/auth.service';
-import { CreateVoteComponent } from '../create-vote/create-vote.component';
+import { AuthService } from '../../services/auth.service';
+import { CreateVoteComponent } from './create-vote/create-vote.component';
 
 @Component({
   selector: 'pp-room',

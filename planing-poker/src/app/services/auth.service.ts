@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Handshake, Room, RoomRole, User } from '@common/models';
 import { Select } from '@ngxs/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { UsersState } from '../../states/users.state';
+import { UsersState } from '../states/users.state';
 
 @Injectable({
   providedIn: 'root',

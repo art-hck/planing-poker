@@ -13,11 +13,14 @@ import { AppSharedModule } from './app-shared.module';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { AuthGuard } from './components/auth/auth.guard';
-import { FeedbackComponent } from './components/feedback/feedback.component';
+import { FeedbackComponent } from './components/header/feedback/feedback.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { NewRoomDialogComponent, RoomsComponent, ShareRoomDialogComponent } from './components/rooms/rooms.component';
+import { RoomCreateComponent } from './components/rooms/room-create/room-create.component';
+import { RoomsComponent, ShareRoomDialogComponent } from './components/rooms/rooms.component';
+import { TelegramLinkComponent } from './components/header/telegram-link/telegram-link.component';
 import { UsersState } from './states/users.state';
 import { VotingsState } from './states/votings.state';
+import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 
 @NgModule({
   declarations: [
@@ -25,10 +28,11 @@ import { VotingsState } from './states/votings.state';
     AuthComponent,
     FeedbackComponent,
     NotFoundComponent,
-    NewRoomDialogComponent,
+    RoomCreateComponent,
     RoomsComponent,
     ShareRoomDialogComponent,
-
+    TelegramLinkComponent,
+    ForbiddenComponent,
   ],
   imports: [
     AppSharedModule,

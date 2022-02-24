@@ -1,22 +1,22 @@
 import { NgModule } from '@angular/core';
-import { RoomRoutingModule } from "./room-routing.module";
-import { RoomComponent } from "./room/room.component";
-import { VotingDeleteConfirmComponent, VotingsComponent } from "./votings/votings.component";
-import { UsersComponent } from "./users/users.component";
-import { CardsComponent } from "./cards/cards.component";
-import { AppSharedModule } from "../app-shared.module";
-import { DoughnutDirective } from "../directives/doughnut.directive";
-import { CreateVoteComponent } from "./create-vote/create-vote.component";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatRippleModule } from "@angular/material/core";
-import { MatStepperModule } from "@angular/material/stepper";
-import { MatChipsModule } from "@angular/material/chips";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatBadgeModule } from "@angular/material/badge";
-import { MatBottomSheetModule } from "@angular/material/bottom-sheet";
-import { UsersPipe } from "./users/users.pipe";
-import { MatMenuModule } from "@angular/material/menu";
-import { ChangeModeratorConfirmComponent, UserComponent } from './users/user/user.component';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatRippleModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { AppSharedModule } from '../app-shared.module';
+import { DoughnutDirective } from '../directives/doughnut.directive';
+import { CardsComponent } from './room/cards/cards.component';
+import { CreateVoteComponent } from './room/create-vote/create-vote.component';
+import { RoomRoutingModule } from './room-routing.module';
+import { RoomComponent } from './room/room.component';
+import { ChangeModeratorConfirmComponent, UserComponent } from './room/users/user/user.component';
+import { UsersComponent } from './room/users/users.component';
+import { UsersPipe } from './room/users/users.pipe';
+import { VotingDeleteConfirmComponent, VotingsComponent } from './room/votings/votings.component';
 
 
 @NgModule({
@@ -30,7 +30,7 @@ import { ChangeModeratorConfirmComponent, UserComponent } from './users/user/use
     CardsComponent,
     UsersPipe,
     UserComponent,
-    ChangeModeratorConfirmComponent
+    ChangeModeratorConfirmComponent,
   ],
   imports: [
     RoomRoutingModule,
@@ -43,7 +43,8 @@ import { ChangeModeratorConfirmComponent, UserComponent } from './users/user/use
     MatTooltipModule,
     MatBadgeModule,
     MatBottomSheetModule,
-    MatMenuModule
-  ]
+    MatMenuModule,
+  ],
 })
-export class RoomModule { }
+export class RoomModule {
+}

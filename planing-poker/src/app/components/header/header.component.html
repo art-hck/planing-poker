@@ -4,12 +4,17 @@
   </button>
   <a mat-button routerLink="/"><h1>Planing Poker</h1></a>
   <div class="flex-space"></div>
-  <button mat-icon-button (click)="feedback()">
-    <mat-icon>feedback</mat-icon>
-  </button>
-  <button mat-icon-button (click)="authService.logout$.next(undefined)">
-    <mat-icon>logout</mat-icon>
-  </button>
+  <ng-container *ngIf='authService.user$ | async'>
+    <button mat-icon-button (click)="telegramLink()" *ngIf='false'>
+      <mat-icon>link</mat-icon>
+    </button>
+    <button mat-icon-button (click)="feedback()">
+      <mat-icon>feedback</mat-icon>
+    </button>
+    <button mat-icon-button (click)="authService.logout$.next(undefined)">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </ng-container>
   <button mat-icon-button (click)="showVotingsChange.emit(!showVotings)"  *ngIf="showVotingsChange.observed && (resolution.isMobile$ | async)">
     <mat-icon>chevron_left</mat-icon>
   </button>

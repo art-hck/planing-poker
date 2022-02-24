@@ -112,7 +112,7 @@ export class VotingRepository implements Repository<Voting> {
    */
   votes(votingId: Uuid, userId: Uuid): Voting['votes'] {
     const voting = this.votings.get(votingId);
-    const user = usersRepo.users.get(userId);
+    const user = usersRepo.get(userId);
     const room = roomRepo.getByVotingId(votingId);
     return new Map(Array.from(voting?.votes.entries() || []).map(([u, p]) => [u, (user && room && this.canViewVotes(room.id, user.id)) || voting?.status === 'end' ? p : null]));
   }
@@ -125,6 +125,6 @@ export class VotingRepository implements Repository<Voting> {
   canViewVotes(roomId: Uuid, userId: Uuid): boolean {
     const room = roomRepo.rooms.get(roomId);
     const roles = room?.users.get(userId);
-    return !room || !roles || usersRepo.users.get(userId)?.su || roles.has(RoomRole.admin) || roles.has(RoomRole.observer);
+    return !room || !roles || usersRepo.get(userId)?.su || roles.has(RoomRole.admin) || roles.has(RoomRole.observer);
   }
 }

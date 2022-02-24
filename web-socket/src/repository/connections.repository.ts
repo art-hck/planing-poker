@@ -35,20 +35,11 @@ class ConnectionsRepository {
   }
 
   /**
-   * Получить соединения пользователя
-   * @param roomId
-   * @param userId
-   */
-  getByUserId(roomId: Uuid, userId: Uuid): Set<WebSocket> | undefined {
-    return this.get(roomId)?.get(userId);
-  }
-
-  /**
    * Проверить есть ли соединение пользователя с комнатой
    * @param roomId
    * @param userId
    */
-  hasUser(roomId: Uuid, userId: Uuid): boolean {
+  isConnected(roomId: Uuid, userId: Uuid): boolean {
     return !!this.get(roomId)?.has(userId);
   }
 
@@ -58,27 +49,41 @@ class ConnectionsRepository {
    * @param userId
    * @param ws
    */
-  add(roomId: Uuid, userId: Uuid, ws: WebSocket): void {
-    const roomConnections = this.has(roomId) ? this.get(roomId) : this.set(roomId, new Map()).get(roomId);
+  connect(roomId: Uuid, userId: Uuid, ws: WebSocket): void {
+    const roomConnections = this.connections.has(roomId) ? this.get(roomId) : this.set(roomId, new Map()).get(roomId);
     roomConnections?.has(userId) ? roomConnections.get(userId)?.add(ws) : roomConnections?.set(userId, new Set([ws]));
 
-    log.normal('WebSocket', `${usersRepo.users.get(userId)?.name} подключился (${roomConnections?.get(userId)?.size} соединений) `);
+    log.normal('WebSocket', `${usersRepo.get(userId)?.name} подключился (${roomConnections?.get(userId)?.size} соединений) `);
+  }
+
+  disconnect(ws: WebSocket) {
+    this.connections.forEach(room =>
+      room.forEach(user => {
+        user.has(ws) && user.delete(ws);
+      })
+    );
   }
 
   /**
-   * Удалить соединения пользователя
+   * Отключить пользователя от комнаты
    * @param roomId
    * @param userId
-   * @param ws если параметр не указан удаляет все соединения
+   * @param ws если параметр не указан отключает все соединения
    */
-  deleteUserConnections(roomId: Uuid, userId: Uuid, ws?: WebSocket): void {
-    const userConnections = this.getByUserId(roomId, userId);
-    ws && userConnections?.delete(ws);
-    log.normal('WebSocket', `${usersRepo.users.get(userId)?.name} отключился (${userConnections?.size} соединений)`);
+  disconnectUser(roomId: Uuid, userId: Uuid, ws?: WebSocket): void {
+    const userConnections = this.get(roomId)?.get(userId);
+    if (userConnections) {
+      ws && userConnections?.delete(ws);
+      log.normal('WebSocket', `${usersRepo.get(userId)?.name} отключился (${userConnections?.size} соединений)`);
 
-    if ((userConnections && userConnections.size < 1) || !ws) {
-      this.get(roomId)?.delete(userId);
+      if ((userConnections && userConnections.size < 1) || !ws) {
+        this.get(roomId)?.delete(userId);
+      }
     }
+  }
+
+  getRoomId(ws: WebSocket): Uuid | undefined {
+    return Array.from(this.connections.entries()).find(([, users]) => Array.from(users.values()).some(user => user.has(ws)))?.[0];
   }
 }
 

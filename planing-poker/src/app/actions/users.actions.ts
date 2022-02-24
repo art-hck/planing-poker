@@ -1,4 +1,4 @@
-import { User } from "@common/models";
+import { User } from '@common/models';
 
 export namespace Users {
   export class Fetch {

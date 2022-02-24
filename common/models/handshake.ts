@@ -3,8 +3,9 @@ import { Token } from './token';
 
 export interface Handshake {
   name: string;
-  role: Role;
   password: string;
+  telegramCode: number;
+  role: Role;
   token: Token;
   refreshToken: Token;
 }
