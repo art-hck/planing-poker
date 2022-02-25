@@ -1,4 +1,5 @@
-<h1 mat-dialog-title>Создать новую комнату</h1>
+<h1 mat-dialog-title *ngIf='join'>Присоединиться к комнате</h1>
+<h1 mat-dialog-title *ngIf='!join'>Создать новую комнату</h1>
 <form [formGroup]='form' (ngSubmit)='form.valid && matDialogRef.close(form.value)'>
   <div mat-dialog-content>
 
@@ -7,7 +8,7 @@
       <input matInput formControlName='name'>
     </mat-form-field>
     <mat-form-field appearance='outline' hideRequiredMarker *ngIf='join'>
-      <mat-label>Код для входа в комнату</mat-label>
+      <mat-label>Код для входа</mat-label>
       <input matInput formControlName='code'>
     </mat-form-field>
     <h4 mat-dialog-title [align]="'center'" [style.color]="'#999'">
@@ -16,6 +17,6 @@
   </div>
   <div mat-dialog-actions [align]="'end'">
     <button mat-flat-button [mat-dialog-close]='false' *ngIf='!matDialogRef.disableClose'>Отмена</button>
-    <button mat-flat-button color='primary'>Создать</button>
+    <button mat-flat-button color='primary'>Присоединиться</button>
   </div>
 </form>

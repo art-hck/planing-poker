@@ -43,7 +43,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
   }
 
   newRoom(config: MatDialogConfig = {}) {
-    this.dialog.open(RoomCreateComponent, { ...config, id: 'new_room', width: '350px' }).afterClosed()
+    this.dialog.open(RoomCreateComponent, { ...config, id: 'new_room', width: '360px' }).afterClosed()
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name, code }) => {
         code ? this.router.navigate([code]) : name ? this.pp.newRoom(name) : null;
