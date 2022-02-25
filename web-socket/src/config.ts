@@ -16,5 +16,8 @@ export const Config = {
   jwtExp: process.env['JWT_EXP'],
   jwtRtExp: process.env['JWT_RT_EXP'],
   tmBotToken: process.env['TELEGRAM_BOT_TOKEN'],
-  tmChatId: process.env['TELEGRAM_CHAT_ID']
+  tmChatId: process.env['TELEGRAM_CHAT_ID'],
+  googleClientId: process.env['GOOGLE_CLIENT_ID'],
+  googleClientSecret: process.env['GOOGLE_CLIENT_SECRET'],
+  googleRedirectUri: process.env['GOOGLE_REDIRECT_URI']
 };

@@ -47,6 +47,9 @@
   <div mat-dialog-actions>
     <mat-error *ngIf="devMode">Superuser mode activated</mat-error>
     <div class="flex-space"></div>
+    <a mat-stroked-button href='https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&response_type=code&client_id=697037016684-mdhphcgjb6j87ot5nc6bl2orh5qujr49.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A4201%2Fgoogle-auth'>
+      <mat-icon svgIcon="google"></mat-icon>&nbsp; Войти с Google
+    </a>
     <button type="submit" mat-flat-button color="primary">Войти</button>
   </div>
 </form>

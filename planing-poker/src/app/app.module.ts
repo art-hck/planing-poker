@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatMenuModule } from '@angular/material/menu';
@@ -11,6 +12,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppSharedModule } from './app-shared.module';
 import { AppComponent } from './app.component';
+import { AuthGoogleComponent } from './components/auth/auth-google.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { AuthGuard } from './components/auth/auth.guard';
 import { FeedbackComponent } from './components/header/feedback/feedback.component';
@@ -26,6 +28,7 @@ import { ForbiddenComponent } from './components/forbidden/forbidden.component';
   declarations: [
     AppComponent,
     AuthComponent,
+    AuthGoogleComponent,
     FeedbackComponent,
     NotFoundComponent,
     RoomCreateComponent,
@@ -39,6 +42,7 @@ import { ForbiddenComponent } from './components/forbidden/forbidden.component';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    HttpClientModule,
     NgxsModule.forRoot([UsersState, VotingsState], { developmentMode: !environment.production }),
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
     MatButtonToggleModule,

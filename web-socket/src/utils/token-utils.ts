@@ -26,7 +26,7 @@ export function verifyToken(r: RoutePayload, sendHandshake?: boolean): User {
     } else throw e;
   }
 
-  if(!tokenPayload.user) {
+  if (!tokenPayload.user) {
     throw new JsonWebTokenError('');
   }
 

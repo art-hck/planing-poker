@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGoogleComponent } from './components/auth/auth-google.component';
 import { AuthGuard } from './components/auth/auth.guard';
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
@@ -9,6 +10,7 @@ const routes: Routes = [
   { path: '', component: RoomsComponent, canActivate: [AuthGuard] },
   { path: 'forbidden', component: ForbiddenComponent },
   { path: 'not-found', component: NotFoundComponent },
+  { path: 'google-auth', component: AuthGoogleComponent },
   { path: ':id', loadChildren: () => import('./components/room.module').then(m => m.RoomModule), canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'not-found' },
 ];

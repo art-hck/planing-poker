@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 import { RolesName } from '@common/models';
 
 @Component({
@@ -23,7 +25,13 @@ export class AuthComponent {
   telegramHandshake = false;
   private ctrlCount = 0;
 
-  constructor(public dialogRef: MatDialogRef<AuthComponent>, private fb: FormBuilder) {
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    public dialogRef: MatDialogRef<AuthComponent>,
+    private fb: FormBuilder,
+    private domSanitizer: DomSanitizer
+  ) {
+    matIconRegistry.addSvgIcon('google', this.domSanitizer.bypassSecurityTrustResourceUrl("assets/google-icon.svg"));
   }
 
   @HostListener('window:keyup', ['$event'])

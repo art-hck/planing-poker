@@ -3,10 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { of, startWith, switchMap } from 'rxjs';
 import { Users } from './actions/users.actions';
 import { Votings } from './actions/votings.actions';
-import { AuthComponent } from './components/auth/auth.component';
 import { AuthService } from './services/auth.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
 
@@ -26,16 +24,6 @@ export class AppComponent implements OnInit {
     private pp: PlaningPokerWsService,
     private snackBar: MatSnackBar,
   ) {
-    this.authService.logout$.pipe(
-      startWith(null),
-      switchMap(() => {
-        const token = window.localStorage.getItem('token');
-        const refreshToken = window.localStorage.getItem('refreshToken');
-
-        const config = { disableClose: true };
-        return token ? of({ token, refreshToken }) : this.dialog.open(AuthComponent, config).afterClosed();
-      }),
-    ).subscribe((handshake) => this.authService.login$.next(handshake));
   }
 
   ngOnInit() {

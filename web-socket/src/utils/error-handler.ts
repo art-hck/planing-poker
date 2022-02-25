@@ -1,3 +1,4 @@
+import { GaxiosError } from 'gaxios/build/src/common';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { NotFoundError, RoutePayload } from '../models';
 import { DeniedError } from '../models/denied-error.ts';
@@ -14,11 +15,12 @@ export function errorHandler(e: unknown, route: RoutePayload) {
       case e instanceof NotFoundError:
         log.error('WebSocket', `Сущность не найдена`, e.message);
         break;
+      case e instanceof GaxiosError:
       case e instanceof JsonWebTokenError:
         route.session.token = route.session.refreshToken = undefined;
         route.send('invalidToken', {});
         routes.bye(route);
-        log.error('WebSocket', `Недействительный токен`);
+        log.error('WebSocket', `Недействительный токен или ошибка google авторизации`);
         break;
       default:
         log.error('WebSocket', e.stack);

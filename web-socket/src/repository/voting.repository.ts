@@ -68,7 +68,7 @@ export class VotingRepository implements Repository<Voting> {
     return new Map(
       Array.from(this.votings.entries())
         .filter(([id]) => room && room.votingIds.has(id))
-        .map(([k, v]) => [k, { ...v, votes: this.votes(v.id, userId) }]),
+        .map(([k, v]) => [k, { ...v, votes: this.votes(v.id, userId) }])
     );
   }
 

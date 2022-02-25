@@ -16,8 +16,8 @@ export class UserRepository implements Repository<User> {
     return this.users.get(userId);
   }
 
-  async find(id: Uuid) {
-    return this.collection?.findOne({ id });
+  async find(id: Uuid): Promise<User | null> {
+    return this.collection?.findOne({ id }, { projection: { _id: 0 } }) || null;
   }
 
   set(user: User): void {

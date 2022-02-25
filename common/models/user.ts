@@ -5,5 +5,5 @@ export interface User {
   id: Uuid;
   name: string;
   su: boolean;
-  role: Role;
+  role?: Role;
 }

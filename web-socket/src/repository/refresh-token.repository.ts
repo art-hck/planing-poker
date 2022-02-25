@@ -49,8 +49,8 @@ export class RefreshTokenRepository implements Repository<{ refreshToken: Token 
         $in: Array.from(this.refreshTokens).filter(rt => {
           const { exp } = jwt.decode(rt, { json: true }) || {}; // проверяем и декодируем токен
           return exp || 0 > Date.now() / 1000;
-        }),
-      },
+        })
+      }
     });
   }
 }
