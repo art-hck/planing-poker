@@ -42,7 +42,7 @@ export class AuthController {
    */
   static bye({ broadcast, userId, session }: RoutePayload<'bye'>) {
     roomRepo.rooms.forEach(room => {
-      broadcast('bye', {}, room.id, userId); // Отправляем на все соединени пользователя событие разлогина
+      // broadcast('bye', {}, room.id, userId); // Отправляем на все соединени пользователя событие разлогина
 
       if (connections.isConnected(room.id, userId)) {
         connections.disconnectUser(room.id, userId);
