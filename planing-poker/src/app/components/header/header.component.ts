@@ -11,6 +11,7 @@ import { TelegramLinkComponent } from './telegram-link/telegram-link.component';
   selector: 'pp-header',
   templateUrl: './header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
   @Input() showPlayers = true;

@@ -40,7 +40,7 @@
         </mat-form-field>
       </div>
     </ng-container>
-    <h4 mat-dialog-title [align]="'center'" [style.color]="'#999'" *ngIf='false'>
+    <h4 mat-dialog-title [align]="'center'" [style.color]="'#999'" *ngIf='devMode'>
       <a mat-button (click)='telegramHandshake = !telegramHandshake'>или  {{telegramHandshake ? 'зарегистрируйтесь' : 'войдите с помощью телеграм'}}</a>
     </h4>
   </div>
