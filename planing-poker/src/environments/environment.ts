@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  websocketHost: 'ws://localhost:9000'
+  websocketHost: '',
+  googleClientId: '',
+  googleRedirectUri: ''
 };
 
 /*

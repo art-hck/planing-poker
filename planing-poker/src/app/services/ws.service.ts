@@ -2,31 +2,45 @@ import { Injectable } from '@angular/core';
 import { WsAction, WsEvent, WsMessage } from '@common/models';
 import { TokenPayload } from '@common/models/token-payload';
 import jwt_decode from 'jwt-decode';
-import { BehaviorSubject, bufferToggle, distinctUntilChanged, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from 'rxjs';
+import {
+  BehaviorSubject,
+  bufferToggle,
+  distinctUntilChanged,
+  filter,
+  map,
+  merge,
+  mergeMap,
+  Observable,
+  ReplaySubject,
+  Subject,
+  timer,
+  windowToggle
+} from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class WsService {
   private ws$!: WebSocketSubject<WsMessage<any>>;
   private readonly read$ = new Subject<WsMessage<any>>();
   private readonly send$ = new Subject<WsMessage<any>>();
   private readonly connected$ = new BehaviorSubject<boolean>(false);
+  public readonly openWs$ = new ReplaySubject<void>(1);
 
   constructor(private authService: AuthService) {
     this.connect();
 
-    // Все эмиты разлогина (rejected)
+    // Все эмиты разлогина
     const off$ = this.connected$.pipe(distinctUntilChanged(), filter(v => !v));
-    // Все эмиты успешной авторизации (granted)
+    // Все эмиты успешной авторизации
     const on$ = this.connected$.pipe(distinctUntilChanged(), filter(v => v));
 
     merge(
       this.send$.pipe(bufferToggle(off$, () => on$)),
-      this.send$.pipe(windowToggle(on$, () => off$)),
+      this.send$.pipe(windowToggle(on$, () => off$))
     ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
 
     this.authService.beforeLogout$.subscribe(options => {
@@ -36,11 +50,13 @@ export class WsService {
 
     this.authService.login$.subscribe(payload => this.send('handshake', payload, { force: true }));
     this.read('handshake').subscribe(({ refreshToken, token }) => {
-      window.localStorage.setItem('token', token);
-      window.localStorage.setItem('refreshToken', refreshToken);
+      window?.localStorage.setItem('token', token);
+      window?.localStorage.setItem('refreshToken', refreshToken);
       this.authService.user$.next(jwt_decode<TokenPayload>(token)?.user || null);
       this.connected$.next(true);
     });
+
+    window?.addEventListener('storage', e => e.key === 'token' && e.newValue === null && this.authService.logout$.next());
   }
 
   private connect() {
@@ -48,12 +64,13 @@ export class WsService {
     this.ws$?.complete();
     this.ws$ = new WebSocketSubject<WsMessage>({
       url: environment.websocketHost || `ws://${window?.location.hostname}:9000`,
+      openObserver: { next: () => this.openWs$.next() },
       closeObserver: {
         next: () => {
           this.connected$.next(false);
           timer(2000).subscribe(() => this.connect());
-        },
-      },
+        }
+      }
     });
 
     this.ws$.subscribe(event => this.read$.next(event));
@@ -69,7 +86,7 @@ export class WsService {
 
   public read<E extends keyof WsEvent, P extends WsEvent[E]>(event: E): Observable<P> {
     return this.read$.pipe(
-      filter(p => p.event === event), map(p => p.payload),
+      filter(p => p.event === event), map(p => p.payload)
       // tap((p) => console.log('READ <- ', event, p)),
     );
   }

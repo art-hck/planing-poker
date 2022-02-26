@@ -8,7 +8,6 @@ import { Routes } from './models';
 export const routes: Routes = {
   handshake: AuthController.handshake,
   bye: AuthController.bye,
-  linkTelegram: AuthController.linkTelegram,
   joinRoom: RoomController.join,
   leaveRoom: RoomController.leave,
   newRoom: RoomController.create,

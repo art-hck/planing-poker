@@ -1,8 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
-  <h1 mat-dialog-title *ngIf='!telegramHandshake'>Введите имя</h1>
-  <h1 mat-dialog-title *ngIf='telegramHandshake'>Введите код</h1>
-  <div mat-dialog-content >
-    <ng-container *ngIf='!telegramHandshake'>
+  <h1 mat-dialog-title>Введите имя</h1>
+  <div mat-dialog-content>
       <div>
         <mat-form-field appearance="outline" hideRequiredMarker>
           <mat-label>Имя</mat-label>
@@ -10,46 +8,30 @@
         </mat-form-field>
       </div>
 
-      <div *ngIf="devMode">
-        <mat-form-field appearance="outline" hideRequiredMarker>
-          <mat-label>Пароль</mat-label>
-          <input matInput formControlName="password" type="password">
-        </mat-form-field>
-      </div>
+    <div *ngIf='devMode'>
+      <mat-form-field appearance='outline' hideRequiredMarker>
+        <mat-label>Пароль</mat-label>
+        <input matInput formControlName='password' type='password'>
+      </mat-form-field>
+    </div>
 
-      <div class="team-roles">
-        <!--div class='mat-form-field-wrapper'-->
-          <mat-button-toggle-group formControlName="role" [class.mat-error]="true">
-            <mat-button-toggle *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-button-toggle>
-          </mat-button-toggle-group>
-        <!--/div-->
+    <div class='team-roles'>
+      <mat-button-toggle-group formControlName='role' [class.mat-error]='true'>
+        <mat-button-toggle *ngFor='let role of roles' [value]='role[0]'>{{role[1]}}</mat-button-toggle>
+      </mat-button-toggle-group>
 
-        <mat-form-field appearance="outline" hideRequiredMarker>
-          <mat-label>Роль</mat-label>
-          <mat-select formControlName="role">
-            <mat-option *ngFor="let role of roles" [value]="role[0]">{{role[1]}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </ng-container>
-    <ng-container *ngIf='telegramHandshake'>
-      <div [formGroup]='telegramCodeForm'>
-        <mat-form-field appearance="outline" hideRequiredMarker>
-          <mat-label>Код телеграмм</mat-label>
-          <input matInput type=number formControlName="telegramCode">
-        </mat-form-field>
-      </div>
-    </ng-container>
-    <h4 mat-dialog-title [align]="'center'" [style.color]="'#999'" *ngIf='devMode'>
-      <a mat-button (click)='telegramHandshake = !telegramHandshake'>или  {{telegramHandshake ? 'зарегистрируйтесь' : 'войдите с помощью телеграм'}}</a>
-    </h4>
+      <mat-form-field appearance='outline' hideRequiredMarker>
+        <mat-label>Роль</mat-label>
+        <mat-select formControlName='role'>
+          <mat-option *ngFor='let role of roles' [value]='role[0]'>{{role[1]}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
   <div mat-dialog-actions>
     <mat-error *ngIf="devMode">Superuser mode activated</mat-error>
     <div class="flex-space"></div>
-    <a mat-stroked-button href='https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&response_type=code&client_id=697037016684-mdhphcgjb6j87ot5nc6bl2orh5qujr49.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A4201%2Fgoogle-auth'>
-      <mat-icon svgIcon="google"></mat-icon>&nbsp; Войти с Google
-    </a>
+    <a mat-stroked-button [href]='googleLink'><mat-icon svgIcon="google"></mat-icon>&nbsp; Войти с Google</a>
     <button type="submit" mat-flat-button color="primary">Войти</button>
   </div>
 </form>

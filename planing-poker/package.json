@@ -28,6 +28,7 @@
     "canvas-confetti": "^1.5.1",
     "chart.js": "^3.6.0",
     "chartjs-plugin-datalabels": "^2.0.0",
+    "google-auth-library": "^7.14.0",
     "jwt-decode": "^3.1.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

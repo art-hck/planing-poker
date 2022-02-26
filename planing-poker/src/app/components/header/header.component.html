@@ -1,31 +1,27 @@
-<mat-toolbar color="primary">
-  <button mat-icon-button (click)="showPlayersChange.emit(!showPlayers)" *ngIf="showPlayersChange.observed && (resolution.isMobile$ | async)">
+<mat-toolbar color='primary'>
+  <button mat-icon-button (click)='showPlayersChange.emit(!showPlayers)' *ngIf='showPlayersChange.observed && (resolution.isMobile$ | async)'>
     <mat-icon>menu</mat-icon>
   </button>
-  <a mat-button routerLink="/"><h1>Planing Poker</h1></a>
-  <div class="flex-space"></div>
+  <a mat-button routerLink='/'><h1>Planing Poker</h1></a>
+  <div class='flex-space'></div>
 
-  <button mat-icon-button (click)="showVotingsChange.emit(!showVotings)"  *ngIf="showVotingsChange.observed && (resolution.isMobile$ | async)">
+  <button mat-icon-button (click)='showVotingsChange.emit(!showVotings)' *ngIf='showVotingsChange.observed && (resolution.isMobile$ | async)'>
     <mat-icon>chevron_left</mat-icon>
   </button>
-  <ng-container *ngIf='authService.user$ | async' >
-    <button mat-icon-button [matMenuTriggerFor]="menu" matBadge="" matBadgeSize='small' matBadgeColor='warn' >
+  <ng-container *ngIf='authService.user$ | async'>
+    <button mat-icon-button [matMenuTriggerFor]='menu' matBadge='' matBadgeSize='small' matBadgeColor='warn'>
       <mat-icon>more_vert</mat-icon>
     </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item  (click)="telegramLink()" *ngIf='(authService.user$ | async)?.su' >
-        <mat-icon matBadge="1" matBadgeSize='small' matBadgeColor='warn'>link</mat-icon>
-        <span>Привязать телеграм</span>
-      </button>
+    <mat-menu #menu='matMenu'>
       <button mat-menu-item [disabled]='true'>
         <mat-icon>settings</mat-icon>
         <span>Настройки</span>
       </button>
-      <button mat-menu-item (click)="feedback()">
+      <button mat-menu-item (click)='feedback()'>
         <mat-icon>feedback</mat-icon>
         <span>Обратная связь</span>
       </button>
-      <button mat-menu-item (click)="authService.logout$.next(undefined)">
+      <button mat-menu-item (click)='authService.logout$.next(undefined)'>
         <mat-icon>logout</mat-icon>
         <span>Выйти</span>
       </button>

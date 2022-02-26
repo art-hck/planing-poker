@@ -3,7 +3,6 @@ import { Config } from './config';
 import { GoogleRepository } from './repository/google.repository';
 import { RefreshTokenRepository } from './repository/refresh-token.repository';
 import { RoomRepository } from './repository/room.repository';
-import { TelegramRepository } from './repository/telegram.repository';
 import { UserRepository } from './repository/user.repository';
 import { VotingRepository } from './repository/voting.repository';
 import { log } from './utils/log';
@@ -12,10 +11,9 @@ export const refreshTokenRepo = new RefreshTokenRepository();
 export const roomRepo = new RoomRepository();
 export const votingRepo = new VotingRepository();
 export const usersRepo = new UserRepository();
-export const telegramRepo = new TelegramRepository();
 export const googleRepo = new GoogleRepository();
 
-const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, telegramRepo, googleRepo];
+const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, googleRepo];
 const { dbName, dbPassword, dbUsername, dbHost, dbPort } = Config;
 const mongo = new MongoClient(`mongodb://${dbUsername}:${dbPassword}@${dbHost}:${dbPort}`);
 

@@ -28,13 +28,12 @@ export class GoogleRepository implements Repository<GoogleAccount> {
    * Получить инфу о гугл-аккаунте пользователя
    * @param code
    */
-  async userInfo(code: string) {
+  async get(code: string) {
     const { tokens } = await this.oAuth2Client.getToken(code);
     this.oAuth2Client.setCredentials(tokens);
     const { data } = await this.oAuth2Client.request<GoogleAccount>({ url: 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json' });
     return data;
   }
-
 
   /**
    * Зарегистрировать и привязать аккаунт гугл к пользовательскому

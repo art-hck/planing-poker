@@ -32,8 +32,7 @@ Thumbs.db
 *.d.ts.map
 /common/**/*.js
 *.tsbuildinfo
-environment.fornex.ts
-environment.prod.ts
+environment.*.ts
 .env
 mongo
 certbot

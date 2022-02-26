@@ -19,7 +19,6 @@ import { FeedbackComponent } from './components/header/feedback/feedback.compone
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { RoomCreateComponent } from './components/rooms/room-create/room-create.component';
 import { RoomsComponent, ShareRoomDialogComponent } from './components/rooms/rooms.component';
-import { TelegramLinkComponent } from './components/header/telegram-link/telegram-link.component';
 import { UsersState } from './states/users.state';
 import { VotingsState } from './states/votings.state';
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
@@ -34,7 +33,6 @@ import { ForbiddenComponent } from './components/forbidden/forbidden.component';
     RoomCreateComponent,
     RoomsComponent,
     ShareRoomDialogComponent,
-    TelegramLinkComponent,
     ForbiddenComponent,
   ],
   imports: [

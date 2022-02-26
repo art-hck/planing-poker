@@ -3,7 +3,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { RolesName } from '@common/models';
+import { environment } from '../../../environments/environment';
 
 @Component({
   templateUrl: './auth.component.html',
@@ -16,20 +18,26 @@ export class AuthComponent {
     name: ['', [Validators.required]],
     password: '',
     role: '',
-    telegramCode: '',
-  });
-  readonly telegramCodeForm = this.fb.group({
-    telegramCode: ['', [Validators.required]],
   });
   devMode = false;
-  telegramHandshake = false;
   private ctrlCount = 0;
+
+  readonly googleLink: string = "https://accounts.google.com/o/oauth2/v2/auth" + this.router.createUrlTree(['.'], {
+    queryParams: {
+      access_type: 'offline',
+      scope: 'https://www.googleapis.com/auth/userinfo.profile',
+      client_id: environment.googleClientId,
+      redirect_uri: environment.googleRedirectUri,
+      response_type: 'code'
+    }
+  }).toString().slice(1);
 
   constructor(
     private matIconRegistry: MatIconRegistry,
     public dialogRef: MatDialogRef<AuthComponent>,
     private fb: FormBuilder,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private router: Router
   ) {
     matIconRegistry.addSvgIcon('google', this.domSanitizer.bypassSecurityTrustResourceUrl("assets/google-icon.svg"));
   }
@@ -46,7 +54,7 @@ export class AuthComponent {
   }
 
   submit() {
-    if (this.form.invalid && this.telegramCodeForm.invalid) return;
-    this.dialogRef.close(this.form.valid ? this.form.value : this.telegramCodeForm.value);
+    if (this.form.invalid) return;
+    this.dialogRef.close(this.form.value);
   }
 }

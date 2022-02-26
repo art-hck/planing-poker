@@ -4,7 +4,7 @@ import { User } from '../../../common/models';
 import { Config } from '../config';
 import { RoutePayload } from '../models';
 import { DeniedError } from '../models/denied-error.ts';
-import { googleRepo, refreshTokenRepo, roomRepo, telegramRepo, usersRepo } from '../mongo';
+import { googleRepo, refreshTokenRepo, roomRepo, usersRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 import { GoogleAccount } from '../repository/google.repository';
 import { verifyToken } from '../utils/token-utils';
@@ -16,7 +16,7 @@ export class AuthController {
   static async handshake(r: RoutePayload<'handshake'>) {
     const { payload, session } = r;
     const { jwtSecret, jwtRtSecret, jwtExp, jwtRtExp } = Config;
-    const { name, role, password, telegramCode, googleCode, token, refreshToken } = payload;
+    const { name, role, password, googleCode, token, refreshToken } = payload;
     let user: User | undefined;
     let isNew = false;
     let googleAccount: GoogleAccount;
@@ -26,12 +26,9 @@ export class AuthController {
         user = (isNew = true) && { id: uuid.v4(), name, role, su: !!password };
         break;
       case !!googleCode:
-        googleAccount = await googleRepo.userInfo(googleCode);
+        googleAccount = await googleRepo.get(googleCode);
         user = (await googleRepo.getLinkedUser(googleAccount.id)) || ((isNew = true) && { id: uuid.v4(), name: googleAccount.name, su: false });
         await googleRepo.register(googleAccount, user.id);
-        break;
-      case !!telegramCode:
-        user = await telegramRepo.getUser(telegramCode);
         break;
     }
 
@@ -47,8 +44,6 @@ export class AuthController {
    */
   static bye({ broadcast, userId, session }: RoutePayload<'bye'>) {
     roomRepo.rooms.forEach(room => {
-      broadcast('bye', {}, room.id, userId); // Отправляем на все соединени пользователя событие разлогина
-
       if (connections.isConnected(room.id, userId)) {
         connections.disconnectUser(room.id, userId);
         broadcast('users', usersRepo.list(room.id), room.id);
@@ -56,12 +51,5 @@ export class AuthController {
     });
 
     session.refreshToken && refreshTokenRepo.delete(session.refreshToken);
-  }
-
-  /**
-   * Связать пользователя с аккаунтом в телеграм
-   */
-  static linkTelegram({ payload: { code }, userId, send }: RoutePayload<'linkTelegram'>) {
-    telegramRepo.link(userId, code).then(e => send('linkTelegram', { success: e?.matchedCount !== 0 }));
   }
 }

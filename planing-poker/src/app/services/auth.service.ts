@@ -5,7 +5,7 @@ import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { UsersState } from '../states/users.state';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
   @Select(UsersState.users) users$!: Observable<User[]>;
@@ -17,8 +17,8 @@ export class AuthService {
   constructor() {
     this.logout$.subscribe(d => {
       this.beforeLogout$.next(d);
-      window.localStorage.removeItem('token');
-      window.localStorage.removeItem('refreshToken');
+      window?.localStorage.removeItem('token');
+      window?.localStorage.removeItem('refreshToken');
       this.user$.next(null);
     });
   }
