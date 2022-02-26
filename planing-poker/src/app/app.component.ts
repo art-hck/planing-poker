@@ -42,12 +42,15 @@ export class AppComponent implements OnInit {
         this.authService.logout$.next();
       },
       invalidToken: () => this.authService.logout$.next({ emitEvent: false }),
-      bye: () => this.authService.logout$.next({ emitEvent: false }),
       feedback: ({ success }) => {
         if (success) {
           this.snackBar.open('Большое спасибо за обратную связь!', undefined, { duration: 1000 });
         }
       },
+      deleteRoom: () => {
+        this.snackBar.open('Комната удалена, вы были перемещены на список комнат', 'Ну ок');
+        this.router.navigate(["/"]);
+      }
     }).subscribe();
   }
 }

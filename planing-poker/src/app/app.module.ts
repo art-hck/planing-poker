@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,13 +16,14 @@ import { AppComponent } from './app.component';
 import { AuthGoogleComponent } from './components/auth/auth-google.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { AuthGuard } from './components/auth/auth.guard';
+import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { FeedbackComponent } from './components/header/feedback/feedback.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { RoomCreateComponent } from './components/rooms/room-create/room-create.component';
-import { RoomsComponent, ShareRoomDialogComponent } from './components/rooms/rooms.component';
+import { RoomShareDialogComponent } from './components/rooms/room-share/room-share.component';
+import { RoomsComponent } from './components/rooms/rooms.component';
 import { UsersState } from './states/users.state';
 import { VotingsState } from './states/votings.state';
-import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,7 @@ import { ForbiddenComponent } from './components/forbidden/forbidden.component';
     NotFoundComponent,
     RoomCreateComponent,
     RoomsComponent,
-    ShareRoomDialogComponent,
+    RoomShareDialogComponent,
     ForbiddenComponent,
   ],
   imports: [
@@ -46,6 +48,7 @@ import { ForbiddenComponent } from './components/forbidden/forbidden.component';
     MatButtonToggleModule,
     MatSelectModule,
     MatMenuModule,
+    MatBottomSheetModule,
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent],

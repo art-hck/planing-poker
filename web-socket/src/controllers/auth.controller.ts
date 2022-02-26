@@ -23,11 +23,13 @@ export class AuthController {
     switch (true) {
       case !!name:
         if (password && password !== '123123') throw new DeniedError();
-        user = (isNew = true) && { id: uuid.v4(), name, role, su: !!password };
+        user = (isNew = true) && { id: uuid.v4(), name, role, su: !!password, verifed: false };
         break;
       case !!googleCode:
         googleAccount = await googleRepo.get(googleCode);
-        user = (await googleRepo.getLinkedUser(googleAccount.id)) || ((isNew = true) && { id: uuid.v4(), name: googleAccount.name, su: false });
+        user = await googleRepo.getLinkedUser(googleAccount.id);
+        isNew = !user;
+        user = user ?? { id: uuid.v4(), name: googleAccount.name, su: false, verifed: true };
         await googleRepo.register(googleAccount, user.id);
         break;
     }
@@ -40,13 +42,20 @@ export class AuthController {
   }
 
   /**
-   * Логаут + удаление аккаунта
+   * Логаут + удаление временного аккаунта
    */
-  static bye({ broadcast, userId, session }: RoutePayload<'bye'>) {
+  static async bye({ broadcast, userId, session }: RoutePayload<'bye'>) {
+    const user = await usersRepo.find(userId);
     roomRepo.rooms.forEach(room => {
       if (connections.isConnected(room.id, userId)) {
         connections.disconnectUser(room.id, userId);
         broadcast('users', usersRepo.list(room.id), room.id);
+      }
+
+      // Удалять из комнаты только временные аккаунты
+      if (user && !user.verifed) {
+        usersRepo.delete(userId);
+        roomRepo.leave(room, userId);
       }
     });
 

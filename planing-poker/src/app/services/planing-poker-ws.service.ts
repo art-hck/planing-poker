@@ -56,8 +56,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('restartVoting', { votingId });
   }
 
-  newVoting(roomId: Uuid, name: string) {
-    this.ws.send('newVoting', { name, roomId });
+  newVoting(roomId: Uuid, names: string[]) {
+    this.ws.send('newVoting', { names, roomId });
   }
 
   newRoom(name: string) {
@@ -68,8 +68,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('joinRoom', { roomId });
   }
 
-  leaveRoom(roomId: Uuid) {
-    this.ws.send('leaveRoom', { roomId });
+  disconnectRoom(roomId: Uuid) {
+    this.ws.send('disconnectRoom', { roomId });
   }
 
   deleteVoting(votingId: Uuid) {
@@ -86,5 +86,13 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
   feedback(subject: string, message: string) {
     this.ws.send('feedback', { subject, message });
+  }
+
+  deleteRoom(roomId: Uuid) {
+    this.ws.send('deleteRoom', { roomId });
+  }
+
+  leaveRoom(roomId: Uuid) {
+    this.ws.send('leaveRoom', { roomId });
   }
 }

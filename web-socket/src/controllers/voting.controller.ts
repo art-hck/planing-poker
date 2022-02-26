@@ -4,6 +4,9 @@ import { NotFoundError, RoutePayload } from '../models';
 import { roomRepo, votingRepo } from '../mongo';
 
 export class VotingController {
+  /**
+   * Проголосовать
+   */
   static vote({ payload: { point, votingId }, broadcast, userId }: RoutePayload<'vote'>) {
     const room = roomRepo.getByVotingId(votingId);
     const voting = votingRepo.get(votingId);
@@ -13,6 +16,9 @@ export class VotingController {
     votingRepo.vote(voting, userId, point).then(() => broadcast('voted', payloadFn, room.id));
   }
 
+  /**
+   * Отменить голос
+   */
   static unvote({ payload: { votingId }, broadcast, userId }: RoutePayload<'unvote'>) {
     const room = roomRepo.getByVotingId(votingId);
     const voting = votingRepo.get(votingId);
@@ -21,6 +27,9 @@ export class VotingController {
     votingRepo.unvote(voting, userId).then(() => broadcast('unvoted', { userId, votingId }, room.id));
   }
 
+  /**
+   * Перезапустить голосование
+   */
   static restart({ payload: { votingId }, broadcast, userId }: RoutePayload<'restartVoting'>) {
     const room = roomRepo.getByVotingId(votingId);
     const voting = votingRepo.get(votingId);
@@ -30,6 +39,9 @@ export class VotingController {
     votingRepo.restart(voting).then(() => broadcast('restartVoting', voting, room.id));
   }
 
+  /**
+   * Открытьь карты
+   */
   static flip({ payload: { votingId }, broadcast, userId }: RoutePayload<'flip'>) {
     const room = roomRepo.getByVotingId(votingId);
     const voting = votingRepo.get(votingId);
@@ -40,14 +52,16 @@ export class VotingController {
     votingRepo.flip(voting).then(() => broadcast('flip', voting, room.id));
   }
 
-  static create({ payload: { roomId, name }, broadcast, userId }: RoutePayload<'newVoting'>) {
+  /**
+   * Создать голосования
+   */
+  static create({ payload: { roomId, names }, broadcast, userId }: RoutePayload<'newVoting'>) {
     const room = roomRepo.get(roomId);
     if (!room) throw new NotFoundError(`roomId: ${roomId}`);
     roomRepo.verifyAdmin(room.id, userId);
-    const votings = name
-      .split('\n')
-      .filter(Boolean)
+    const votings = names
       .map(name => name.trim())
+      .filter(Boolean)
       .map(name => ({ id: uuid.v4(), name: name, votes: new Map(), status: 'pristine' } as Voting));
 
     votingRepo.createMultiple(votings, room).then(() => {
@@ -55,6 +69,9 @@ export class VotingController {
     });
   }
 
+  /**
+   * Удалить голосование
+   */
   static delete({ payload: { votingId }, broadcast, userId }: RoutePayload<'deleteVoting'>) {
     const room = roomRepo.getByVotingId(votingId);
     if (!room) throw new NotFoundError(`room by votingId: ${votingId}`);
@@ -63,6 +80,9 @@ export class VotingController {
     votingRepo.delete(votingId).then(() => broadcast('votings', userId => votingRepo.list(room.id, userId), room.id));
   }
 
+  /**
+   * Активировать голосование
+   */
   static activate({ payload: { votingId }, broadcast, userId }: RoutePayload<'activateVoting'>) {
     const room = roomRepo.getByVotingId(votingId);
     const voting = votingRepo.get(votingId);

@@ -43,11 +43,7 @@ export class UserComponent {
 @Component({
   template: `
 <h2 mat-dialog-title>Внимание!</h2>
-
-<div mat-dialog-content>
-  Вы собираетесь сменить модератора комнаты.
-  Вернуть статус обратно вам сможет только новый модератор.
-</div>
+<div mat-dialog-content>Вы собираетесь сменить модератора комнаты. Вернуть статус обратно вам сможет только новый модератор.</div>
 <div mat-dialog-actions [align]="'end'">
   <button mat-flat-button (click)="ref.close(false)">Отмена</button>
   <button mat-flat-button color="primary" (click)="ref.close(true)">Сменить</button>
@@ -57,4 +53,3 @@ export class ChangeModeratorConfirmComponent {
   constructor(public ref: MatDialogRef<ChangeModeratorConfirmComponent>) {
   }
 }
-

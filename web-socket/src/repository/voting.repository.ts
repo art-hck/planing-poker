@@ -114,7 +114,9 @@ export class VotingRepository implements Repository<Voting> {
     const voting = this.votings.get(votingId);
     const user = usersRepo.get(userId);
     const room = roomRepo.getByVotingId(votingId);
-    return new Map(Array.from(voting?.votes.entries() || []).map(([u, p]) => [u, (user && room && this.canViewVotes(room.id, user.id)) || voting?.status === 'end' ? p : null]));
+    return new Map(Array.from(voting?.votes.entries() || []).map(([u, p]) => {
+      return [u, (user && room && this.canViewVotes(room.id, user.id)) || voting?.status === 'end' ? p : null];
+    }));
   }
 
   /**

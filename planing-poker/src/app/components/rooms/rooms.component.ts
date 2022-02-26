@@ -1,15 +1,16 @@
-import { ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { MatDialog, MatDialogState } from '@angular/material/dialog';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { MatDialogConfig } from '@angular/material/dialog/dialog-config';
 import { Router } from '@angular/router';
 import { Uuid } from '@common/models';
 import { filter, Subject, takeUntil } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { ResolutionService } from '../../services/resolution.service';
 import { SidebarsService } from '../../services/sidebars.service';
-import { AuthService } from '../../services/auth.service';
 import { RoomCreateComponent } from './room-create/room-create.component';
+import { RoomShareDialogComponent } from './room-share/room-share.component';
 
 @Component({
   selector: 'pp-rooms',
@@ -27,6 +28,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
     public cd: ChangeDetectorRef,
     public sidebars: SidebarsService,
     public resolutionService: ResolutionService,
+    private bottomSheet: MatBottomSheet
   ) {
   }
 
@@ -51,7 +53,12 @@ export class RoomsComponent implements OnInit, OnDestroy {
   }
 
   inviteRoom(roomId: Uuid) {
-    this.dialog.open(ShareRoomDialogComponent, { width: '470px', data: { roomId } });
+    this.bottomSheet.open(RoomShareDialogComponent, { data: { roomId } });
+  }
+
+  deleteRoom(roomId: Uuid) {
+    this.dialog.open(DeleteRoomConfirmDialogComponent, { width: '360px' }).afterClosed().pipe(filter(Boolean), takeUntil(this.destroy$))
+      .subscribe(() => this.pp.deleteRoom(roomId));
   }
 
   ngOnDestroy() {
@@ -62,32 +69,14 @@ export class RoomsComponent implements OnInit, OnDestroy {
 
 @Component({
   template: `
-    <!--      <div class="mat-body">-->
-    <!--        Для получения доступа к комнате достаточно просто перейти по ссылке. Скопируйте и отправте её всем участникам.-->
-    <!--      </div>-->
-    <br />
-
-    <mat-form-field appearance='outline' hideRequiredMarker>
-      <mat-label>Код для входа в комнату</mat-label>
-      <input matInput [value]='location' #input (focus)='input.select()'>
-    </mat-form-field>
-    <div [align]="'end'">
-      <button mat-flat-button color='primary' (click)='ref.dismiss()'>Закрыть</button>
-    </div>
-  `,
+<h2 mat-dialog-title>Удалить комнату?</h2>
+<div mat-dialog-content>Отменить действие будет невозможно. Все данные о голосованиях в комнате будут также удалены.</div>
+<div mat-dialog-actions [align]="'end'">
+  <button mat-flat-button (click)="ref.close(false)">Отмена</button>
+  <button mat-flat-button color="primary" (click)="ref.close(true)">Удалить</button>
+</div>`
 })
-export class ShareRoomDialogComponent {
-  location = this.data.roomId;
-  @ViewChild('input') input?: ElementRef<HTMLInputElement>;
-
-  constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: { roomId: Uuid }, public ref: MatBottomSheetRef) {
+export class DeleteRoomConfirmDialogComponent {
+  constructor(public ref: MatDialogRef<DeleteRoomConfirmDialogComponent>) {
   }
-
-  //
-  // copy() {
-  //   this.input?.nativeElement.focus();
-  //   this.input?.nativeElement.select();
-  //   document.execCommand('copy');
-  //   this.ref.dismiss();
-  // }
 }

@@ -6,4 +6,5 @@ export interface User {
   name: string;
   su: boolean;
   role?: Role;
+  verifed: boolean;
 }

@@ -1,18 +1,28 @@
 <pp-header [(showPlayers)]="sidebars.showPlayers" (showPlayersChange)="sidebars.saveSidebarsState()"></pp-header>
 
 <ng-container *ngIf="pp.rooms$ | async as rooms">
-  <mat-drawer-container *ngIf="authService.user$ | async">
+  <mat-drawer-container *ngIf="authService.user$ | async as me">
     <mat-drawer class='app-left-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showPlayers" [autoFocus]="false">
       <mat-selection-list [multiple]="false">
-        <a [routerLink]="room[1].id" *ngFor="let room of rooms; let i = index">
+        <a [routerLink]="room.id" *ngFor="let room of rooms; let i = index">
           <mat-list-option>
             <mat-icon color="primary" matListIcon [matMenuTriggerFor]="menu" (click)="$event.stopPropagation(); $event.preventDefault()">more_vert</mat-icon>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="inviteRoom(room[1].id)">Пригласить</button>
-              <button mat-menu-item disabled>Удалить комнату</button>
+              <button mat-menu-item (click)='inviteRoom(room.id)'>
+                <mat-icon>share</mat-icon>
+                <span>Пригласить</span>
+              </button>
+              <button mat-menu-item *ngIf='authService.isAdmin(me, room)' (click)='deleteRoom(room.id)'>
+                <mat-icon>delete</mat-icon>
+                <span>Удалить комнату</span>
+              </button>
+              <button mat-menu-item *ngIf='!authService.isAdmin(me, room)' (click)='pp.leaveRoom(room.id)'>
+                <mat-icon>logout</mat-icon>
+                <span>Выйти из комнаты</span>
+              </button>
             </mat-menu>
-            <div matLine>{{room[1].name}}</div>
-            <div matLine [style.color]="'#999'">#{{room[1].id}}</div>
+            <div matLine>{{room.name}}</div>
+            <div matLine [style.color]="'#999'">#{{room.id}}</div>
           </mat-list-option>
           <mat-divider></mat-divider>
         </a>

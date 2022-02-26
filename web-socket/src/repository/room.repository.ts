@@ -38,9 +38,9 @@ export class RoomRepository implements Repository<Room> {
     await this.collection?.updateOne({ id: room.id }, { $set: serialize(room) }, { upsert: true });
   }
 
-  async delete(room: Room) {
-    this.rooms.delete(room.id);
-    await this.collection?.deleteOne({ id: room.id });
+  async delete(id: Uuid) {
+    this.rooms.delete(id);
+    await this.collection?.deleteOne({ id });
   }
 
   /**
@@ -62,6 +62,23 @@ export class RoomRepository implements Repository<Room> {
     return this.update(room);
   }
 
+  /**
+   * Покинуть комнату
+   * @param room
+   * @param userId
+   */
+  async leave(room: Room, userId: Uuid) {
+    room.users.delete(userId);
+    connections.disconnectUser(room.id, userId);
+    return this.update(room);
+  }
+
+  /**
+   * Установить роль пользователя в комнате
+   * @param room
+   * @param userId
+   * @param role
+   */
   async setRole(room: Room, userId: Uuid, role: RoomRole) {
     switch (role) {
       case RoomRole.admin:
@@ -85,12 +102,8 @@ export class RoomRepository implements Repository<Room> {
    * Список комнат доступных для пользователя
    * @param userId
    */
-  availableRooms(userId: Uuid): Map<Uuid, { id: Uuid; name: string }> {
-    return new Map(
-      Array.from(this.rooms.values())
-        .filter(room => room.users.has(userId))
-        .map(({ id, name }) => [id, { id, name }])
-    );
+  availableRooms(userId: Uuid): Room[] {
+    return Array.from(this.rooms.values()).filter(room => room.users.has(userId));
   }
 
   /**
@@ -120,6 +133,6 @@ export class RoomRepository implements Repository<Room> {
    * @param room
    */
   hasAdmins(room: Room): boolean {
-    return Array.from(room.users.entries()).some(([id, roles]) => roles.has(RoomRole.admin) && connections.isConnected(room.id, id));
+    return Array.from(room.users.values()).some(roles => roles.has(RoomRole.admin));
   }
 }

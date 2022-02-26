@@ -38,7 +38,7 @@ new WebSocketServer(server ? { server } : { port: Number(wsPort) }).on('connecti
   ws.on('close', () => {
     if (session.token) {
       const roomId = connections.getRoomId(ws);
-      roomId && routes.leaveRoom({ ...routePayloadPart, userId: getUserId(session.token), payload: { roomId } });
+      roomId && routes.disconnectRoom({ ...routePayloadPart, userId: getUserId(session.token), payload: { roomId } });
     }
   });
 });

@@ -23,10 +23,10 @@ c.then(() => {
   log.success('MongoDB', `Started at ${dbPort} port`);
   const db = mongo.db(dbName);
   repoDeclaration.forEach(instance => instance.init(db.collection(instance.repositoryName) as Collection<any>));
-  mongo.on('serverHeartbeatFailed', () => log.cyan('MongoDB', 'ServerHeartbeatFailed. Сервис продолжит работать, но данные не будут записаны в базу.'));
+  mongo.on('serverHeartbeatFailed', () => log.cyan('MongoDB', 'HeartbeatFailed. Сервис продолжит работать, но данные не будут записаны в базу.'));
 }).catch(e => {
   if (e instanceof MongoServerSelectionError) {
-    log.cyan('MongoDB', 'MongoServerSelectionError. Сервис продолжит работать, но данные не будут записаны в базу.');
+    log.cyan('MongoDB', 'ServerSelectionError. Сервис продолжит работать, но данные не будут записаны в базу.');
   } else {
     log.error('MongoDB', e);
   }

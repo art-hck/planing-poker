@@ -5,7 +5,7 @@ import { Room, RoomRole, User, Uuid, Voting } from '@common/models';
 import { AuthService } from '../../../services/auth.service';
 import { PlaningPokerWsService } from '../../../services/planing-poker-ws.service';
 import { Colors } from '../../../util/colors';
-import { ShareRoomDialogComponent } from '../../rooms/rooms.component';
+import { RoomShareDialogComponent } from '../../rooms/room-share/room-share.component';
 
 @Component({
   selector: 'pp-users',
@@ -34,7 +34,7 @@ export class UsersComponent implements OnChanges {
   }
 
   inviteRoom(roomId: Uuid) {
-    this.bottomSheet.open(ShareRoomDialogComponent, { data: { roomId } });
+    this.bottomSheet.open(RoomShareDialogComponent, { data: { roomId } });
   }
 
   trackByFn = (index: number, item: User) => item.id;

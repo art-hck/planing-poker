@@ -12,7 +12,7 @@ import { take } from 'rxjs';
 export class CreateVoteComponent {
   @ViewChild('autosize') autosize!: CdkTextareaAutosize;
   readonly form = this.fb.group({
-    name: ['', Validators.required],
+    names: ['', Validators.required],
   });
 
   constructor(

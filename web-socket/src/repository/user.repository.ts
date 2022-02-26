@@ -16,16 +16,17 @@ export class UserRepository implements Repository<User> {
     return this.users.get(userId);
   }
 
-  async find(id: Uuid): Promise<User | null> {
-    return this.collection?.findOne({ id }, { projection: { _id: 0 } }) || null;
+  async find(id: Uuid): Promise<User | undefined> {
+    return await this.collection?.findOne({ id }, { projection: { _id: 0 } }) || undefined;
   }
 
   set(user: User): void {
     this.users.set(user.id, user);
   }
 
-  delete(userId: Uuid): void {
-    this.users.delete(userId);
+  async delete(id: Uuid) {
+    this.users.delete(id);
+    this.collection?.deleteOne({ id });
   }
 
   /**

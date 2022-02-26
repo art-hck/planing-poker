@@ -13,7 +13,7 @@ import { WsService } from '../../services/ws.service';
 import { UsersState } from '../../states/users.state';
 import { VotingsState } from '../../states/votings.state';
 import { AuthService } from '../../services/auth.service';
-import { CreateVoteComponent } from './create-vote/create-vote.component';
+import { CreateVoteComponent } from './votings-create/create-vote.component';
 
 @Component({
   selector: 'pp-room',
@@ -74,7 +74,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   openNewVotingModal() {
     if (this.dialog.getDialogById('NewVotingModal')?.getState() === MatDialogState.OPEN) return;
     this.dialog.open(CreateVoteComponent, { id: 'NewVotingModal', width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(data => {
-      this.pp.newVoting(this.route.snapshot.params['id'], data.name);
+      this.pp.newVoting(this.route.snapshot.params['id'], data.names.split('\n'));
     });
   }
 
@@ -83,6 +83,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
     this.store.dispatch(new Users.Fetch([]));
     this.store.dispatch(new Votings.Fetch([]));
-    this.pp.leaveRoom(this.route.snapshot.params['id']);
+    this.pp.disconnectRoom(this.route.snapshot.params['id']);
   }
 }

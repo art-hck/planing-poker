@@ -2,6 +2,7 @@ import * as uuid from 'uuid';
 import { NotFoundError, RoutePayload } from '../models';
 import { roomRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
+import { broadcast } from '../utils/broadcast';
 
 export class RoomController {
   /**
@@ -26,16 +27,24 @@ export class RoomController {
   }
 
   /**
-   * Покинуть комнату
+   * Отключиться от комнаты
    */
-  static leave({ payload: { roomId }, broadcast, userId, ws }: RoutePayload<'leaveRoom'>) {
-    const room = roomRepo.rooms.get(roomId);
+  static disconnect({ payload: { roomId }, broadcast, userId, ws }: RoutePayload<'disconnectRoom'>) {
+    connections.disconnectUser(roomId, userId, ws);
+
+    if (!connections.isConnected(roomId, userId)) {
+      broadcast('users', usersRepo.list(roomId), roomId);
+    }
+  }
+
+  /**
+   * Выйти от комнаты
+   */
+  static leave({ payload: { roomId }, send, userId }: RoutePayload<'leaveRoom'>) {
+    const room = roomRepo.get(roomId);
     if (!room) throw new NotFoundError(`roomId: ${roomId}`);
 
-    connections.disconnectUser(room.id, userId, ws);
-    if (!connections.isConnected(room.id, userId)) {
-      broadcast('users', usersRepo.list(room.id), room.id);
-    }
+    roomRepo.leave(room, userId).then(() => send('rooms', roomRepo.availableRooms(userId)));
   }
 
   /**
@@ -52,5 +61,14 @@ export class RoomController {
 
   static rooms({ send, userId }: RoutePayload<'rooms'>) {
     send('rooms', roomRepo.availableRooms(userId));
+  }
+
+  static delete({ payload: { roomId }, send, userId }: RoutePayload<'deleteRoom'>) {
+    roomRepo.verifyAdmin(roomId, userId);
+    broadcast('deleteRoom', {}, roomId);
+
+    roomRepo.delete(roomId).then(() => {
+      send('rooms', roomRepo.availableRooms(userId));
+    });
   }
 }

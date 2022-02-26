@@ -73,10 +73,10 @@ class ConnectionsRepository {
   disconnectUser(roomId: Uuid, userId: Uuid, ws?: WebSocket): void {
     const userConnections = this.get(roomId)?.get(userId);
     if (userConnections) {
-      ws && userConnections?.delete(ws);
+      ws && userConnections.delete(ws);
       log.normal('WebSocket', `${usersRepo.get(userId)?.name} отключился (${userConnections?.size} соединений)`);
 
-      if ((userConnections && userConnections.size < 1) || !ws) {
+      if (userConnections.size < 1 || !ws) {
         this.get(roomId)?.delete(userId);
       }
     }
