@@ -9,6 +9,7 @@ import { Users } from './actions/users.actions';
 import { Votings } from './actions/votings.actions';
 import { AuthService } from './services/auth.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
+import { WsService } from './services/ws.service';
 
 @Component({
   selector: 'pp-root',
@@ -24,15 +25,29 @@ export class AppComponent implements OnInit {
     private dialog: MatDialog,
     private store: Store,
     private pp: PlaningPokerWsService,
+    private ws: WsService,
     private snackBar: MatSnackBar,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
   ) {
     matIconRegistry.addSvgIcon('google', this.domSanitizer.bypassSecurityTrustResourceUrl("assets/google-icon.svg"));
+
+    this.authService.beforeLogout$.subscribe(options => {
+      if (!options || options.emitEvent) this.pp.bye();
+      this.ws.connected$.next(false);
+    });
+
+    this.authService.login$.subscribe(payload => this.pp.handshake(payload));
   }
 
   ngOnInit() {
     this.pp.events({
+      handshake: ({ refreshToken, token }) => {
+        window?.localStorage.setItem('token', token);
+        window?.localStorage.setItem('refreshToken', refreshToken);
+        this.ws.connected$.next(true);
+      },
+      user: user => this.authService.user$.next(user),
       users: users => this.store.dispatch(new Users.Fetch(users.map(([, v]) => v))),
       votings: votings => this.store.dispatch(new Votings.Fetch(votings.map(([, v]) => v))),
       voted: ({ userId, votingId, point }) => this.store.dispatch(new Votings.Vote(userId, votingId, point)),

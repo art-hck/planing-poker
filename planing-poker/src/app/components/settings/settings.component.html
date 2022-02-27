@@ -14,11 +14,11 @@
       <h4 matLine>{{me.name}}</h4>
       <p matLine class='mat-gray mat-small'>Имя</p>
       <div matListIcon style='order: -1'>
-        <mat-icon *ngIf='!me.verifed' color='warn' matTooltip='Аккаунт не верифицирован' matTooltipPosition='before'
+        <mat-icon *ngIf='!me.verified' color='warn' matTooltip='Аккаунт не верифицирован' matTooltipPosition='before'
                   matTooltipClass='app-big-tooltip'
                   matTooltipShowDelay='500'>error
         </mat-icon>
-        <mat-icon *ngIf='me.verifed' color='success' matTooltip='Аккаунт прошел верификацию' matTooltipPosition='before'
+        <mat-icon *ngIf='me.verified' color='success' matTooltip='Аккаунт прошел верификацию' matTooltipPosition='before'
                   matTooltipClass='app-big-tooltip'
                   matTooltipShowDelay='500'>verified_user
         </mat-icon>
@@ -59,7 +59,7 @@
     </div>
   </form>
 
-  <div *ngIf='!edit && !me.verifed'>
+  <div *ngIf='!edit && !me.verified'>
     <div class='mat-caption' [style.margin]='"12px 0"'>
       <span class='app-strong'>Аккаунт не верифицирован.</span> При выходе или неактивности течение 30 дней все данные <span
       class='app-strong'>удалятся</span>.
@@ -68,7 +68,7 @@
   </div>
 </mat-dialog-content>
 
-<mat-dialog-actions *ngIf='!edit && !data.user.verifed'>
+<mat-dialog-actions *ngIf='!edit && !data.user.verified'>
   <div class='flex-space'></div>
   <button mat-flat-button matTooltip='Временно недоступно' matTooltipPosition='above'>По почте</button>
   <a mat-stroked-button [href]='googleLink'>

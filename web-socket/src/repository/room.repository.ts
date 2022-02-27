@@ -1,4 +1,5 @@
 import { Collection } from 'mongodb';
+import * as uuid from 'uuid';
 import { WebSocket } from 'ws';
 import { Room, RoomRole, Uuid } from '../../../common/models';
 import { DeniedError } from '../models/denied-error.ts';
@@ -24,12 +25,14 @@ export class RoomRepository implements Repository<Room> {
     return this.rooms.get(id);
   }
 
-  async create(id: Uuid, name: string, userId: Uuid) {
+  async create(name: string, userId: Uuid) {
+    const id = uuid.v4();
     const users = new Map<Uuid, Set<RoomRole>>().set(userId, new Set([RoomRole.admin, RoomRole.user]));
     const room: Room = { id, name, votingIds: new Set(), users };
     this.rooms.set(room.id, room);
-
     await this.collection?.insertOne(serialize(room));
+
+    return room.id;
   }
 
   async update(room: Room) {

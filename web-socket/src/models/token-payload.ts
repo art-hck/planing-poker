@@ -1,6 +1,6 @@
 import { JwtPayload } from 'jsonwebtoken';
-import { User } from '../../../common/models';
+import { Uuid } from '../../../common/models';
 
 export interface TokenPayload extends JwtPayload {
-  user?: User;
+  id?: Uuid;
 }

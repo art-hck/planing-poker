@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogConfig } from '@angular/material/dialog/dialog-config';
 import { Router } from '@angular/router';
 import { Uuid } from '@common/models';
@@ -34,11 +34,11 @@ export class RoomsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.authService.user$.pipe(filter(u => !!u), takeUntil(this.destroy$)).subscribe(() => this.pp.rooms());
-    this.pp.rooms$.pipe(
-      filter(r => r.length === 0),
-      filter(() => this.dialog.getDialogById('new_room')?.getState() !== MatDialogState.OPEN),
-      takeUntil(this.destroy$),
-    ).subscribe(() => this.newRoom());
+    // this.pp.rooms$.pipe(
+    //   filter(r => r.length === 0),
+    //   filter(() => this.dialog.getDialogById('new_room')?.getState() !== MatDialogState.OPEN),
+    //   takeUntil(this.destroy$),
+    // ).subscribe(() => this.newRoom());
 
     this.sidebars.detectChanges$.pipe(takeUntil(this.destroy$)).subscribe(() => this.cd.detectChanges());
     this.resolutionService.isMobile$.pipe(filter(Boolean), takeUntil(this.destroy$)).subscribe(isMobile => this.sidebars.showPlayers = isMobile);

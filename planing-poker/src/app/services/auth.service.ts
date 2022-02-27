@@ -21,6 +21,8 @@ export class AuthService {
       window?.localStorage.removeItem('refreshToken');
       this.user$.next(null);
     });
+
+    window?.addEventListener('storage', e => e.key === 'token' && e.newValue === null && this.logout$.next());
   }
 
   hasRole(user: User, role: RoomRole, room?: Room<true>): boolean {

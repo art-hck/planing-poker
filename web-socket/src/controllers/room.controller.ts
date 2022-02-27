@@ -1,4 +1,3 @@
-import * as uuid from 'uuid';
 import { NotFoundError, RoutePayload } from '../models';
 import { roomRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
@@ -51,9 +50,7 @@ export class RoomController {
    * Создать комнату
    */
   static create({ payload: { name }, send, userId }: RoutePayload<'newRoom'>) {
-    const roomId = uuid.v4();
-
-    roomRepo.create(roomId, name, userId).then(() => {
+    roomRepo.create(name, userId).then(roomId => {
       send('newRoom', { roomId });
       send('rooms', roomRepo.availableRooms(userId));
     });

@@ -1,7 +1,7 @@
-import * as jwt from 'jsonwebtoken';
 import { Collection } from 'mongodb';
 import { Token } from '../../../common/models';
 import { Repository } from '../models/repository';
+import { jwtDecode } from '../utils/token-utils';
 
 export class RefreshTokenRepository implements Repository<{ refreshToken: Token }> {
   readonly repositoryName = 'refreshToken';
@@ -47,7 +47,7 @@ export class RefreshTokenRepository implements Repository<{ refreshToken: Token 
     this.collection?.deleteMany({
       refreshToken: {
         $in: Array.from(this.refreshTokens).filter(rt => {
-          const { exp } = jwt.decode(rt, { json: true }) || {}; // проверяем и декодируем токен
+          const { exp } = jwtDecode(rt) || {}; // проверяем и декодируем токен
           return exp || 0 > Date.now() / 1000;
         })
       }

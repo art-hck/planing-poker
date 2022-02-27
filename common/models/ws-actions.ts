@@ -47,4 +47,5 @@ export interface WsEvent<serialized = true> {
   feedback: { success: boolean }; // Обратная связь
   invalidToken: {}; // Токен не прошёл проверку
   googleAlreadyLinked: {}; // Гугл аккаунт уже привязан
+  user: User; // Информация о пользователе
 }

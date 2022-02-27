@@ -1,4 +1,5 @@
 import { Collection } from 'mongodb';
+import * as uuid from 'uuid';
 import { User, Uuid } from '../../../common/models';
 import { Repository } from '../models/repository';
 import { connections } from './connections.repository';
@@ -17,7 +18,10 @@ export class UserRepository implements Repository<User> {
   }
 
   async find(id: Uuid): Promise<User | undefined> {
-    return await this.collection?.findOne({ id }, { projection: { _id: 0 } }) || undefined;
+    const user = this.users.get(id) || (await this.collection?.findOne({ id }, { projection: { _id: 0 } })) || undefined;
+    if (user && !this.users.has(id)) this.users.set(user.id, user);
+
+    return user;
   }
 
   async update(user: User) {
@@ -50,11 +54,13 @@ export class UserRepository implements Repository<User> {
 
   /**
    * Создать пользователя
-   * @param user
+   * @param newUser
    */
-  create(user: User) {
-    const u = { ...user };
+  async register(newUser: Omit<User, 'id'>) {
+    const user: User = { ...newUser, id: uuid.v4() };
     this.users.set(user.id, user);
-    return this.collection?.insertOne(u);
+    await this.collection?.insertOne(user);
+
+    return user;
   }
 }

@@ -42,7 +42,7 @@ export class HeaderComponent {
 
   verifications(user: User) {
     return {
-      verifed: user.verifed,
+      verified: user.verified,
       hasRole: !!user.role
     };
   }

@@ -53,6 +53,6 @@ export class GoogleRepository implements Repository<GoogleAccount> {
   async getLinkedUser(id: string) {
     const account = await this.collection?.findOne({ id }, { projection: { _id: 0 } });
 
-    return (account?.userId && await usersRepo.find(account.userId)) || undefined;
+    return (account?.userId && (await usersRepo.find(account.userId))) || undefined;
   }
 }

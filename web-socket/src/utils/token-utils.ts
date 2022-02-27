@@ -6,32 +6,32 @@ import { RoutePayload } from '../models';
 import { TokenPayload } from '../models/token-payload';
 import { refreshTokenRepo } from '../mongo';
 
-export function verifyToken(r: RoutePayload, sendHandshake?: boolean): User {
+export function verifyToken(r: RoutePayload, sendHandshake?: boolean): Uuid {
   const { jwtSecret, jwtRtSecret, jwtExp, jwtRtExp } = Config;
   const { send, session: s } = r;
   const rtRepo = refreshTokenRepo;
-  let tokenPayload: TokenPayload;
+  let id: User['id'] | undefined;
 
   if (!s.token || !s.refreshToken) throw new JsonWebTokenError('');
 
   try {
-    tokenPayload = jwt.verify(s.token, jwtSecret) as TokenPayload; // проверяем и декодируем токен
+    id = jwtVerify(s.token, jwtSecret)?.id; // проверяем и декодируем токен
   } catch (e) {
     // Если токен протух, но есть рефреш токен который еще не использовался
     if (e instanceof TokenExpiredError && rtRepo.has(s.refreshToken)) {
       rtRepo.delete(s.refreshToken).then(); // использованый токен удаляем
-      tokenPayload = jwt.verify(s.refreshToken, jwtRtSecret) as TokenPayload; // проверяем и декодируем рефреш токен
+      id = jwtVerify(s.refreshToken, jwtRtSecret)?.id; // проверяем и декодируем рефреш токен
       s.token = s.refreshToken = undefined; // удаляем данные клиента, т.к. ниже их нужно перезаписать
       sendHandshake = true;
     } else throw e;
   }
 
-  if (!tokenPayload.user) {
+  if (!id) {
     throw new JsonWebTokenError('');
   }
 
-  s.token = s.token ?? jwt.sign({ user: tokenPayload.user }, jwtSecret, { expiresIn: jwtExp });
-  s.refreshToken = s.refreshToken ?? jwt.sign({ user: tokenPayload.user }, jwtRtSecret, { expiresIn: jwtRtExp });
+  s.token = s.token ?? jwtSign({ id }, jwtSecret, jwtExp);
+  s.refreshToken = s.refreshToken ?? jwtSign({ id }, jwtRtSecret, jwtRtExp);
 
   rtRepo.create(s.refreshToken).then();
 
@@ -39,9 +39,21 @@ export function verifyToken(r: RoutePayload, sendHandshake?: boolean): User {
     send('handshake', { token: s.token, refreshToken: s.refreshToken });
   }
 
-  return tokenPayload.user;
+  return id;
+}
+
+export function jwtDecode(token: Token) {
+  return jwt.decode(token) as TokenPayload | null;
+}
+
+export function jwtVerify(token: Token, secret: string) {
+  return jwt.verify(token, secret) as TokenPayload | null;
+}
+
+export function jwtSign(payload: TokenPayload, secret: string, expiresIn?: string): Token {
+  return jwt.sign(payload, secret, { expiresIn });
 }
 
 export function getUserId(token: Token): Uuid {
-  return jwt.decode(token, { json: true })?.['user']?.id ?? ''; // Проверки на случай старого формата токена
+  return jwtDecode(token)?.id ?? '';
 }
