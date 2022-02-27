@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { AppSharedModule } from '../app-shared.module';
 import { DoughnutDirective } from '../directives/doughnut.directive';
 import { RoomRoutingModule } from './room-routing.module';
@@ -17,6 +18,7 @@ import { UsersPipe } from './room/users/users.pipe';
 import { CreateVoteComponent } from './room/votings-create/create-vote.component';
 import { VotingDeleteConfirmComponent, VotingsComponent } from './room/votings/votings.component';
 import { DeleteRoomConfirmDialogComponent } from './rooms/rooms.component';
+import { SettingsComponent } from './settings/settings.component';
 
 
 @NgModule({
@@ -31,7 +33,8 @@ import { DeleteRoomConfirmDialogComponent } from './rooms/rooms.component';
     UsersPipe,
     UserComponent,
     ChangeModeratorConfirmComponent,
-    DeleteRoomConfirmDialogComponent
+    DeleteRoomConfirmDialogComponent,
+    SettingsComponent
   ],
   imports: [
     RoomRoutingModule,
@@ -41,9 +44,10 @@ import { DeleteRoomConfirmDialogComponent } from './rooms/rooms.component';
     MatRippleModule,
     MatStepperModule,
     MatChipsModule,
-    MatTooltipModule,
     MatBadgeModule,
-    MatMenuModule
+    MatMenuModule,
+    MatButtonToggleModule,
+    MatSelectModule
   ]
 })
 export class RoomModule {

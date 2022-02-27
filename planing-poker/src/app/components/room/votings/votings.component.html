@@ -1,6 +1,6 @@
 <ng-container *ngIf="authService.user$ | async as me">
   <mat-selection-list [multiple]="false" *ngIf="votings?.length">
-    <div *ngFor="let voting of votings; trackBy: trackByFn" [matTooltip]="voting.name" matTooltipClass="voting-tooltip" matTooltipShowDelay="500">
+    <div *ngFor="let voting of votings; trackBy: trackByFn" [matTooltip]="voting.name" matTooltipClass="app-big-tooltip" matTooltipShowDelay="500">
       <mat-list-option (click)="choose.emit(voting)" [class.disabled]="!authService.isAdmin(me, room)">
         <mat-icon matBadge="✓" [matBadgeHidden]="voting.status !== 'end'" matBadgeSize="small" matListIcon>description</mat-icon>
         <h3 matLine>{{voting.name}}</h3>
@@ -11,7 +11,7 @@
       <mat-divider></mat-divider>
     </div>
   </mat-selection-list>
-  <div class="empty" *ngIf="!votings?.length">
+  <div class="mat-gray empty" *ngIf="!votings?.length">
     Здесь скоро появятся самые интересные стори на свете
   </div>
 </ng-container>

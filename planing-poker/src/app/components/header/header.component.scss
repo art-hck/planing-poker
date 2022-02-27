@@ -1,4 +1,10 @@
+@use '@angular/material' as mat;
+
 button.mat-badge-overlap.mat-badge-after ::ng-deep .mat-badge-content {
   top: 0;
   right: 0;
+}
+
+:host ::ng-deep .mat-badge-accent .mat-badge-content {
+  background-color: mat.get-color-from-palette(mat.define-palette(mat.$orange-palette), 500);
 }

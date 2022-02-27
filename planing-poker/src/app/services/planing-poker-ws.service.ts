@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Handshake, RoomRole, Uuid, WsAction, WsEvent } from '@common/models';
+import { Handshake, Role, RoomRole, Token, Uuid, WsAction, WsEvent } from '@common/models';
 import { merge, Observable, tap } from 'rxjs';
 import { WsService } from './ws.service';
 
@@ -34,6 +34,10 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
   bye() {
     this.ws.send('bye', {});
+  }
+
+  linkGoogle(token: Token, googleCode: string) {
+    this.ws.send('linkGoogle', { token, googleCode }, { force: true });
   }
 
   vote(votingId: Uuid, point: number) {
@@ -94,5 +98,9 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
   leaveRoom(roomId: Uuid) {
     this.ws.send('leaveRoom', { roomId });
+  }
+
+  editUser(name: string, role: Role) {
+    this.ws.send('editUser', { name, role });
   }
 }

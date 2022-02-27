@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Users } from './actions/users.actions';
@@ -23,7 +25,10 @@ export class AppComponent implements OnInit {
     private store: Store,
     private pp: PlaningPokerWsService,
     private snackBar: MatSnackBar,
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
   ) {
+    matIconRegistry.addSvgIcon('google', this.domSanitizer.bypassSecurityTrustResourceUrl("assets/google-icon.svg"));
   }
 
   ngOnInit() {
@@ -49,6 +54,10 @@ export class AppComponent implements OnInit {
       },
       deleteRoom: () => {
         this.snackBar.open('Комната удалена, вы были перемещены на список комнат', 'Ну ок');
+        this.router.navigate(["/"]);
+      },
+      googleAlreadyLinked: () => {
+        this.snackBar.open('Данный google аккаунт уже привязан к пользователю.', 'Ну ок');
         this.router.navigate(["/"]);
       }
     }).subscribe();

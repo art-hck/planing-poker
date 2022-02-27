@@ -8,14 +8,28 @@
   <button mat-icon-button (click)='showVotingsChange.emit(!showVotings)' *ngIf='showVotingsChange.observed && (resolution.isMobile$ | async)'>
     <mat-icon>chevron_left</mat-icon>
   </button>
-  <ng-container *ngIf='authService.user$ | async'>
-    <button mat-icon-button [matMenuTriggerFor]='menu' matBadge='' matBadgeSize='small' matBadgeColor='warn'>
+  <ng-container *ngIf='authService.user$ | async as me'>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]='menu'
+      [matBadge]='errorLength(me)'
+      matBadgeSize='small'
+      [matBadgeColor]='me.verifed ? "accent" : "warn"'
+      [matBadgeHidden]='errorLength(me) === 0'
+    >
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu='matMenu'>
-      <button mat-menu-item [disabled]='true'>
-        <mat-icon>settings</mat-icon>
-        <span>Настройки</span>
+      <button mat-menu-item (click)='settings(me)'>
+        <mat-icon
+          [matBadge]='errorLength(me)'
+          matBadgeSize='small'
+          [matBadgeColor]='me.verifed ? "accent" : "warn"'
+          [matBadgeHidden]='errorLength(me) === 0'
+        >
+          account_circle
+        </mat-icon>
+        <span>Профиль</span>
       </button>
       <button mat-menu-item (click)='feedback()'>
         <mat-icon>feedback</mat-icon>

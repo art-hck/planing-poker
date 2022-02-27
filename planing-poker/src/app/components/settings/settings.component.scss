@@ -1,0 +1,26 @@
+h2 {
+  margin: 0;
+}
+
+mat-selection-list {
+  margin: 0 -24px;
+}
+
+.close {
+  position: absolute;
+  right: -13px;
+  top: -4px;
+}
+
+.avatar {
+  font-size: 44px;
+  font-weight: 500;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 128px;
+  height: 128px;
+  margin: 24px auto;
+}

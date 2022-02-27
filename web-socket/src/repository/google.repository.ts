@@ -41,7 +41,9 @@ export class GoogleRepository implements Repository<GoogleAccount> {
    * @param userId
    */
   async register(account: GoogleAccount, userId: Uuid) {
-    return this.collection?.updateOne({ id: account.id }, { $set: { ...account, userId } }, { upsert: true });
+    if (await this.collection?.findOne({ id: account.id, userId: { $exists: true } })) return false;
+    await this.collection?.updateOne({ id: account.id }, { $set: { ...account, userId } }, { upsert: true });
+    return true;
   }
 
   /**

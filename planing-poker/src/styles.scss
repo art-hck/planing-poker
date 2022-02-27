@@ -1,3 +1,5 @@
+@use '@angular/material' as mat;
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
@@ -17,7 +19,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   overflow: hidden;
 }
 
-.mat-tooltip.voting-tooltip {
+.mat-tooltip.app-big-tooltip {
   font-size: 12px;
 }
 
@@ -35,4 +37,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 mat-form-field {
   width: 100%;
+}
+
+.mat-success {
+  color: mat.get-color-from-palette(mat.define-palette(mat.$green-palette), 800);
+}
+
+.mat-gray {
+  color: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 500);
+}
+
+.mat-orange {
+  color: mat.get-color-from-palette(mat.define-palette(mat.$orange-palette), 500);
 }

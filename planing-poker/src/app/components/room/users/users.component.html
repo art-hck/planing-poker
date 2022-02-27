@@ -25,7 +25,7 @@
     <mat-list-option (click)="inviteRoom(room.id); item.selected = false" #item>
       <mat-icon matListIcon>share</mat-icon>
       <div class="overflow-hidden" matLine>{{room.name}}</div>
-      <div class="overflow-hidden" matLine [style.color]="'#999'">#{{room.id}}</div>
+      <div class="overflow-hidden mat-gray" matLine>#{{room.id}}</div>
     </mat-list-option>
   </mat-selection-list>
 </div>

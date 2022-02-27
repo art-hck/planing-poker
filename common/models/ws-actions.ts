@@ -1,6 +1,8 @@
 import { Handshake } from './handshake';
+import { Role } from './role';
 import { Room } from './room';
 import { RoomRole } from './room-role';
+import { Token } from './token';
 import { User } from './user';
 import { Uuid } from './uuid';
 import { Voting } from './voting';
@@ -8,6 +10,7 @@ import { Voting } from './voting';
 export interface WsAction {
   handshake: Handshake; // Авторизация + регистрация
   bye: {}; // Логаут + удаление временного аккаунта
+  linkGoogle: { token: Token, googleCode: string }; // Привязать google аккаунт
   vote: { point: number, votingId: Uuid }; // Проголосовать
   unvote: { votingId: Uuid }; // Отменить голос
   flip: { votingId: Uuid }; // Открыть карты
@@ -23,6 +26,7 @@ export interface WsAction {
   deleteRoom: { roomId: Uuid }; // Удалить комнату
   setRole: { userId: Uuid, roomId: Uuid, role: RoomRole }; // Задать роль пользователю
   feedback: { message: string, subject: string }; // Обратная связь
+  editUser: { name: string; role: Role; }; // Изменить пользователя
 }
 
 export interface WsEvent<serialized = true> {
@@ -42,4 +46,5 @@ export interface WsEvent<serialized = true> {
   deleteRoom: {}; // Удаление комнаты
   feedback: { success: boolean }; // Обратная связь
   invalidToken: {}; // Токен не прошёл проверку
+  googleAlreadyLinked: {}; // Гугл аккаунт уже привязан
 }

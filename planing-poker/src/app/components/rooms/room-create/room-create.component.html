@@ -11,7 +11,7 @@
       <mat-label>Код для входа</mat-label>
       <input matInput formControlName='code'>
     </mat-form-field>
-    <h4 mat-dialog-title [align]="'center'" [style.color]="'#999'">
+    <h4 mat-dialog-title [align]="'center'" class='mat-gray'>
       <a mat-button (click)='join = !join'>или  {{join ? 'создайте новую комнату' : 'войдите с помощью кода'}}</a>
     </h4>
   </div>

@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { User } from '@common/models';
 import { filter } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { ResolutionService } from '../../services/resolution.service';
+import { SettingsComponent } from '../settings/settings.component';
 import { FeedbackComponent } from './feedback/feedback.component';
 
 @Component({
@@ -17,7 +19,6 @@ export class HeaderComponent {
   @Input() showVotings = true;
   @Output() showPlayersChange = new EventEmitter<boolean>();
   @Output() showVotingsChange = new EventEmitter<boolean>();
-
   constructor(
     public authService: AuthService,
     private dialog: MatDialog,
@@ -30,5 +31,23 @@ export class HeaderComponent {
     this.dialog.open(FeedbackComponent, { width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(({ subject, message }) => {
       this.pp.feedback(subject, message);
     });
+  }
+
+  settings(user: User) {
+    this.dialog.open(SettingsComponent, { width: '385px', data: { user }, autoFocus: false}).afterClosed().pipe(filter(v => v)).subscribe(payload => {
+      const { name, role } = payload;
+      this.pp.editUser(name, role);
+    });
+  }
+
+  verifications(user: User) {
+    return {
+      verifed: user.verifed,
+      hasRole: !!user.role
+    };
+  }
+
+  errorLength(user: User) {
+    return Object.values(this.verifications(user)).filter(v => !v).length;
   }
 }

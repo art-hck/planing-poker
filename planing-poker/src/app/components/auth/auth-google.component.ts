@@ -13,7 +13,11 @@ export class AuthGoogleComponent implements OnDestroy {
   constructor(private route: ActivatedRoute, router: Router, private authService: AuthService, private pp: PlaningPokerWsService) {
     route.queryParams
       .pipe(filter(({ code }) => code), takeUntil(this.destroy$))
-      .subscribe(params => this.authService.login$.next({ googleCode: params['code'] } as Handshake));
+      .subscribe(params => {
+        const token = window?.localStorage.getItem('token'); // Если есть токен, то связываем пользователя, если нет - регестрируем
+        const googleCode = params['code'];
+        token ? this.pp.linkGoogle(token, params['code']) : this.authService.login$.next({ googleCode } as Handshake);
+      });
 
     this.pp.events({
       handshake: () => router.navigate(["/"]),

@@ -20,6 +20,12 @@ export class UserRepository implements Repository<User> {
     return await this.collection?.findOne({ id }, { projection: { _id: 0 } }) || undefined;
   }
 
+  async update(user: User) {
+    this.users.set(user.id, user);
+
+    await this.collection?.updateOne({ id: user.id }, { $set: user });
+  }
+
   set(user: User): void {
     this.users.set(user.id, user);
   }

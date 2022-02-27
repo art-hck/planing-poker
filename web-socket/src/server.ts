@@ -28,7 +28,7 @@ new WebSocketServer(server ? { server } : { port: Number(wsPort) }).on('connecti
     const userId = getUserId((payload as Handshake).token ?? session.token); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
 
     try {
-      if (action !== 'handshake') verifyToken({ ...routePayloadPart, payload, userId });
+      if (!['handshake', 'linkGoogle'].includes(action || "")) verifyToken({ ...routePayloadPart, payload, userId });
       action && routes[action]({ ...routePayloadPart, payload, userId })?.catch(e => errorHandler(e, { ...routePayloadPart, userId }));
     } catch (e) {
       errorHandler(e, { ...routePayloadPart, userId });

@@ -13,6 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { PluralizePipe } from './pipes/pluralize-pipe';
@@ -49,6 +50,7 @@ import { PluralizePipe } from './pipes/pluralize-pipe';
     MatFormFieldModule,
     MatInputModule,
     MatListModule,
+    MatTooltipModule,
   ],
 })
 export class AppSharedModule {
