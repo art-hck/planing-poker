@@ -24,7 +24,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .mat-drawer-container {
-  height: calc(100% - 64px)
+  height: calc(100% - 56px);
+
+  @media screen and (min-width: 600px) {
+    height: calc(100% - 64px);
+  }
 }
 
 .app-left-side {
@@ -33,6 +37,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .app-right-side {
   width: 300px;
+}
+
+.app-relative {
+  position: relative;
 }
 
 mat-form-field {

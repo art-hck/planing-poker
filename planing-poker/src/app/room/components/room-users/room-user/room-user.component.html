@@ -1,0 +1,41 @@
+<ng-container *ngIf="authService.user$ | async as me">
+  <mat-list-item *ngIf="user && room">
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="changeModerator(user.id, room.id)" *ngIf="!authService.isAdmin(user, room)">
+        <mat-icon>verified_user</mat-icon>
+        <span>Модератор</span>
+      </button>
+      <button mat-menu-item (click)="pp.setRole(user.id, room.id, roomRole.user)" *ngIf="authService.hasRole(user, roomRole.observer, room)">
+        <mat-icon>account_circle</mat-icon>
+        <span>Голосующий</span>
+      </button>
+      <button mat-menu-item (click)="pp.setRole(user.id, room.id, roomRole.observer)" *ngIf="!authService.hasRole(user, roomRole.observer, room)">
+        <mat-icon>remove_red_eye</mat-icon>
+        <span>Наблюдатель</span>
+      </button>
+    </mat-menu>
+
+    <div
+      class="avatar"
+      matListIcon
+      [style.background-color]="user.name | stringToColor"
+      [matMenuTriggerFor]="menu"
+      [class.menu]="authService.isAdmin(me, room)"
+    >
+      {{ user.name | abbreviation }}
+      <mat-icon *ngIf="authService.isAdmin(user, room)">grade</mat-icon>
+    </div>
+    <div class="overflow-hidden" matLine>{{ user.name }}</div>
+    <div class="overflow-hidden" matLine *ngIf="user.role && role[user.role]">{{ role[user.role] }}</div>
+
+    <div class="flex-space"></div>
+    <mat-chip-list>
+      <mat-chip *ngIf="user.id === me?.id"><small>Вы</small></mat-chip>
+      <ng-container *ngIf="isVoted">
+        <mat-chip [style.background]="voteColors?.get(votes?.get(user.id) || 0)" [selected]="true">
+          <small>{{ votes?.get(user.id) ?? "?" }}</small>
+        </mat-chip>
+      </ng-container>
+    </mat-chip-list>
+  </mat-list-item>
+</ng-container>

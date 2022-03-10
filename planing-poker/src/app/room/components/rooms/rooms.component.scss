@@ -1,0 +1,68 @@
+@use 'node_modules/@angular/material/index' as mat;
+
+.rooms-list {
+  &__item, &__create {
+    text-decoration: none;
+    display: block;
+    margin: 16px 0;
+    padding: 0 12px;
+    position: relative;
+    cursor: pointer;
+
+    &__avatar {
+      font-size: 20px;
+      width: 48px;
+      height: 48px;
+      font-weight: 500;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 50%;
+      transition: border-radius 150ms;
+    }
+  }
+
+  &__item {
+    &.active:before, &:hover:before {
+      content: "";
+      width: 4px;
+      background: mat.get-color-from-palette(mat.define-palette(mat.$gray-palette), 500);
+      position: absolute;
+      left: 0;
+      top: 50%;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      transform: translateY(-50%);
+      transition: height 150ms;
+    }
+
+    &:hover:not(&.active):before {
+      height: 20px;
+    }
+
+    &.active:before {
+      height: 40px;
+    }
+
+    &:hover &__avatar {
+      border-radius: 35%;
+    }
+  }
+
+  &__create {
+    &__avatar {
+      background: mat.get-color-from-palette(mat.define-palette(mat.$gray-palette), 500);
+    }
+  }
+}
+
+mat-drawer {
+  ::ng-deep .mat-drawer-inner-container {
+    &::-webkit-scrollbar {
+      //width: 0;
+      display: none;
+    }
+  }
+}

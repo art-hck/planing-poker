@@ -14,6 +14,7 @@ export class RoomController {
       send('notFound', {});
       throw new NotFoundError(`roomId: ${roomId}`);
     }
+    const sendAvailableRooms = !room.users.has(userId);
 
     roomRepo.join(room, userId, ws).then(() => {
       send('votings', votingRepo.list(roomId, userId));
@@ -22,6 +23,10 @@ export class RoomController {
       }
       broadcast('room', room, roomId);
       broadcast('users', usersRepo.list(roomId), roomId);
+
+      if (sendAvailableRooms) {
+        send('rooms', roomRepo.availableRooms(userId));
+      }
     });
   }
 
@@ -37,7 +42,7 @@ export class RoomController {
   }
 
   /**
-   * Выйти от комнаты
+   * Выйти из комнаты
    */
   static leave({ payload: { roomId }, send, userId }: RoutePayload<'leaveRoom'>) {
     const room = roomRepo.get(roomId);

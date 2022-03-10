@@ -1,0 +1,28 @@
+<ng-container *ngIf="pp.room$ | async as room">
+  <mat-drawer-container *ngIf="authService.user$ | async as me">
+    <mat-drawer class='app-left-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showPlayers" [autoFocus]="false">
+      <!--- USERS --->
+      <pp-room-users [users]="users$ | async" [activeVoting]="activeVoting$ | async" [room]="room"></pp-room-users>
+    </mat-drawer>
+
+    <mat-drawer-content>
+      <!--- CARDS --->
+      <pp-room-cards [activeVoting]="activeVoting$ | async" [step]="step" [room]="room"></pp-room-cards>
+
+      <!--- CREATE --->
+      <div class="new-voting-button-wrap" *ngIf="authService.isAdmin(me, room)">
+        <div class="new-voting-button-tooltip" *ngIf="!(votings$ | async)?.length" style="">
+          <div>Для начала добавьте стори</div>
+        </div>
+        <button mat-fab color="primary" class="new-voting-button" (click)="openNewVotingModal()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </mat-drawer-content>
+
+    <mat-drawer class='app-right-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showVotings" position="end" [autoFocus]="false">
+      <!--- VOTINGS --->
+      <pp-room-votings [votings]="votings$ | async" [room]="room" (choose)="pp.activateVoting(($event.id))"></pp-room-votings>
+    </mat-drawer>
+  </mat-drawer-container>
+</ng-container>

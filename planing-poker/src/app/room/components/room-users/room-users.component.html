@@ -1,0 +1,29 @@
+<mat-list>
+  <ng-container *ngFor='let group of groups'>
+    <ng-container *ngIf='users && room && (users | roomUsers: room: group.roles) as users'>
+      <ng-container *ngIf="users.length">
+        <div mat-subheader>{{group.name}} ({{users.length}})</div>
+        <ng-container *ngFor="let user of users">
+          <pp-room-user [room]="room" [user]="user" [votes]="votes" [voteColors]="voteColors"></pp-room-user>
+        </ng-container>
+        <mat-divider></mat-divider>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</mat-list>
+<div class="flex-space"></div>
+
+<div class="footer-actions" *ngIf="room">
+  <mat-selection-list [multiple]='false'>
+    <mat-divider></mat-divider>
+    <mat-list-option #item (click)='openRoomSettings(); item.selected = false;'>
+      <div matListIcon class='avatar' [style.background-color]='room.name | stringToColor'>{{ room.name | abbreviation }}</div>
+      <div class="overflow-hidden" matLine>{{room.name}}</div>
+      <div class="overflow-hidden mat-gray" matLine [ngSwitch]='activeVoting?.status'>
+        <ng-container *ngSwitchCase='"end"'>Голосование окончено</ng-container>
+        <ng-container *ngSwitchCase='"in-progress"'>Голосование идет</ng-container>
+        <ng-container *ngSwitchDefault>Ожидаем начала голосования</ng-container>
+      </div>
+    </mat-list-option>
+  </mat-selection-list>
+</div>

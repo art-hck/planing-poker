@@ -1,0 +1,44 @@
+.disabled {
+  pointer-events: none;
+}
+
+mat-list-option {
+  .delete {
+    order: -1;
+    position: absolute;
+    right: 16px;
+    opacity: 0;
+    transition: opacity 300ms;
+  }
+
+  &:hover {
+    .delete {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  h3[matLine] {
+    margin-right: 24px;
+  }
+
+  .mat-list-icon ::ng-deep .mat-badge-content {
+    background: #8bc34a;
+    top: 0;
+    right: 0;
+  }
+}
+
+.empty {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px;
+  box-sizing: border-box;
+}

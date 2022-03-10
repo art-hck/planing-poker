@@ -1,0 +1,34 @@
+import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { RolesName, Room, RoomRole, User, Uuid } from '@common/models';
+import { filter } from 'rxjs';
+import { AuthService } from '../../../../app/services/auth.service';
+import { PlaningPokerWsService } from '../../../../app/services/planing-poker-ws.service';
+import { RoomUsersChangeModeratorComponent } from '../../room-users-change-moderator/room-users-change-moderator.component';
+
+@Component({
+  selector: 'pp-room-user',
+  templateUrl: './room-user.component.html',
+  styleUrls: ['./room-user.component.scss']
+})
+export class RoomUserComponent {
+  @Input() user?: User;
+  @Input() room?: Room<true> | null;
+  @Input() votes?: Map<Uuid, number | null>;
+  @Input() voteColors?: Map<number | null, string>;
+  readonly roomRole = RoomRole;
+  readonly role = RolesName;
+
+  constructor(public authService: AuthService, public pp: PlaningPokerWsService, private dialog: MatDialog) {}
+
+  get isVoted(): boolean {
+    return !!this.user && this.votes?.get(this.user.id) !== undefined;
+  }
+
+  changeModerator(userId: Uuid, roomId: Uuid) {
+    this.dialog.open(RoomUsersChangeModeratorComponent, {width: '365px'}).afterClosed().pipe(filter(v => !!v)).subscribe(
+      () => this.pp.setRole(userId, roomId, RoomRole.admin)
+    );
+  }
+}
+

@@ -1,0 +1,30 @@
+<ng-container *ngIf='data.room as room'>
+  <div class='app-relative'>
+    <h2 mat-dialog-title>{{room.name}}</h2>
+    <button color='gray' class='close' mat-icon-button [mat-dialog-close]='false'>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content *ngIf='authService.user$ | async as me'>
+    <div class='avatar' [style.background-color]='room.name | stringToColor'>{{ room.name | abbreviation }}</div>
+    <mat-selection-list [multiple]='false'>
+      <mat-list-option (click)='item1.selected = false' #item1 [disabled]='true'>
+        <mat-icon color='gray' matListIcon>settings</mat-icon>
+        <h4 matLine>Настройки (coming soon)</h4>
+      </mat-list-option>
+      <mat-list-option (click)='inviteRoom(); item2.selected = false' #item2>
+        <mat-icon color='gray' matListIcon>group_add</mat-icon>
+        <h4 matLine>Пригласить людей</h4>
+      </mat-list-option>
+      <mat-list-option [selected]='false' *ngIf='authService.isAdmin(me, room)' (click)='deleteRoom(); item3.selected = false' #item3>
+        <mat-icon color='error' matListIcon>delete</mat-icon>
+        <h4 matLine class='mat-error'>Удалить комнату</h4>
+      </mat-list-option>
+
+      <mat-list-option [selected]='false' *ngIf='!authService.isAdmin(me, room)' (click)='leaveRoom(); item4.selected = false' #item4>
+        <mat-icon color='gray' matListIcon>logout</mat-icon>
+        <h4 matLine>Покинуть из комнату</h4>
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-dialog-content>
+</ng-container>
