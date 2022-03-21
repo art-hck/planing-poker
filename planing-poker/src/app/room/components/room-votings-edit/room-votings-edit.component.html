@@ -1,0 +1,14 @@
+<form [formGroup]="form" (ngSubmit)="form.valid && dialogRef.close(form.value)">
+  <h1 mat-dialog-title>Изменить стори</h1>
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline" hideRequiredMarker>
+      <mat-label>Название</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <div class="flex-space"></div>
+    <button mat-flat-button type='button' (click)='dialogRef.close()'>Отмена</button>
+    <button mat-flat-button color="primary" >Изменить</button>
+  </div>
+</form>

@@ -18,6 +18,7 @@ export interface WsAction {
   activateVoting: { votingId: Uuid }; // Активировать голосвание
   newVoting: { names: string[], roomId: Uuid }; // Создать голосвание
   deleteVoting: { votingId: Uuid }; // Удалить голосование
+  editVoting: { votingId: Uuid, name: string }; // Изменить голосование
   newRoom: { name: string }; // Создать комнату
   rooms: {}; // Список комнат
   joinRoom: { roomId: Uuid }; // Присоединиться к комнате

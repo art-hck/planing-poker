@@ -80,6 +80,10 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('deleteVoting', { votingId });
   }
 
+  editVoting(votingId: Uuid, name: string) {
+    this.ws.send('editVoting', { votingId, name });
+  }
+
   rooms() {
     this.ws.send('rooms', {});
   }

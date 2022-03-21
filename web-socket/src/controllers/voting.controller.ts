@@ -81,6 +81,18 @@ export class VotingController {
   }
 
   /**
+   * Изменить голосование
+   */
+  static edit({ payload: { votingId, name }, broadcast, userId }: RoutePayload<'editVoting'>) {
+    const room = roomRepo.getByVotingId(votingId);
+    const voting = votingRepo.get(votingId);
+    if (!voting || !room) throw new NotFoundError(`roomId: ${room?.id} or votingId: ${votingId}`);
+    roomRepo.verifyAdmin(room.id, userId);
+    voting.name = name;
+    votingRepo.update(voting).then(() => broadcast('votings', userId => votingRepo.list(room.id, userId), room.id));
+  }
+
+  /**
    * Активировать голосование
    */
   static activate({ payload: { votingId }, broadcast, userId }: RoutePayload<'activateVoting'>) {

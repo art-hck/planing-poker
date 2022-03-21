@@ -3,16 +3,16 @@
 }
 
 mat-list-option {
-  .delete {
+  .menu {
     order: -1;
     position: absolute;
     right: 16px;
-    opacity: 0;
+    opacity: 0.5;
     transition: opacity 300ms;
   }
 
   &:hover {
-    .delete {
+    .menu {
       opacity: 0.5;
 
       &:hover {

@@ -29,6 +29,7 @@ import { RoomsHomeComponent } from './components/rooms-home/rooms-home.component
 import { RoomsComponent } from './components/rooms/rooms.component';
 import { DoughnutDirective } from './directives/doughnut.directive';
 import { RoomRoutingModule } from './room-routing.module';
+import { RoomVotingsEditComponent } from './components/room-votings-edit/room-votings-edit.component';
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import { RoomRoutingModule } from './room-routing.module';
     RoomsHomeComponent,
     RoomSettingsComponent,
     DoughnutDirective,
+    RoomVotingsEditComponent,
   ],
   imports: [
     RoomRoutingModule,

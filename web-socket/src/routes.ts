@@ -19,6 +19,7 @@ export const routes: Routes = {
   vote: VotingController.vote,
   unvote: VotingController.unvote,
   deleteVoting: VotingController.delete,
+  editVoting: VotingController.edit,
   restartVoting: VotingController.restart,
   newVoting: VotingController.create,
   activateVoting: VotingController.activate,
