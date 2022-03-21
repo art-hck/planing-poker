@@ -7,6 +7,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
+import { NgxsModule } from '@ngxs/store';
+import { UsersState } from './states/users.state';
+import { VotingsState } from './states/votings.state';
 
 import { AppSharedModule } from '../shared/app-shared.module';
 import { RoomCardsComponent } from './components/room-cards/room-cards.component';
@@ -50,6 +53,7 @@ import { RoomRoutingModule } from './room-routing.module';
   imports: [
     RoomRoutingModule,
     AppSharedModule,
+    NgxsModule.forFeature([UsersState, VotingsState]),
 
     MatDividerModule,
     MatRippleModule,

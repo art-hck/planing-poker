@@ -5,8 +5,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { Users } from './actions/users.actions';
-import { Votings } from './actions/votings.actions';
 import { AuthService } from './services/auth.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
 import { SidebarsService } from './services/sidebars.service';
@@ -56,13 +54,6 @@ export class AppComponent implements OnInit {
         this.ws.connected$.next(true);
       },
       user: user => this.authService.user$.next(user),
-      users: users => this.store.dispatch(new Users.Fetch(users.map(([, v]) => v))),
-      votings: votings => this.store.dispatch(new Votings.Fetch(votings.map(([, v]) => v))),
-      voted: ({ userId, votingId, point }) => this.store.dispatch(new Votings.Vote(userId, votingId, point)),
-      unvoted: ({ userId, votingId }) => this.store.dispatch(new Votings.Unvote(userId, votingId)),
-      flip: voting => this.store.dispatch(new Votings.Flip(voting)),
-      activateVoting: ({ votingId }) => this.store.dispatch(new Votings.Activate(votingId)),
-      restartVoting: voting => this.store.dispatch(new Votings.Restart(voting)),
       newRoom: ({ roomId }) => this.router.navigate(['room', roomId]),
       notFound: () => this.router.navigate(['not-found'], { skipLocationChange: true }),
       denied: () => {

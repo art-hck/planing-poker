@@ -5,13 +5,13 @@ import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { User, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
 import { distinctUntilChanged, filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, take, takeUntil, withLatestFrom } from 'rxjs';
-import { Users } from '../../../app/actions/users.actions';
-import { Votings } from '../../../app/actions/votings.actions';
+import { Users } from '../../actions/users.actions';
+import { Votings } from '../../actions/votings.actions';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
 import { WsService } from '../../../app/services/ws.service';
-import { UsersState } from '../../../app/states/users.state';
-import { VotingsState } from '../../../app/states/votings.state';
+import { UsersState } from '../../states/users.state';
+import { VotingsState } from '../../states/votings.state';
 import { AuthService } from '../../../app/services/auth.service';
 import { RoomVotingsCreateComponent } from '../room-votings-create/room-votings-create.component';
 

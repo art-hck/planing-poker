@@ -21,8 +21,6 @@ import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { HeaderComponent } from './components/header/header.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { UserComponent } from './components/user/user.component';
-import { UsersState } from './states/users.state';
-import { VotingsState } from './states/votings.state';
 
 @NgModule({
   declarations: [
@@ -41,7 +39,7 @@ import { VotingsState } from './states/votings.state';
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    NgxsModule.forRoot([UsersState, VotingsState], { developmentMode: !environment.production }),
+    NgxsModule.forRoot([], { developmentMode: !environment.production }),
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
     MatButtonToggleModule,
     MatSelectModule,
