@@ -1,6 +1,6 @@
 <mat-list>
   <ng-container *ngFor='let group of groups'>
-    <ng-container *ngIf='users && room && (users | roomUsers: room: group.roles) as users'>
+    <ng-container *ngIf='users && room && (users | roomUsers: room: group.roles : group.online) as users'>
       <ng-container *ngIf="users.length">
         <div mat-subheader>{{group.name}} ({{users.length}})</div>
         <ng-container *ngFor="let user of users">

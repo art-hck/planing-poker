@@ -1,7 +1,7 @@
 <ng-container *ngIf="authService.user$ | async as me">
   <mat-list-item *ngIf="user && room">
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="changeModerator(user.id, room.id)" *ngIf="!authService.isAdmin(user, room)">
+      <button mat-menu-item (click)="changeModerator(user.id, room.id)" *ngIf="user.online && !authService.isAdmin(user, room)">
         <mat-icon>verified_user</mat-icon>
         <span>Модератор</span>
       </button>
@@ -13,12 +13,16 @@
         <mat-icon>remove_red_eye</mat-icon>
         <span>Наблюдатель</span>
       </button>
+      <button mat-menu-item (click)="pp.leaveRoom(room.id, user.id)">
+        <mat-icon>block</mat-icon>
+        <span>Исключить</span>
+      </button>
     </mat-menu>
 
     <div
       class="avatar"
       matListIcon
-      [style.background-color]="user.name | stringToColor"
+      [style.background-color]="user.online ? (user.name | stringToColor) : null"
       [matMenuTriggerFor]="menu"
       [class.menu]="authService.isAdmin(me, room)"
     >

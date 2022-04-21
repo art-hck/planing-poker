@@ -2,6 +2,7 @@ import { Collection } from 'mongodb';
 import * as uuid from 'uuid';
 import { User, Uuid } from '../../../common/models';
 import { Repository } from '../models/repository';
+import { roomRepo } from '../mongo';
 import { connections } from './connections.repository';
 
 export class UserRepository implements Repository<User> {
@@ -46,9 +47,11 @@ export class UserRepository implements Repository<User> {
   list(roomId: Uuid): Map<Uuid, User> {
     return new Map(
       Array.from<[Uuid, User]>(this.users.entries())
-
-        .filter(([id]) => connections.isConnected(roomId, id))
-        .map(([token, user]) => [token, user])
+        .filter(([id]) => roomRepo.get(roomId)?.users.has(id))
+        .map(([id, user]) => {
+          user.online = connections.isConnected(roomId, id);
+          return [id, user];
+        })
     );
   }
 

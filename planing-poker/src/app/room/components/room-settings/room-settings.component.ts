@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Room } from '@common/models';
 import { filter } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
@@ -21,7 +20,6 @@ export class RoomSettingsComponent {
     public dialogRef: MatDialogRef<RoomSettingsComponent>,
     private dialog: MatDialog,
     private bottomSheet: MatBottomSheet,
-    private router: Router,
     public pp: PlaningPokerWsService,
     public authService: AuthService,
   ) {
@@ -47,7 +45,6 @@ export class RoomSettingsComponent {
   }
 
   leaveRoom() {
-    this.router.navigate(['/']);
     this.pp.leaveRoom(this.data.room.id);
     this.dialogRef.close();
   }

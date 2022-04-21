@@ -22,7 +22,7 @@ export interface WsAction {
   newRoom: { name: string, points: string[] }; // Создать комнату
   rooms: {}; // Список комнат
   joinRoom: { roomId: Uuid }; // Присоединиться к комнате
-  leaveRoom: { roomId: Uuid }; // Покинуть комнату
+  leaveRoom: { roomId: Uuid, userId?: Uuid }; // Покинуть комнату
   disconnectRoom: { roomId: Uuid }; // Отключиться от комнаты (отличие от leaveRoom в том что из комнаты удаляется только соединение пользователя)
   deleteRoom: { roomId: Uuid }; // Удалить комнату
   setRole: { userId: Uuid, roomId: Uuid, role: RoomRole }; // Задать роль пользователю
@@ -45,6 +45,7 @@ export interface WsEvent<serialized = true> {
   rooms: Room<serialized>[]; // Комнаты
   room: Room<serialized>; // Комната
   deleteRoom: {}; // Удаление комнаты
+  leaveRoom: { roomId: Uuid }; // Выход из комнаты
   feedback: { success: boolean }; // Обратная связь
   invalidToken: {}; // Токен не прошёл проверку
   googleAlreadyLinked: {}; // Гугл аккаунт уже привязан

@@ -69,6 +69,15 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
 
     this.sidebars.detectChanges$.subscribe(() => this.cd.detectChanges());
+
+    this.pp.events({
+      leaveRoom: ({ roomId }) => {
+        this.pp.rooms();
+        if (this.route.snapshot.params['id'] === roomId) {
+          this.router.navigate(['/']);
+        }
+      }
+    }).pipe(takeUntil(this.destroy$)).subscribe();
   }
 
   openNewVotingModal() {

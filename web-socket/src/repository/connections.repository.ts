@@ -18,6 +18,20 @@ class ConnectionsRepository {
   }
 
   /**
+   * Получить соединения пользователя
+   * @param userId
+   */
+  getByUser(userId: Uuid): WebSocket[] {
+    return Array.from(this.connections.values()).reduce((connections: WebSocket[], roomConnections: RoomConnections) => {
+      const userConnections = Array.from(roomConnections.entries())
+        .filter(([id]) => id === userId)
+        .reduce((userConnections: WebSocket[], [, userRoomConnections]) => ([...userConnections, ...userRoomConnections]), []);
+
+      return [...connections, ...userConnections];
+    }, []);
+  }
+
+  /**
    * Задать соединения комнаты
    * @param roomId
    * @param connections

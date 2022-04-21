@@ -23,10 +23,16 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
   votes?: Map<Uuid, string | null>;
   readonly groups = [{
     name: 'Голосующие',
-    roles: [RoomRole.user]
+    roles: [RoomRole.user],
+    online: true
   }, {
     name: 'Наблюдатели',
-    roles: [RoomRole.observer]
+    roles: [RoomRole.observer],
+    online: true
+  }, {
+    name: 'Оффлайн',
+    roles: [],
+    online: false
   }];
 
   constructor(public authService: AuthService, private dialog: MatDialog, public pp: PlaningPokerWsService) {

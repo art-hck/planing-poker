@@ -3,6 +3,7 @@ import { InvalidParamsError } from '../models/invalid-params-error';
 import { roomRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 import { broadcast } from '../utils/broadcast';
+import { replacer } from '../utils/set-map-utils';
 
 export class RoomController {
   /**
@@ -45,11 +46,18 @@ export class RoomController {
   /**
    * Выйти из комнаты
    */
-  static leave({ payload: { roomId }, send, userId }: RoutePayload<'leaveRoom'>) {
+  static leave({ payload: { roomId, userId }, userId: selfUserId, broadcast }: RoutePayload<'leaveRoom'>) {
     const room = roomRepo.get(roomId);
     if (!room) throw new NotFoundError(`roomId: ${roomId}`);
+    if (userId) roomRepo.verifyAdmin(roomId, selfUserId);
+    const uid = userId ?? selfUserId;
 
-    roomRepo.leave(room, userId).then(() => send('rooms', roomRepo.availableRooms(userId)));
+    const userConnections = connections.getByUser(uid);
+
+    roomRepo.leave(room, uid).then(() => {
+      broadcast('users', usersRepo.list(roomId), roomId);
+      userConnections?.forEach(c => c.send(JSON.stringify({ event: 'leaveRoom', payload: { roomId } }, replacer)));
+    });
   }
 
   /**

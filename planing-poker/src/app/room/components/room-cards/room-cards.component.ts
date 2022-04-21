@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { Room, RoomRole, Voting } from '@common/models';
+import { Room, RoomRole, User, Voting } from '@common/models';
 import * as confetti from 'canvas-confetti';
 import { CreateTypes as Confetti } from 'canvas-confetti';
 import { concatMap, filter, range, Subject, takeUntil, timer } from 'rxjs';
@@ -28,6 +28,7 @@ import { ConfirmComponent } from '../../../shared/component/confirm/confirm.comp
 })
 export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('stepper') stepper?: MatStepper;
+  @Input() users?: User[] | null;
   @Input() step?: number | null;
   @Input() room?: Room<true>;
   @Input() activeVoting?: Voting<true> | null;
@@ -112,7 +113,11 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   flip() {
-    if (this.room?.users && this.activeVoting?.votes && this.room?.users?.length > this.activeVoting?.votes?.length) {
+    const usersLength = this.room?.users
+      .filter(([id, role]) => this.users?.some(u => u.online && u.id === id) && role.indexOf(RoomRole.user) >= 0).length || 0;
+    const votesLength = this.activeVoting?.votes.length || 0;
+
+    if (usersLength > votesLength) {
       const data = {
         title: 'Еще не все проголосовали',
         content: 'В случае, если вы не хотите дожидаться можно открыть карты, либо переместить пользователя в наблюдатели.',

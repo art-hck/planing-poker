@@ -7,4 +7,5 @@ export interface User {
   su: boolean;
   role?: Role;
   verified: boolean;
+  online?: boolean;
 }
