@@ -19,7 +19,7 @@ export class RoomRepository implements Repository<Room> {
       .find({})
       .toArray()
       .then(rooms => rooms.map(({ _id: {}, ...room }) => room).forEach(room => {
-        if (room.points?.length === 0) { // Fallback for old rooms without points
+        if (!room.points?.length) { // Fallback for old rooms without points
           room.points = ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'];
         }
         this.rooms.set(room.id, deserialize(room));
