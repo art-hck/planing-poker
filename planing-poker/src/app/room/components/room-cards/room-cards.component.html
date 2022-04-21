@@ -32,7 +32,7 @@
         </div>
       <ng-container *ngIf="authService.isAdmin(me, room) && activeVoting?.votes!.length">
         <br/>
-        <button mat-flat-button color="primary" (click)="pp.flip(activeVoting!.id)">Открыть карты</button>
+        <button mat-flat-button color="primary" (click)="flip()">Открыть карты</button>
       </ng-container>
     </ng-container>
     <ng-container *ngSwitchCase="2">
@@ -55,7 +55,7 @@
         <div class="summary__content">
           <ng-container *ngIf="authService.isAdmin(me, room)">
             <br/>
-            <button color="primary" mat-flat-button (click)="pp.restartVoting(activeVoting!.id)">Перезапустить</button>
+            <button color="primary" mat-flat-button (click)="restart()">Перезапустить</button>
           </ng-container>
         </div>
         <div class="summary__aside"></div>

@@ -4,7 +4,7 @@ import { RolesName, Room, RoomRole, User, Uuid } from '@common/models';
 import { filter } from 'rxjs';
 import { AuthService } from '../../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../../app/services/planing-poker-ws.service';
-import { RoomUsersChangeModeratorComponent } from '../../room-users-change-moderator/room-users-change-moderator.component';
+import { ConfirmComponent } from '../../../../shared/component/confirm/confirm.component';
 
 @Component({
   selector: 'pp-room-user',
@@ -26,7 +26,14 @@ export class RoomUserComponent {
   }
 
   changeModerator(userId: Uuid, roomId: Uuid) {
-    this.dialog.open(RoomUsersChangeModeratorComponent, {width: '365px'}).afterClosed().pipe(filter(v => !!v)).subscribe(
+    const data = {
+      title: 'Внимание!',
+      content: 'Вы собираетесь сменить модератора комнаты. Вернуть статус обратно вам сможет только новый модератор.',
+      cancel: 'Отмена',
+      submit: 'Сменить'
+    };
+
+    this.dialog.open(ConfirmComponent, { width: '365px', data }).afterClosed().pipe(filter(v => !!v)).subscribe(
       () => this.pp.setRole(userId, roomId, RoomRole.admin)
     );
   }

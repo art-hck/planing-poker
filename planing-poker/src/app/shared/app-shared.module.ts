@@ -18,12 +18,14 @@ import { RouterModule } from '@angular/router';
 import { AbbreviationPipe } from './pipes/abbreviation.pipe';
 import { PluralizePipe } from './pipes/pluralize-pipe';
 import { StringToColorPipe } from './pipes/string-to-color.pipe';
+import { ConfirmComponent } from './component/confirm/confirm.component';
 
 @NgModule({
   declarations: [
     PluralizePipe,
     AbbreviationPipe,
     StringToColorPipe,
+    ConfirmComponent,
 
   ],
   imports: [
@@ -35,6 +37,7 @@ import { StringToColorPipe } from './pipes/string-to-color.pipe';
     MatButtonModule,
     MatMenuModule,
     MatBadgeModule,
+    MatDialogModule,
   ],
   exports: [
     PluralizePipe,

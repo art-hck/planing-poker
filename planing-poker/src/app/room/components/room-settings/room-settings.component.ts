@@ -6,7 +6,7 @@ import { Room } from '@common/models';
 import { filter } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
-import { RoomDeleteComponent } from '../room-delete/room-delete.component';
+import { ConfirmComponent } from '../../../shared/component/confirm/confirm.component';
 import { RoomShareDialogComponent } from '../room-share/room-share.component';
 
 @Component({
@@ -32,7 +32,14 @@ export class RoomSettingsComponent {
   }
 
   deleteRoom() {
-    this.dialog.open(RoomDeleteComponent, { width: '360px', restoreFocus: false }).afterClosed().pipe(filter(Boolean))
+    const data = {
+      title: 'Удалить комнату?',
+      content: 'Отменить действие будет невозможно. Все данные о голосованиях в комнате будут также удалены.',
+      cancel: 'Отмена',
+      submit: 'Удалить'
+    };
+
+    this.dialog.open(ConfirmComponent, { width: '360px', data, restoreFocus: false }).afterClosed().pipe(filter(Boolean))
       .subscribe(() => {
         this.pp.deleteRoom(this.data.room.id);
         this.dialogRef.close();

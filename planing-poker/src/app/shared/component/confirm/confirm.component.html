@@ -1,0 +1,6 @@
+<h2 mat-dialog-title *ngIf='data.title'>{{data.title}}</h2>
+<div mat-dialog-content *ngIf='data.content'>{{data.content}}</div>
+<div mat-dialog-actions [align]="'end'">
+  <button mat-flat-button *ngIf='data.cancel' (click)='ref.close(false)'>{{data.cancel}}</button>
+  <button mat-flat-button color='primary' (click)='ref.close(true)'>{{data.submit}}</button>
+</div>

@@ -7,7 +7,7 @@
 
     <mat-drawer-content>
       <!--- CARDS --->
-      <pp-room-cards [activeVoting]="activeVoting$ | async" [step]="step" [room]="room"></pp-room-cards>
+      <pp-room-cards [activeVoting]="activeVoting$ | async" [step]="step$ | async" [room]="room"></pp-room-cards>
 
       <!--- CREATE --->
       <div class="new-voting-button-wrap" *ngIf="authService.isAdmin(me, room)">
