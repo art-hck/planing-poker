@@ -44,15 +44,15 @@ export class UserRepository implements Repository<User> {
    * Список пользователей в комнате
    * @param roomId
    */
-  list(roomId: Uuid): Map<Uuid, User> {
-    return new Map(
-      Array.from<[Uuid, User]>(this.users.entries())
-        .filter(([id]) => roomRepo.get(roomId)?.users.has(id))
-        .map(([id, user]) => {
-          user.online = connections.isConnected(roomId, id);
-          return [id, user];
-        })
-    );
+  async list(roomId: Uuid): Promise<Map<Uuid, User>> {
+    const room = roomRepo.get(roomId);
+    const users = await this.collection?.find({ id: { $in: Array.from(room?.users.keys() || []) } }, { projection: { _id: 0 } }).toArray() ||
+      Array.from(this.users.values());
+
+    return new Map(Array.from<[Uuid, User]>(users.map(user => {
+      user.online = connections.isConnected(roomId, user.id);
+      return [user.id, user];
+    })));
   }
 
   /**

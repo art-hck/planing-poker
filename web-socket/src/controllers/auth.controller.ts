@@ -1,4 +1,4 @@
-import { User } from '../../../common/models';
+import { Room, User } from '../../../common/models';
 import { Config } from '../config';
 import { NotFoundError, RoutePayload } from '../models';
 import { DeniedError } from '../models/denied-error.ts';
@@ -46,10 +46,10 @@ export class AuthController {
    */
   static async bye({ broadcast, userId, session }: RoutePayload<'bye'>) {
     const user = await usersRepo.find(userId);
-    roomRepo.rooms.forEach(room => {
+    await roomRepo.rooms.forEach(async (room: Room) => {
       if (connections.isConnected(room.id, userId)) {
         connections.disconnectUser(room.id, userId);
-        broadcast('users', usersRepo.list(room.id), room.id);
+        broadcast('users', await usersRepo.list(room.id), room.id);
       }
 
       // Удалять из комнаты только временные аккаунты
@@ -59,7 +59,7 @@ export class AuthController {
       }
     });
 
-    session.refreshToken && refreshTokenRepo.delete(session.refreshToken);
+    session.refreshToken && await refreshTokenRepo.delete(session.refreshToken);
   }
 
   /**
@@ -92,9 +92,9 @@ export class AuthController {
 
     usersRepo.update(user).then(() => user && send('user', user));
 
-    roomRepo.rooms.forEach(room => {
+    await roomRepo.rooms.forEach(async room => {
       if (!connections.get(room.id)?.has(userId)) return;
-      broadcast('users', usersRepo.list(room.id), room.id);
+      broadcast('users', await usersRepo.list(room.id), room.id);
     });
   }
 }
