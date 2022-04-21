@@ -2,6 +2,7 @@ import { GaxiosError } from 'gaxios/build/src/common';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { NotFoundError, RoutePayload } from '../models';
 import { DeniedError } from '../models/denied-error.ts';
+import { InvalidParamsError } from '../models/invalid-params-error';
 import { routes } from '../routes';
 import { log } from './log';
 
@@ -14,6 +15,9 @@ export function errorHandler(e: unknown, route: RoutePayload) {
         break;
       case e instanceof NotFoundError:
         log.error('WebSocket', `Сущность не найдена`, e.message);
+        break;
+      case e instanceof InvalidParamsError:
+        log.warning('WebSocket', `Неверные данные от клиента`, e.message);
         break;
       case e instanceof GaxiosError:
       case e instanceof JsonWebTokenError:

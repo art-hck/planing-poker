@@ -7,6 +7,20 @@
       <mat-label>Название</mat-label>
       <input matInput formControlName='name'>
     </mat-form-field>
+
+    <mat-form-field class='example-chip-list' appearance='outline' *ngIf='!join'>
+      <mat-label>Варианты голосования</mat-label>
+      <mat-chip-list #chipList formArrayName='points'>
+        <mat-chip *ngFor='let point of points.value' (removed)='removePoint(point)'>
+          {{point}}
+          <button matChipRemove *ngIf='points.controls.length > 2'>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+        <input maxlength='4' [matChipInputFor]='chipList' [matChipInputAddOnBlur]='true' (matChipInputTokenEnd)='addPoint($event)' />
+      </mat-chip-list>
+    </mat-form-field>
+
     <mat-form-field appearance='outline' hideRequiredMarker *ngIf='join'>
       <mat-label>Код для входа</mat-label>
       <input matInput formControlName='code'>

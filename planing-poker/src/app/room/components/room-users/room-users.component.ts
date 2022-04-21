@@ -18,9 +18,9 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
   @Input() room?: Room<true> | null;
   @Input() activeVoting?: Voting<true> | null;
 
-  readonly voteColors = new Map<number | null, string>();
+  readonly voteColors = new Map<string | null, string>();
   readonly destroy$ = new Subject<void>();
-  votes?: Map<Uuid, number | null>;
+  votes?: Map<Uuid, string | null>;
   readonly groups = [{
     name: 'Голосующие',
     roles: [RoomRole.user]
@@ -34,7 +34,7 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(c: SimpleChanges) {
     if (c['activeVoting']) {
-      this.votes = new Map<Uuid, number | null>(this.activeVoting?.votes);
+      this.votes = new Map(this.activeVoting?.votes);
       this.voteColors.clear();
       Array.from(new Set(this.votes.values())).sort().forEach(vote => this.voteColors.set(vote, Colors[this.voteColors.size]));
     }

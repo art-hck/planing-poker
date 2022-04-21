@@ -14,8 +14,8 @@ import { RoomUsersChangeModeratorComponent } from '../../room-users-change-moder
 export class RoomUserComponent {
   @Input() user?: User;
   @Input() room?: Room<true> | null;
-  @Input() votes?: Map<Uuid, number | null>;
-  @Input() voteColors?: Map<number | null, string>;
+  @Input() votes?: Map<Uuid, string | null>;
+  @Input() voteColors?: Map<string | null, string>;
   readonly roomRole = RoomRole;
   readonly role = RolesName;
 

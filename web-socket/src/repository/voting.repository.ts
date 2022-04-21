@@ -48,7 +48,7 @@ export class VotingRepository implements Repository<Voting> {
     await this.collection?.deleteOne({ id });
   }
 
-  async vote(voting: Voting, userId: Uuid, point: number) {
+  async vote(voting: Voting, userId: Uuid, point: string) {
     voting.votes.set(userId, point);
     return this.update(voting);
   }

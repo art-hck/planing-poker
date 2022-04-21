@@ -32,7 +32,7 @@
     <mat-chip-list>
       <mat-chip *ngIf="user.id === me?.id"><small>Вы</small></mat-chip>
       <ng-container *ngIf="isVoted">
-        <mat-chip [style.background]="voteColors?.get(votes?.get(user.id) || 0)" [selected]="true">
+        <mat-chip [style.background]="voteColors?.get(votes?.get(user.id) || null)" [selected]="true">
           <small>{{ votes?.get(user.id) ?? "?" }}</small>
         </mat-chip>
       </ng-container>

@@ -40,7 +40,7 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('linkGoogle', { token, googleCode }, { force: true });
   }
 
-  vote(votingId: Uuid, point: number) {
+  vote(votingId: Uuid, point: string) {
     this.ws.send('vote', { point, votingId });
   }
 
@@ -64,8 +64,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('newVoting', { names, roomId });
   }
 
-  newRoom(name: string) {
-    this.ws.send('newRoom', { name });
+  newRoom(name: string, points: string[]) {
+    this.ws.send('newRoom', { name, points });
   }
 
   joinRoom(roomId: Uuid) {

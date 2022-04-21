@@ -1,4 +1,5 @@
 import { NotFoundError, RoutePayload } from '../models';
+import { InvalidParamsError } from '../models/invalid-params-error';
 import { roomRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 import { broadcast } from '../utils/broadcast';
@@ -54,8 +55,9 @@ export class RoomController {
   /**
    * Создать комнату
    */
-  static create({ payload: { name }, send, userId }: RoutePayload<'newRoom'>) {
-    roomRepo.create(name, userId).then(roomId => {
+  static create({ payload: { name, points }, send, userId }: RoutePayload<'newRoom'>) {
+    if (points.length < 2) throw new InvalidParamsError(`points: ${points}`);
+    roomRepo.create(name, userId, points).then(roomId => {
       send('newRoom', { roomId });
       send('rooms', roomRepo.availableRooms(userId));
     });

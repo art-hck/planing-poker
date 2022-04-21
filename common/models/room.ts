@@ -7,4 +7,5 @@ export interface Room<serialized = false> {
   votingIds: serialized extends false ? Set<Uuid> : Uuid[];
   users: serialized extends false ? Map<Uuid, Set<RoomRole>> : [Uuid, RoomRole[]][];
   activeVotingId?: Uuid
+  points: string[]
 }

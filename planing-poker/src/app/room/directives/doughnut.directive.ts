@@ -7,14 +7,14 @@ import { Colors } from '../../shared/util/colors';
 @Directive({ selector: 'canvas[ppDoughnut]' })
 export class DoughnutDirective implements AfterViewInit, OnChanges {
   @Input() voting?: Voting<true>;
-  @Input() groupedVotes?: [number, number][];
+  @Input() groupedVotes?: [string, number][];
   chart?: Chart;
 
   constructor(private chartEl: ElementRef) {
   }
 
-  get sortedGroupedVotes() {
-    return this.groupedVotes?.sort(([a], [b]) => a - b).map(v => v[1]);
+  get sortedGroupedVotes() { // @TODO: Sort in room points order
+    return this.groupedVotes?.sort(([a], [b]) => a > b ? 1 : -1).map(v => v[1]);
   }
 
   ngOnChanges() {

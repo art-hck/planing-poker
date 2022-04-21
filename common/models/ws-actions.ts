@@ -11,7 +11,7 @@ export interface WsAction {
   handshake: Handshake; // Авторизация + регистрация
   bye: {}; // Логаут + удаление временного аккаунта
   linkGoogle: { token: Token, googleCode: string }; // Привязать google аккаунт
-  vote: { point: number, votingId: Uuid }; // Проголосовать
+  vote: { point: string, votingId: Uuid }; // Проголосовать
   unvote: { votingId: Uuid }; // Отменить голос
   flip: { votingId: Uuid }; // Открыть карты
   restartVoting: { votingId: Uuid }; // Перезапустить голосование
@@ -19,7 +19,7 @@ export interface WsAction {
   newVoting: { names: string[], roomId: Uuid }; // Создать голосвание
   deleteVoting: { votingId: Uuid }; // Удалить голосование
   editVoting: { votingId: Uuid, name: string }; // Изменить голосование
-  newRoom: { name: string }; // Создать комнату
+  newRoom: { name: string, points: string[] }; // Создать комнату
   rooms: {}; // Список комнат
   joinRoom: { roomId: Uuid }; // Присоединиться к комнате
   leaveRoom: { roomId: Uuid }; // Покинуть комнату
@@ -35,7 +35,7 @@ export interface WsEvent<serialized = true> {
   restartVoting: Voting<serialized>; // Перезапуск голосвания
   flip: Voting<serialized>; // Открытие карточек
   users: [Uuid, User][]; // Список пользователей
-  voted: { userId: Uuid, votingId: Uuid, point?: number }; // Проголосовал
+  voted: { userId: Uuid, votingId: Uuid, point?: string }; // Проголосовал
   unvoted: { userId: Uuid, votingId: Uuid }; // Отменил голос
   votings: [Uuid, Voting<serialized>][]; // Список голосований
   activateVoting: { votingId: Uuid }; // Активация голосования

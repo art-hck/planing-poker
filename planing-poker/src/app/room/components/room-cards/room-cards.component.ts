@@ -35,9 +35,8 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   readonly roomRole = RoomRole;
-  readonly points = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40];
   readonly destroy$ = new Subject<void>();
-  active?: number;
+  active?: string;
   confetti?: Confetti;
 
   constructor(public pp: PlaningPokerWsService, private cd: ChangeDetectorRef, public authService: AuthService) {
@@ -62,14 +61,14 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
     return this.active !== undefined;
   }
 
-  get groupedVotes(): [number, number][] {
+  get groupedVotes(): [string, number][] {
     return Array.from(this.activeVoting?.votes.reduce((group, vote) => {
       if (vote[1] !== null) {
         group.set(vote[1], (group.get(vote[1]) ?? 0) + 1);
       }
 
       return group;
-    }, new Map<number, number>()) || []).sort((a, b) => b[1] - a[1]);
+    }, new Map<string, number>()) || []).sort((a, b) => b[1] - a[1]);
   }
 
   get winner(): string {
@@ -83,7 +82,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  vote(point: number) {
+  vote(point: string) {
     if (this.activeVoting) {
       if (this.active !== point) {
         this.active = point;

@@ -18,17 +18,22 @@ export class RoomRepository implements Repository<Room> {
     collection
       .find({})
       .toArray()
-      .then(rooms => rooms.map(({ _id: {}, ...room }) => room).forEach(room => this.rooms.set(room.id, deserialize(room))));
+      .then(rooms => rooms.map(({ _id: {}, ...room }) => room).forEach(room => {
+        if (room.points?.length === 0) { // Fallback for old rooms without points
+          room.points = ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'];
+        }
+        this.rooms.set(room.id, deserialize(room));
+      }));
   }
 
   get(id: Uuid) {
     return this.rooms.get(id);
   }
 
-  async create(name: string, userId: Uuid) {
+  async create(name: string, userId: Uuid, points: string[]) {
     const id = uuid.v4();
     const users = new Map<Uuid, Set<RoomRole>>().set(userId, new Set([RoomRole.admin, RoomRole.user]));
-    const room: Room = { id, name, votingIds: new Set(), users };
+    const room: Room = { id, name, votingIds: new Set(), users, points };
     this.rooms.set(room.id, room);
     await this.collection?.insertOne(serialize(room));
 

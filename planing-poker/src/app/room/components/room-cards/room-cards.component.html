@@ -11,8 +11,8 @@
     </div>
     <ng-template #waiting><div class="mat-headline app-center" >Ожидаем начала голосования...</div></ng-template>
 
-    <div class="poker-cards">
-      <mat-card *ngFor="let point of points" class="mat-display-2 poker-cards__item poker-cards__item-disabled">{{point}}</mat-card>
+    <div class="poker-cards" *ngIf='room'>
+      <mat-card *ngFor="let point of room.points" class="mat-display-2 poker-cards__item poker-cards__item-disabled">{{point}}</mat-card>
     </div>
   </ng-container>
   <ng-container *ngIf="activeVoting" [ngSwitch]="step">
@@ -20,9 +20,9 @@
       {{ activeVoting.name}}
     </div>
     <ng-container *ngSwitchCase="1">
-        <div class="poker-cards">
+        <div class="poker-cards" *ngIf='room'>
           <mat-card
-            *ngFor="let point of points"
+            *ngFor="let point of room.points"
             matRipple
             class="mat-display-2 poker-cards__item"
             [class.mat-elevation-z8]="active === point"

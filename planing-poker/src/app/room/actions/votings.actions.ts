@@ -11,7 +11,7 @@ export namespace Votings {
   export class Vote {
     static readonly type = '[Votings] Voted';
 
-    constructor(public userId: Uuid, public votingId: Uuid, public point?: number) {}
+    constructor(public userId: Uuid, public votingId: Uuid, public point?: string) {}
   }
 
   export class Unvote {

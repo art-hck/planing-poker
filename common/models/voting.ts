@@ -7,4 +7,4 @@ export interface Voting<serialized = false> {
   status: "end" | "pristine" | "in-progress";
 }
 
-export type Votes<serialized = false> = serialized extends false ? Map<Uuid, number | null> : [Uuid, number | null][];
+export type Votes<serialized = false> = serialized extends false ? Map<Uuid, string | null> : [Uuid, string | null][];
