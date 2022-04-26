@@ -47,7 +47,8 @@ export class UserRepository implements Repository<User> {
   async list(roomId: Uuid): Promise<Map<Uuid, User>> {
     const room = roomRepo.get(roomId);
     const users = await this.collection?.find({ id: { $in: Array.from(room?.users.keys() || []) } }, { projection: { _id: 0 } }).toArray() ||
-      Array.from(this.users.values());
+      Array.from(this.users.values()).filter(u => room?.users.has(u.id));
+
 
     return new Map(Array.from<[Uuid, User]>(users.map(user => {
       user.online = connections.isConnected(roomId, user.id);

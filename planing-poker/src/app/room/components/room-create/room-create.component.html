@@ -1,14 +1,13 @@
-<h1 mat-dialog-title *ngIf='join'>Присоединиться к комнате</h1>
-<h1 mat-dialog-title *ngIf='!join'>Создать новую комнату</h1>
+<h1 mat-dialog-title>Создать новую комнату</h1>
 <form [formGroup]='form' (ngSubmit)='form.valid && matDialogRef.close(form.value)'>
   <div mat-dialog-content>
 
-    <mat-form-field appearance='outline' hideRequiredMarker *ngIf='!join'>
+    <mat-form-field appearance='outline' hideRequiredMarker >
       <mat-label>Название</mat-label>
       <input matInput formControlName='name'>
     </mat-form-field>
 
-    <mat-form-field class='example-chip-list' appearance='outline' *ngIf='!join'>
+    <mat-form-field class='example-chip-list' appearance='outline'>
       <mat-label>Варианты голосования</mat-label>
       <mat-chip-list #chipList formArrayName='points'>
         <mat-chip *ngFor='let point of points.value' (removed)='removePoint(point)'>
@@ -20,14 +19,6 @@
         <input maxlength='4' [matChipInputFor]='chipList' [matChipInputAddOnBlur]='true' (matChipInputTokenEnd)='addPoint($event)' />
       </mat-chip-list>
     </mat-form-field>
-
-    <mat-form-field appearance='outline' hideRequiredMarker *ngIf='join'>
-      <mat-label>Код для входа</mat-label>
-      <input matInput formControlName='code'>
-    </mat-form-field>
-    <h4 mat-dialog-title [align]="'center'" class='mat-gray'>
-      <a mat-button (click)='join = !join'>или  {{join ? 'создайте новую комнату' : 'войдите с помощью кода'}}</a>
-    </h4>
   </div>
   <div mat-dialog-actions [align]="'end'">
     <button mat-flat-button [mat-dialog-close]='false' *ngIf='!matDialogRef.disableClose'>Отмена</button>

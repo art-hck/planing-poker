@@ -7,7 +7,7 @@ import { Uuid } from '@common/models';
     <br />
 
     <mat-form-field appearance='outline' hideRequiredMarker>
-      <mat-label>Код для входа в комнату</mat-label>
+      <mat-label>Ссылка для входа в комнату</mat-label>
       <input matInput [value]='location' #input (focus)='input.select()'>
     </mat-form-field>
     <div [align]="'end'">
@@ -16,7 +16,7 @@ import { Uuid } from '@common/models';
   `,
 })
 export class RoomShareDialogComponent {
-  location = this.data.roomId;
+  location = document?.location.toString();
   @ViewChild('input') input?: ElementRef<HTMLInputElement>;
 
   constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: { roomId: Uuid }, public ref: MatBottomSheetRef) {
