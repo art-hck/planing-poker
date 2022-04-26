@@ -2,12 +2,12 @@
   <mat-drawer-container *ngIf="authService.user$ | async as me">
     <mat-drawer class='app-left-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showPlayers" [autoFocus]="false">
       <!--- USERS --->
-      <pp-room-users [users]="users$ | async" [activeVoting]="activeVoting$ | async" [room]="room"></pp-room-users>
+      <pp-room-users [users]="users$ | async" [currentVoting]="currentVoting$ | async" [room]="room"></pp-room-users>
     </mat-drawer>
 
     <mat-drawer-content>
       <!--- CARDS --->
-      <pp-room-cards [users]="users$ | async" [activeVoting]="activeVoting$ | async" [step]="step$ | async" [room]="room"></pp-room-cards>
+      <pp-room-cards [users]="users$ | async" [currentVoting]="currentVoting$ | async" [step]="step$ | async" [room]="room"></pp-room-cards>
 
       <!--- CREATE --->
       <div class="new-voting-button-wrap" *ngIf="authService.isAdmin(me, room)">
@@ -22,7 +22,7 @@
 
     <mat-drawer class='app-right-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showVotings" position="end" [autoFocus]="false">
       <!--- VOTINGS --->
-      <pp-room-votings [votings]="votings$ | async" [room]="room" (choose)="pp.activateVoting(($event.id))"></pp-room-votings>
+      <pp-room-votings [votings]="votings$ | async" [activeVoting]='activeVoting$ | async' [room]="room" (choose)="activate($event.id, authService.isAdmin(me, room))"></pp-room-votings>
     </mat-drawer>
   </mat-drawer-container>
 </ng-container>

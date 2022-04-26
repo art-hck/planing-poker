@@ -16,7 +16,7 @@ import { RoomSettingsComponent } from '../room-settings/room-settings.component'
 export class RoomUsersComponent implements OnChanges, OnDestroy {
   @Input() users?: User[] | null;
   @Input() room?: Room<true> | null;
-  @Input() activeVoting?: Voting<true> | null;
+  @Input() currentVoting?: Voting<true> | null;
 
   readonly voteColors = new Map<string | null, string>();
   readonly destroy$ = new Subject<void>();
@@ -39,8 +39,8 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(c: SimpleChanges) {
-    if (c['activeVoting']) {
-      this.votes = new Map(this.activeVoting?.votes);
+    if (c['currentVoting']) {
+      this.votes = new Map(this.currentVoting?.votes);
       this.voteColors.clear();
       Array.from(new Set(this.votes.values())).sort().forEach(vote => this.voteColors.set(vote, Colors[this.voteColors.size]));
     }

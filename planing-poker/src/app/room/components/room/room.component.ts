@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogState } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { User, Voting } from '@common/models';
+import { ActivatedRoute, Router } from '@angular/router';
+import { User, Uuid, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
 import { distinctUntilChanged, filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, take, takeUntil, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
@@ -26,9 +26,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   @Select(UsersState.users) users$!: Observable<User[]>;
   @Select(VotingsState.votings) votings$!: Observable<Voting<true>[]>;
   @Select(VotingsState.activeVoting) activeVoting$!: Observable<Voting<true>>;
+  currentVoting$ = this.route.queryParams.pipe(switchMap(({ votingId }) => {
+    return this.store.select(VotingsState.voting(votingId));
+  }));
   step$ = merge(
     this.pp.restartVoting$.pipe(mapTo(1)),
-    this.activeVoting$.pipe(map(v => v ? v?.status === 'end' ? 2 : 1 : 0)),
+    this.currentVoting$.pipe(map(v => v ? v?.status === 'end' ? 2 : 1 : 0)),
     this.pp.flip$.pipe(mapTo(2))
   );
   readonly destroy$ = new Subject<void>();
@@ -48,16 +51,20 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    let roomId: Uuid;
     this.route.params.pipe(
       mergeMap(p => this.authService.user$.pipe(
         distinctUntilChanged((p, c) => p?.id === c?.id),
         filter(u => !!u), mapTo(p)
       )),
       takeUntil(this.destroy$)
-    ).subscribe(({ id }) => this.pp.joinRoom(id));
-
-    this.router.events.pipe(filter(e => e instanceof NavigationStart), takeUntil(this.destroy$))
-      .subscribe(() => this.pp.disconnectRoom(this.route.snapshot.params['id']));
+    ).subscribe(({ id }) => {
+      if (roomId) {
+        this.pp.disconnectRoom(roomId);
+      }
+      this.pp.joinRoom(id);
+      roomId = id;
+    });
 
     this.pp.voted$.pipe(
       withLatestFrom(this.authService.user$),
@@ -85,6 +92,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.dialog.open(RoomVotingsCreateComponent, { id: 'NewVotingModal', width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(data => {
       this.pp.newVoting(this.route.snapshot.params['id'], data.names.split('\n'));
     });
+  }
+
+  activate(votingId: Voting['id'], isAdmin: boolean) {
+    this.router.navigate([], { queryParams: { votingId } });
+
+    if (isAdmin) {
+      this.pp.activateVoting((votingId));
+    }
   }
 
   ngOnDestroy() {

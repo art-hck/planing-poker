@@ -19,7 +19,7 @@
     <mat-list-option #item (click)='openRoomSettings(); item.selected = false;'>
       <div matListIcon class='avatar' [style.background-color]='room.name | stringToColor'>{{ room.name | abbreviation }}</div>
       <div class="overflow-hidden" matLine>{{room.name}}</div>
-      <div class="overflow-hidden mat-gray" matLine [ngSwitch]='activeVoting?.status'>
+      <div class="overflow-hidden mat-gray" matLine [ngSwitch]='currentVoting?.status'>
         <ng-container *ngSwitchCase='"end"'>Голосование окончено</ng-container>
         <ng-container *ngSwitchCase='"in-progress"'>Голосование идет</ng-container>
         <ng-container *ngSwitchDefault>Ожидаем начала голосования</ng-container>

@@ -31,7 +31,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   @Input() users?: User[] | null;
   @Input() step?: number | null;
   @Input() room?: Room<true>;
-  @Input() activeVoting?: Voting<true> | null;
+  @Input() currentVoting?: Voting<true> | null;
 
   @ViewChild('confettiCanvas') set confettiCanvas(el: ElementRef<HTMLCanvasElement>) {
     this.confetti = el ? confetti.create(el.nativeElement, { resize: true }) : undefined;
@@ -46,7 +46,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.confetti && changes['activeVoting'] && changes['activeVoting'].previousValue?.id === changes['activeVoting'].currentValue?.id) {
+    if (this.confetti && changes['currentVoting'] && changes['currentVoting'].previousValue?.id === changes['currentVoting'].currentValue?.id) {
       if (this.groupedVotes.length === 1 && this.groupedVotes[0][1] > 1) { // Если голоса в одной группе и их больше одного
         range(1, 10)
           .pipe(concatMap(() => timer(100 + (Math.random() * 700))), takeUntil(this.destroy$))
@@ -65,7 +65,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   get groupedVotes(): [string, number][] {
-    return Array.from(this.activeVoting?.votes.reduce((group, vote) => {
+    return Array.from(this.currentVoting?.votes.reduce((group, vote) => {
       if (vote[1] !== null) {
         group.set(vote[1], (group.get(vote[1]) ?? 0) + 1);
       }
@@ -86,13 +86,13 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   vote(point: string) {
-    if (this.activeVoting) {
+    if (this.currentVoting) {
       if (this.active !== point) {
         this.active = point;
-        this.pp.vote(this.activeVoting.id, point);
+        this.pp.vote(this.currentVoting.id, point);
       } else {
         this.active = undefined;
-        this.pp.unvote(this.activeVoting.id);
+        this.pp.unvote(this.currentVoting.id);
       }
     }
   }
@@ -107,7 +107,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
 
     this.dialog.open(ConfirmComponent, { width: '360px', data, restoreFocus: false }).afterClosed().pipe(filter(Boolean))
       .subscribe(() => {
-        if (this.activeVoting) this.pp.restartVoting(this.activeVoting?.id);
+        if (this.currentVoting) this.pp.restartVoting(this.currentVoting?.id);
       });
 
   }
@@ -115,7 +115,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   flip() {
     const usersLength = this.room?.users
       .filter(([id, role]) => this.users?.some(u => u.online && u.id === id) && role.indexOf(RoomRole.user) >= 0).length || 0;
-    const votesLength = this.activeVoting?.votes.length || 0;
+    const votesLength = this.currentVoting?.votes.length || 0;
 
     if (usersLength > votesLength) {
       const data = {
@@ -127,10 +127,10 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
 
       this.dialog.open(ConfirmComponent, { width: '360px', data, restoreFocus: false }).afterClosed().pipe(filter(Boolean))
         .subscribe(() => {
-          if (this.activeVoting) this.pp.flip(this.activeVoting?.id);
+          if (this.currentVoting) this.pp.flip(this.currentVoting?.id);
         });
     } else {
-      if (this.activeVoting) this.pp.flip(this.activeVoting?.id);
+      if (this.currentVoting) this.pp.flip(this.currentVoting?.id);
     }
   }
 

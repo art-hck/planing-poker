@@ -1,7 +1,7 @@
 <ng-container *ngIf="authService.user$ | async as me">
   <mat-selection-list [multiple]="false" *ngIf="votings?.length" [disableRipple]='true' >
     <div *ngFor="let voting of votings; trackBy: trackByFn" [matTooltip]="voting.name" matTooltipClass="app-big-tooltip" matTooltipShowDelay="500">
-      <mat-list-option (click)="choose.emit(voting)" [class.disabled]="!authService.isAdmin(me, room)">
+      <mat-list-option (click)="choose.emit(voting)">
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="editVoting(voting)">
             <mat-icon>edit</mat-icon>
@@ -13,8 +13,10 @@
           </button>
         </mat-menu>
 
-        <mat-icon color='gray' matBadge="✓" [matBadgeHidden]="voting.status !== 'end'" matBadgeSize="small" matListIcon>donut_large</mat-icon>
-        <h3 matLine>{{voting.name}}</h3>
+        <mat-icon color='{{voting.id === activeVoting?.id ? "primary" : "gray"}}' matBadge="✓" [matBadgeHidden]="voting.status !== 'end'" matBadgeSize="small" matListIcon>donut_large</mat-icon>
+        <h3 matLine>
+          <span [class.app-strong]='voting.id === activeVoting?.id'>{{voting.name}}</span>
+        </h3>
         <div matListIcon *ngIf="authService.isAdmin(me, room)" class='menu' [matMenuTriggerFor]="menu" matRipple (click)='$event.preventDefault(); $event.stopPropagation()'>
           <mat-icon>more_horiz</mat-icon>
         </div>

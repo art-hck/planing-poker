@@ -5,7 +5,7 @@
     <mat-step label="Результаты" [completed]="false"></mat-step>
   </mat-horizontal-stepper>
 
-  <ng-container *ngIf="!activeVoting">
+  <ng-container *ngIf="!currentVoting">
     <div class="mat-headline app-center" *ngIf="authService.isAdmin(me, room); else waiting">
       Выберите стори для начала голосования
     </div>
@@ -15,9 +15,9 @@
       <mat-card *ngFor="let point of room.points" class="mat-display-2 poker-cards__item poker-cards__item-disabled">{{point}}</mat-card>
     </div>
   </ng-container>
-  <ng-container *ngIf="activeVoting" [ngSwitch]="step">
+  <ng-container *ngIf="currentVoting" [ngSwitch]="step">
     <div class="mat-headline app-center">
-      {{ activeVoting.name}}
+      {{ currentVoting.name}}
     </div>
     <ng-container *ngSwitchCase="1">
         <div class="poker-cards" *ngIf='room'>
@@ -30,7 +30,7 @@
             (click)="vote(point)"
           >{{point}}</mat-card>
         </div>
-      <ng-container *ngIf="authService.isAdmin(me, room) && activeVoting?.votes!.length">
+      <ng-container *ngIf="authService.isAdmin(me, room) && currentVoting?.votes!.length">
         <br/>
         <button mat-flat-button color="primary" (click)="flip()">Открыть карты</button>
       </ng-container>
@@ -40,7 +40,7 @@
       <div class="summary">
         <div class="summary__aside"></div>
         <div class="summary__content">
-          <canvas ppDoughnut [groupedVotes]="groupedVotes" [voting]="activeVoting"></canvas>
+          <canvas ppDoughnut [groupedVotes]="groupedVotes" [voting]="currentVoting"></canvas>
           <div class="doughnut-result mat-display-1">{{winner}}</div>
         </div>
         <table class="summary__aside">

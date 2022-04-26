@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Uuid, Votes, Voting } from '@common/models';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { Action, createSelector, Selector, State, StateContext } from '@ngxs/store';
 import { patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { insertOrPatch } from '../../shared/util/insert-or-patch.state-operator';
 import { Votings } from '../actions/votings.actions';
@@ -34,6 +34,10 @@ export class VotingsState {
   static activeVoting({ activeVotingId, votings }: Model) {
     return votings.find(({ id }) => id === activeVotingId);
   }
+
+  static voting = (id: Voting["id"]) => createSelector([VotingsState],
+    (state: Model) => state.votings.find((voting) => voting.id === id) || VotingsState.activeVoting(state)
+  );
 
   @Action(Fetch)
   fetch({ setState }: Context, { votings }: Fetch) {

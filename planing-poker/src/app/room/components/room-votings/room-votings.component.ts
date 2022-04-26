@@ -16,6 +16,7 @@ import { RoomVotingsEditComponent } from '../room-votings-edit/room-votings-edit
 })
 export class RoomVotingsComponent implements OnDestroy {
   @Input() votings?: Voting<true>[] | null;
+  @Input() activeVoting?: Voting<true> | null;
   @Input() room?: Room<true>;
   @Output() choose = new EventEmitter<Voting<true>>();
   readonly destroy$ = new Subject<void>();
