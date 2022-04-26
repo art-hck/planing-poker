@@ -37,5 +37,18 @@ export class RoomUserComponent {
       () => this.pp.setRole(userId, roomId, RoomRole.admin)
     );
   }
+
+  kick(userId: Uuid, roomId: Uuid) {
+    const data = {
+      title: 'Внимание!',
+      content: 'Вы собираетесь исключить пользователя из комнаты.',
+      cancel: 'Отмена',
+      submit: 'Исключить'
+    };
+
+    this.dialog.open(ConfirmComponent, { width: '365px', data }).afterClosed().pipe(filter(v => !!v)).subscribe(
+      () => this.pp.leaveRoom(roomId, userId)
+    );
+  }
 }
 

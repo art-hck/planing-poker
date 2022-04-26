@@ -13,7 +13,7 @@
         <mat-icon>remove_red_eye</mat-icon>
         <span>Наблюдатель</span>
       </button>
-      <button mat-menu-item (click)="pp.leaveRoom(room.id, user.id)">
+      <button mat-menu-item (click)="kick(user.id, room.id)" *ngIf='me.id !== user.id'>
         <mat-icon>block</mat-icon>
         <span>Исключить</span>
       </button>
