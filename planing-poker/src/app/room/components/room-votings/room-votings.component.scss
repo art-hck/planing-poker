@@ -2,6 +2,10 @@
   pointer-events: none;
 }
 
+a {
+  text-decoration: none;
+}
+
 mat-list-option {
   .menu {
     order: -1;

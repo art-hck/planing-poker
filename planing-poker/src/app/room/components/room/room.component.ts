@@ -94,15 +94,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
   }
 
-  activate(votingId: Voting['id'], isAdmin: boolean) {
-    const queryParams = isAdmin || this.store.selectSnapshot(VotingsState.activeVoting)?.id === votingId ? {} : { votingId };
-    this.router.navigate([], { queryParams });
-
-    if (isAdmin) {
-      this.pp.activateVoting((votingId));
-    }
-  }
-
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();

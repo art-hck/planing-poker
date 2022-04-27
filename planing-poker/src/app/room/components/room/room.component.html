@@ -22,7 +22,7 @@
 
     <mat-drawer class='app-right-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showVotings" position="end" [autoFocus]="false">
       <!--- VOTINGS --->
-      <pp-room-votings [votings]="votings$ | async" [activeVoting]='activeVoting$ | async' [room]="room" (choose)="activate($event.id, authService.isAdmin(me, room))"></pp-room-votings>
+      <pp-room-votings [votings]="votings$ | async" [activeVoting]='activeVoting$ | async' [room]="room" (choose)="pp.activateVoting($event.id)"></pp-room-votings>
     </mat-drawer>
   </mat-drawer-container>
 </ng-container>
