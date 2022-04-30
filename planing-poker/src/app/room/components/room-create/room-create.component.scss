@@ -1,15 +1,17 @@
-.room-create {
-  &__preview-votes {
-    margin-bottom: 1.34375em;
-    padding: 5px;
+.mat-chip {
+  user-select: none;
 
-    &-options {
-      display: flex;
-      justify-content: space-between;
-    }
+  &:not(.mat-chip-disabled):active {
+    box-shadow: none;
+  }
 
-    &-title {
-      margin-bottom: 5px;
-    }
+  &:focus::after, &:hover::after, &:active::after {
+    display: none;
+  }
+}
+
+.pointerChip {
+  .mat-chip {
+    cursor: pointer;
   }
 }

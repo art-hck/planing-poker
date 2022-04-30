@@ -2,7 +2,7 @@
   <mat-selection-list [multiple]="false" *ngIf="votings?.length" [disableRipple]='true' >
     <div *ngFor="let voting of votings; trackBy: trackByFn" [matTooltip]="voting.name" matTooltipClass="app-big-tooltip" matTooltipShowDelay="500">
       <a [routerLink]='[]' [queryParams]='activeVoting?.id === voting.id || authService.isAdmin(me, room) ? {} : {votingId: voting.id}'>
-      <mat-list-option (click)="authService.isAdmin(me, room) && choose.emit(voting)">
+      <mat-list-option (click)="authService.isAdmin(me, room) && choose.emit(voting)" [selected]='voting === currentVoting'>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="editVoting(voting)">
             <mat-icon>edit</mat-icon>

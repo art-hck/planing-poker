@@ -1,6 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { MatChipInputEvent, MatChipList } from '@angular/material/chips';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RoomRole } from '@common/models';
 import { startWith, Subject, takeUntil } from 'rxjs';
@@ -13,10 +13,13 @@ type RoomRoleData = { role: RoomRole, name: string, checked: boolean }
   styleUrls: ['./room-create.component.scss']
 })
 export class RoomCreateComponent implements OnDestroy {
-
+  @ViewChild('pointsChipList') pointsChipList!: MatChipList;
   readonly form = this.fb.group({
     name: ['', Validators.required],
-    points: this.fb.array(['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40']),
+    points: this.fb.array(
+      ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'],
+      [Validators.minLength(2), Validators.required]
+    ),
     canPreviewVotes: []
   });
   readonly roomRoles = this.fb.array([
@@ -45,10 +48,12 @@ export class RoomCreateComponent implements OnDestroy {
     }
 
     event.chipInput?.clear();
+    this.pointsChipList.errorState = this.points.invalid;
   }
 
   removePoint(point: string) {
     this.points.removeAt(this.points.controls.findIndex(c => c.value === point));
+    this.pointsChipList.errorState = this.points.invalid;
   }
 
   ngOnDestroy() {
