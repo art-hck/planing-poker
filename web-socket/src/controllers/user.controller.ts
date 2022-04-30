@@ -6,8 +6,8 @@ export class UserController {
     const room = roomRepo.get(roomId);
     if (!room) throw new NotFoundError(`roomId: ${roomId}`);
 
-    roomRepo.verifyAdmin(roomId, ownUserId);
+    roomRepo.verifyAdmin(room.id, ownUserId);
 
-    roomRepo.setRole(room, userId, role).then(() => broadcast('room', room, roomId));
+    roomRepo.setRole(room, userId, role).then(() => broadcast('room', room, room.id));
   }
 }

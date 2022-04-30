@@ -2,12 +2,13 @@
   <mat-drawer-container *ngIf='authService.user$ | async as me'>
     <mat-drawer mode='side' [opened]='true'>
       <div class='rooms-list'>
-        <a class='rooms-list__item' routerLinkActive='active' [routerLink]="['room', room.id]" *ngFor='let room of rooms'>
+        <a class='rooms-list__item' routerLinkActive='active' [routerLink]="['room', room.alias || room.id]" *ngFor='let room of rooms'>
           <div
             class='rooms-list__item__avatar'
             [matTooltip]='room.name' matTooltipClass='app-big-tooltip' matTooltipPosition='right'
             [style.background-color]='room.name | stringToColor'
           >{{ room.name | abbreviation }}</div>
+          <div [routerLink]="['room', room.id]" ></div>
         </a>
         <div class='rooms-list__create' (click)='newRoom()'>
           <div class='rooms-list__create__avatar' matTooltip='Добавить комнату' matTooltipClass='app-big-tooltip' matTooltipPosition='right'>+</div>

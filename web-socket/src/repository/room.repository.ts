@@ -30,17 +30,18 @@ export class RoomRepository implements Repository<Room> {
   }
 
   get(id: Uuid) {
-    return this.rooms.get(id);
+    return this.rooms.get(id) ?? Array.from(this.rooms.values()).find(room => room.alias && room.alias.toLowerCase() === id.toLowerCase());
   }
 
-  async create(name: string, userId: Uuid, points: string[], canPreviewVotes: RoomRole[]) {
+  async create(name: string, userId: Uuid, points: string[], canPreviewVotes: RoomRole[], alias: string | null) {
     const id = uuid.v4();
     const users = new Map<Uuid, Set<RoomRole>>().set(userId, new Set([RoomRole.admin, RoomRole.user]));
-    const room: Room = { id, name, votingIds: new Set(), users, points, canPreviewVotes };
+    alias = alias && Array.from(this.rooms.values()).every(room => room.alias !== alias) ? alias.toLowerCase() : null;
+    const room: Room = { id, name, votingIds: new Set(), users, points, canPreviewVotes, alias };
     this.rooms.set(room.id, room);
     await this.collection?.insertOne(serialize(room));
 
-    return room.id;
+    return room;
   }
 
   async update(room: Room) {
@@ -145,5 +146,13 @@ export class RoomRepository implements Repository<Room> {
    */
   hasAdmins(room: Room): boolean {
     return Array.from(room.users.values()).some(roles => roles.has(RoomRole.admin));
+  }
+
+  /**
+   * Проверка адреса на доступность
+   * @param alias
+   */
+  async checkAlias(alias: string): Promise<boolean> {
+    return !Array.from(this.rooms.values()).some(room => room.alias && room.alias.toLowerCase() === alias.toLowerCase());
   }
 }

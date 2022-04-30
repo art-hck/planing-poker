@@ -1,3 +1,4 @@
+import { JsonWebTokenError } from 'jsonwebtoken';
 import { Room, User } from '../../../common/models';
 import { Config } from '../config';
 import { NotFoundError, RoutePayload } from '../models';
@@ -38,7 +39,10 @@ export class AuthController {
 
     const id = verifyToken(r, true);
 
-    usersRepo.find(id).then(user => user && send('user', user));
+    await usersRepo.find(id).then(user => {
+      if (user) send('user', user);
+      else throw new JsonWebTokenError('');
+    });
   }
 
   /**

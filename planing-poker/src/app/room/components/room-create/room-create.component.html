@@ -7,8 +7,18 @@
       <input matInput formControlName='name'>
     </mat-form-field>
 
+
+    <mat-form-field appearance='outline'>
+      <mat-label>Адрес (необязательно)</mat-label>
+      <input matInput formControlName='alias'>
+      <mat-spinner *ngIf='form.get("alias")?.pending' matSuffix diameter="21" style="display: inline-flex"></mat-spinner>
+
+      <mat-error *ngIf="form.get('alias')?.hasError('alreadyInUse')">Адрес уже используется, выберите другой</mat-error>
+      <mat-error *ngIf="form.get('alias')?.hasError('minlength')">Минимум 4 символа</mat-error>
+    </mat-form-field>
+
     <mat-form-field appearance='outline' class='pointerChip'>
-      <mat-label>Кто видит голоса до вскрытия?</mat-label>
+      <mat-label>Кто видит голоса в процессе голосования?</mat-label>
       <mat-chip-list multiple>
         <mat-chip *ngFor='let c of roomRoles.controls' [selected]='c.value.checked' (click)='c.get("checked")?.setValue(!c.value.checked)'>
           {{c.value.name}}

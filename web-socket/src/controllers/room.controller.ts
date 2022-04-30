@@ -19,12 +19,12 @@ export class RoomController {
     const sendAvailableRooms = !room.users.has(userId);
 
     await roomRepo.join(room, userId, ws).then(async () => {
-      send('votings', votingRepo.list(roomId, userId));
+      send('votings', votingRepo.list(room.id, userId));
       if (room.activeVotingId && votingRepo.votings.has(room.activeVotingId)) {
         send('activateVoting', { votingId: room.activeVotingId });
       }
-      broadcast('room', room, roomId);
-      broadcast('users', await usersRepo.list(roomId), roomId);
+      broadcast('room', room, room.id);
+      broadcast('users', await usersRepo.list(room.id), room.id);
 
       if (sendAvailableRooms) {
         send('rooms', roomRepo.availableRooms(userId));
@@ -49,24 +49,24 @@ export class RoomController {
   static async leave({ payload: { roomId, userId }, userId: selfUserId, broadcast }: RoutePayload<'leaveRoom'>) {
     const room = roomRepo.get(roomId);
     if (!room) throw new NotFoundError(`roomId: ${roomId}`);
-    if (userId) roomRepo.verifyAdmin(roomId, selfUserId);
+    if (userId) roomRepo.verifyAdmin(room.id, selfUserId);
     const uid = userId ?? selfUserId;
 
     const userConnections = connections.getByUser(uid);
 
     roomRepo.leave(room, uid).then(async () => {
       broadcast('users', await usersRepo.list(roomId), roomId);
-      userConnections?.forEach(c => c.send(JSON.stringify({ event: 'leaveRoom', payload: { roomId } }, replacer)));
+      userConnections?.forEach(c => c.send(JSON.stringify({ event: 'leaveRoom', payload: { roomId: room.id } }, replacer)));
     });
   }
 
   /**
    * Создать комнату
    */
-  static create({ payload: { name, points, canPreviewVotes }, send, userId }: RoutePayload<'newRoom'>) {
+  static create({ payload: { name, points, alias, canPreviewVotes }, send, userId }: RoutePayload<'newRoom'>) {
     if (points.length < 2) throw new InvalidParamsError(`points: ${points}`);
-    roomRepo.create(name, userId, points, canPreviewVotes).then(roomId => {
-      send('newRoom', { roomId });
+    roomRepo.create(name, userId, points, canPreviewVotes, alias || null).then(room => {
+      send('newRoom', { roomId: room.alias || room.id });
       send('rooms', roomRepo.availableRooms(userId));
     });
   }
@@ -81,6 +81,11 @@ export class RoomController {
 
     roomRepo.delete(roomId).then(() => {
       send('rooms', roomRepo.availableRooms(userId));
+    });
+  }
+  static checkAlias({ payload: { alias }, send }: RoutePayload<'checkAlias'>) {
+    roomRepo.checkAlias(alias).then(success => {
+      send('checkAlias', { success });
     });
   }
 }

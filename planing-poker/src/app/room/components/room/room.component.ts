@@ -2,9 +2,23 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { MatDialog, MatDialogState } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { User, Uuid, Voting } from '@common/models';
+import { User, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
-import { distinctUntilChanged, filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  mapTo,
+  merge,
+  mergeMap,
+  Observable,
+  shareReplay,
+  startWith,
+  Subject,
+  switchMap,
+  takeUntil,
+  withLatestFrom
+} from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
@@ -35,6 +49,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.pp.flip$.pipe(mapTo(2))
   );
   readonly destroy$ = new Subject<void>();
+  readonly room$ = this.pp.room$.pipe(shareReplay(1));
 
   constructor(
     public sidebars: SidebarsService,
@@ -51,39 +66,39 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    let roomId: Uuid;
     this.route.params.pipe(
       mergeMap(p => this.authService.user$.pipe(
         distinctUntilChanged((p, c) => p?.id === c?.id),
         filter(u => !!u), mapTo(p)
       )),
+      withLatestFrom(this.room$.pipe(startWith(null))),
       takeUntil(this.destroy$)
-    ).subscribe(({ id }) => {
-      if (roomId) {
-        this.pp.disconnectRoom(roomId);
+    ).subscribe(([{ id }, room]) => {
+      if (room) {
+        this.pp.disconnectRoom(room.id);
       }
       this.pp.joinRoom(id);
-      roomId = id;
     });
-
 
     this.sidebars.detectChanges$.subscribe(() => this.cd.detectChanges());
 
-    this.pp.events({
-      leaveRoom: ({ roomId }) => {
-        this.pp.rooms();
-        if (this.route.snapshot.params['id'] === roomId) {
-          this.router.navigate(['/']);
-        }
+    this.pp.leaveRoom$.pipe(
+      withLatestFrom(this.room$),
+      takeUntil(this.destroy$)
+    ).subscribe(([{ roomId }, room]) => {
+      this.pp.rooms();
+      if (room?.id === roomId) {
+        this.router.navigate(['/']);
       }
-    }).pipe(takeUntil(this.destroy$)).subscribe();
+    });
   }
 
   openNewVotingModal() {
     if (this.dialog.getDialogById('NewVotingModal')?.getState() === MatDialogState.OPEN) return;
-    this.dialog.open(RoomVotingsCreateComponent, { id: 'NewVotingModal', width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(data => {
-      this.pp.newVoting(this.route.snapshot.params['id'], data.names.split('\n'));
-    });
+    this.dialog.open(RoomVotingsCreateComponent, { id: 'NewVotingModal', width: '500px' }).afterClosed().pipe(
+      filter(v => !!v),
+      withLatestFrom(this.room$)
+    ).subscribe(([data, room]) => this.pp.newVoting(room.id, data.names.split('\n')));
   }
 
   ngOnDestroy() {

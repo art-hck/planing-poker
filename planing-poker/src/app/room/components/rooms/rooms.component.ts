@@ -49,7 +49,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
   newRoom(config: MatDialogConfig = {}) {
     this.dialog.open(RoomCreateComponent, { ...config, id: 'new_room', width: '500px' }).afterClosed()
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
-      .subscribe(({ name, points, canPreviewVotes }) => name ? this.pp.newRoom(name, points, canPreviewVotes) : null);
+      .subscribe(({ name, points, canPreviewVotes, alias }) => name ? this.pp.newRoom(name, points, canPreviewVotes, alias) : null);
   }
 
   ngOnDestroy() {

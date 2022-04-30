@@ -19,7 +19,7 @@ export interface WsAction {
   newVoting: { names: string[], roomId: Uuid }; // Создать голосвание
   deleteVoting: { votingId: Uuid }; // Удалить голосование
   editVoting: { votingId: Uuid, name: string }; // Изменить голосование
-  newRoom: { name: string, canPreviewVotes: RoomRole[], points: string[] }; // Создать комнату
+  newRoom: { name: string, canPreviewVotes: RoomRole[], alias: string, points: string[] }; // Создать комнату
   rooms: {}; // Список комнат
   joinRoom: { roomId: Uuid }; // Присоединиться к комнате
   leaveRoom: { roomId: Uuid, userId?: Uuid }; // Покинуть комнату
@@ -28,6 +28,7 @@ export interface WsAction {
   setRole: { userId: Uuid, roomId: Uuid, role: RoomRole }; // Задать роль пользователю
   feedback: { message: string, subject: string }; // Обратная связь
   editUser: { name: string; role: Role; }; // Изменить пользователя
+  checkAlias: { alias: string; }; // Проверка адреса на доступность
 }
 
 export interface WsEvent<serialized = true> {
@@ -50,4 +51,5 @@ export interface WsEvent<serialized = true> {
   invalidToken: {}; // Токен не прошёл проверку
   googleAlreadyLinked: {}; // Гугл аккаунт уже привязан
   user: User; // Информация о пользователе
+  checkAlias: { success: boolean } // Проверка адреса на доступность
 }

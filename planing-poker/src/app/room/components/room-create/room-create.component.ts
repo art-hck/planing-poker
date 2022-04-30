@@ -1,9 +1,10 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent, MatChipList } from '@angular/material/chips';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RoomRole } from '@common/models';
-import { startWith, Subject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, of, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 
 type RoomRoleData = { role: RoomRole, name: string, checked: boolean }
 
@@ -16,6 +17,20 @@ export class RoomCreateComponent implements OnDestroy {
   @ViewChild('pointsChipList') pointsChipList!: MatChipList;
   readonly form = this.fb.group({
     name: ['', Validators.required],
+    alias: ['', [Validators.minLength(4)], [
+      (control: FormControl) => control.valueChanges.pipe(
+        startWith(null),
+        debounceTime(400),
+        distinctUntilChanged(),
+        switchMap(value => {
+          if (!value) return of(null);
+          this.pp.checkAlias(value);
+          control.markAsTouched(); // Для того что б сразу вывести ошибку
+          return this.pp.checkAlias$.pipe(map(({ success }) => success ? null : { alreadyInUse: true }));
+        }),
+        take(1)
+      )
+    ]],
     points: this.fb.array(
       ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'],
       [Validators.minLength(2), Validators.required]
@@ -30,7 +45,7 @@ export class RoomCreateComponent implements OnDestroy {
   readonly asFormGroup = (c: AbstractControl) => c as FormGroup;
   readonly destroy$ = new Subject<void>();
 
-  constructor(private fb: FormBuilder, public matDialogRef: MatDialogRef<RoomCreateComponent>) {
+  constructor(private fb: FormBuilder, public matDialogRef: MatDialogRef<RoomCreateComponent>, private pp: PlaningPokerWsService) {
     this.roomRoles.valueChanges.pipe(startWith(this.roomRoles.value), takeUntil(this.destroy$)).subscribe((value: RoomRoleData[]) => {
       this.form.get('canPreviewVotes')?.setValue(value.filter(({ checked }) => checked).map(({ role }) => role));
     });

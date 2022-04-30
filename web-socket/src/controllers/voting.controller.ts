@@ -65,7 +65,7 @@ export class VotingController {
       .map(name => ({ id: uuid.v4(), name: name, votes: new Map(), status: 'pristine' } as Voting));
 
     votingRepo.createMultiple(votings, room).then(() => {
-      broadcast('votings', id => votingRepo.list(roomId, id), roomId);
+      broadcast('votings', id => votingRepo.list(room.id, id), room.id);
     });
   }
 

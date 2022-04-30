@@ -15,6 +15,7 @@ export const routes: Routes = {
   leaveRoom: RoomController.leave,
   newRoom: RoomController.create,
   deleteRoom: RoomController.delete,
+  checkAlias: RoomController.checkAlias,
   rooms: RoomController.rooms,
   vote: VotingController.vote,
   unvote: VotingController.unvote,
