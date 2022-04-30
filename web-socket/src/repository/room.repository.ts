@@ -22,6 +22,9 @@ export class RoomRepository implements Repository<Room> {
         if (!room.points?.length) { // Fallback for old rooms without points
           room.points = ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'];
         }
+        if (!room.canPreviewVotes) { // Fallback for old rooms without votesVisibility
+          room.canPreviewVotes = [RoomRole.observer, RoomRole.admin];
+        }
         this.rooms.set(room.id, deserialize(room));
       }));
   }
@@ -30,10 +33,10 @@ export class RoomRepository implements Repository<Room> {
     return this.rooms.get(id);
   }
 
-  async create(name: string, userId: Uuid, points: string[]) {
+  async create(name: string, userId: Uuid, points: string[], canPreviewVotes: RoomRole[]) {
     const id = uuid.v4();
     const users = new Map<Uuid, Set<RoomRole>>().set(userId, new Set([RoomRole.admin, RoomRole.user]));
-    const room: Room = { id, name, votingIds: new Set(), users, points };
+    const room: Room = { id, name, votingIds: new Set(), users, points, canPreviewVotes };
     this.rooms.set(room.id, room);
     await this.collection?.insertOne(serialize(room));
 

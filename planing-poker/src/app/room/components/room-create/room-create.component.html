@@ -7,16 +7,25 @@
       <input matInput formControlName='name'>
     </mat-form-field>
 
-    <mat-form-field class='example-chip-list' appearance='outline'>
+    <div class='room-create__preview-votes'>
+      <h4 class='room-create__preview-votes-title'>Кто видит голоса до вскрытия?</h4>
+      <div class='room-create__preview-votes-options'>
+        <ng-container *ngFor='let group of roomRoles.controls; index as i' [formGroup]='asFormGroup(group)'>
+          <mat-checkbox formControlName='checked' color='primary'>{{group.get('name')?.value}}</mat-checkbox>
+        </ng-container>
+      </div>
+    </div>
+
+    <mat-form-field appearance='outline'>
       <mat-label>Варианты голосования</mat-label>
-      <mat-chip-list #chipList formArrayName='points'>
+      <mat-chip-list #pointsChipList>
         <mat-chip *ngFor='let point of points.value' (removed)='removePoint(point)'>
           {{point}}
           <button matChipRemove *ngIf='points.controls.length > 2'>
             <mat-icon>cancel</mat-icon>
           </button>
         </mat-chip>
-        <input maxlength='4' [matChipInputFor]='chipList' [matChipInputAddOnBlur]='true' (matChipInputTokenEnd)='addPoint($event)' />
+        <input placeholder='Добавить...' maxlength='4' [matChipInputFor]='pointsChipList' [matChipInputAddOnBlur]='true' (matChipInputTokenEnd)='addPoint($event)' />
       </mat-chip-list>
     </mat-form-field>
   </div>

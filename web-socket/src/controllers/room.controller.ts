@@ -63,9 +63,9 @@ export class RoomController {
   /**
    * Создать комнату
    */
-  static create({ payload: { name, points }, send, userId }: RoutePayload<'newRoom'>) {
+  static create({ payload: { name, points, canPreviewVotes }, send, userId }: RoutePayload<'newRoom'>) {
     if (points.length < 2) throw new InvalidParamsError(`points: ${points}`);
-    roomRepo.create(name, userId, points).then(roomId => {
+    roomRepo.create(name, userId, points, canPreviewVotes).then(roomId => {
       send('newRoom', { roomId });
       send('rooms', roomRepo.availableRooms(userId));
     });

@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
@@ -60,7 +62,9 @@ import { VotingsState } from './states/votings.state';
     MatBadgeModule,
     MatMenuModule,
     MatButtonToggleModule,
-    MatSelectModule
+    MatSelectModule,
+    MatCheckboxModule,
+    MatAutocompleteModule
   ]
 })
 export class RoomModule {

@@ -1,0 +1,15 @@
+.room-create {
+  &__preview-votes {
+    margin-bottom: 1.34375em;
+    padding: 5px;
+
+    &-options {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &-title {
+      margin-bottom: 5px;
+    }
+  }
+}

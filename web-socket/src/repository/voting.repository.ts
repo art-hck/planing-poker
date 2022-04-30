@@ -1,5 +1,5 @@
 import { Collection } from 'mongodb';
-import { Room, RoomRole, Uuid, Voting } from '../../../common/models';
+import { Room, Uuid, Voting } from '../../../common/models';
 import { Repository } from '../models/repository';
 import { roomRepo, usersRepo, votingRepo } from '../mongo';
 import { deserialize, serialize } from '../utils/set-map-utils';
@@ -129,6 +129,6 @@ export class VotingRepository implements Repository<Voting> {
   canViewVotes(roomId: Uuid, userId: Uuid): boolean {
     const room = roomRepo.rooms.get(roomId);
     const roles = room?.users.get(userId);
-    return !room || !roles || usersRepo.get(userId)?.su || roles.has(RoomRole.admin) || roles.has(RoomRole.observer);
+    return !room || !roles || usersRepo.get(userId)?.su || room?.canPreviewVotes.some(role => roles?.has(role));
   }
 }
