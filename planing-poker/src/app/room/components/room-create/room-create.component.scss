@@ -1,15 +1,3 @@
-.mat-chip {
-  user-select: none;
-
-  &:not(.mat-chip-disabled):active {
-    box-shadow: none;
-  }
-
-  &:focus::after, &:hover::after, &:active::after {
-    display: none;
-  }
-}
-
 .pointerChip {
   .mat-chip {
     cursor: pointer;

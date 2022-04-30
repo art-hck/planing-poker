@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, Uuid, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
-import { distinctUntilChanged, filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, take, takeUntil, withLatestFrom } from 'rxjs';
+import { distinctUntilChanged, filter, map, mapTo, merge, mergeMap, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
@@ -66,14 +66,6 @@ export class RoomComponent implements OnInit, OnDestroy {
       roomId = id;
     });
 
-    this.pp.voted$.pipe(
-      withLatestFrom(this.authService.user$),
-      filter(([voted, user]) => voted.userId !== user?.id),
-      switchMap(([voted]) => this.users$.pipe(take(1), map(users => users.find((u) => u.id === voted.userId)))),
-      takeUntil(this.destroy$)
-    ).subscribe(user => {
-      this.snackBar.open(`${user?.name} проголосовал(а)`, 'Ну ок', { duration: 4000, horizontalPosition: 'right' });
-    });
 
     this.sidebars.detectChanges$.subscribe(() => this.cd.detectChanges());
 
