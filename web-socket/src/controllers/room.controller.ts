@@ -80,6 +80,8 @@ export class RoomController {
       send('notFound', {});
       throw new NotFoundError(`roomId: ${payload.room.id}`);
     }
+    roomRepo.verifyAdmin(payload.room.id, userId);
+
     room.name = payload.room.name;
     room.alias = payload.room.alias;
     room.canPreviewVotes = payload.room.canPreviewVotes;

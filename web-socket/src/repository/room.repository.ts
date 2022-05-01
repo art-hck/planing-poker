@@ -45,9 +45,14 @@ export class RoomRepository implements Repository<Room> {
   }
 
   async update(room: Room) {
+    room.alias = room.alias && Array.from(this.rooms.values()).every(({id, alias}) => {
+      return id === room.id || (alias !== room.alias && id !== room.alias);
+    }) ? room.alias.toLowerCase() : null;
     this.rooms.set(room.id, room);
 
     await this.collection?.updateOne({ id: room.id }, { $set: serialize(room) }, { upsert: true });
+
+    return room;
   }
 
   async delete(id: Uuid) {

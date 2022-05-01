@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { Uuid } from '@common/models';
+import { Room } from '@common/models';
 
 @Component({
   template: `
@@ -16,9 +16,9 @@ import { Uuid } from '@common/models';
   `,
 })
 export class RoomShareDialogComponent {
-  location = document?.location.toString();
+  readonly location = window?.location.host + '/room/' + (this.data.room.alias || this.data.room.id);
   @ViewChild('input') input?: ElementRef<HTMLInputElement>;
 
-  constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: { roomId: Uuid }, public ref: MatBottomSheetRef) {
+  constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: { room: Room<true> }, public ref: MatBottomSheetRef) {
   }
 }
