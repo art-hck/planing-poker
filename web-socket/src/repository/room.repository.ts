@@ -36,7 +36,7 @@ export class RoomRepository implements Repository<Room> {
   async create(name: string, userId: Uuid, points: string[], canPreviewVotes: RoomRole[], alias: string | null) {
     const id = uuid.v4();
     const users = new Map<Uuid, Set<RoomRole>>().set(userId, new Set([RoomRole.admin, RoomRole.user]));
-    alias = alias && Array.from(this.rooms.values()).every(room => room.alias !== alias) ? alias.toLowerCase() : null;
+    alias = alias && Array.from(this.rooms.values()).every(room => room.alias !== alias && room.id !== alias) ? alias.toLowerCase() : null;
     const room: Room = { id, name, votingIds: new Set(), users, points, canPreviewVotes, alias };
     this.rooms.set(room.id, room);
     await this.collection?.insertOne(serialize(room));
@@ -141,7 +141,7 @@ export class RoomRepository implements Repository<Room> {
   }
 
   /**
-   * Есть ли админ и он онлайн?
+   * Есть ли админ?
    * @param room
    */
   hasAdmins(room: Room): boolean {
@@ -153,6 +153,6 @@ export class RoomRepository implements Repository<Room> {
    * @param alias
    */
   async checkAlias(alias: string): Promise<boolean> {
-    return !Array.from(this.rooms.values()).some(room => room.alias && room.alias.toLowerCase() === alias.toLowerCase());
+    return !Array.from(this.rooms.values()).some(room => room.alias && room.alias.toLowerCase() === alias.toLowerCase() && room.id === alias.toLowerCase());
   }
 }
