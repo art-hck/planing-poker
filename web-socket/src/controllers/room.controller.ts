@@ -71,6 +71,26 @@ export class RoomController {
     });
   }
 
+  /**
+   * Изменить комнату
+   */
+  static update({ payload, send, userId }: RoutePayload<'updateRoom'>) {
+    const room = roomRepo.get(payload.room.id);
+    if (!room) {
+      send('notFound', {});
+      throw new NotFoundError(`roomId: ${payload.room.id}`);
+    }
+    room.name = payload.room.name;
+    room.alias = payload.room.alias;
+    room.canPreviewVotes = payload.room.canPreviewVotes;
+    room.points = payload.room.points;
+
+    roomRepo.update(room).then(room => {
+      send('rooms', roomRepo.availableRooms(userId));
+      broadcast('room', room, room.id);
+    });
+  }
+
   static rooms({ send, userId }: RoutePayload<'rooms'>) {
     send('rooms', roomRepo.availableRooms(userId));
   }
@@ -83,6 +103,7 @@ export class RoomController {
       send('rooms', roomRepo.availableRooms(userId));
     });
   }
+
   static checkAlias({ payload: { alias }, send }: RoutePayload<'checkAlias'>) {
     roomRepo.checkAlias(alias).then(success => {
       send('checkAlias', { success });

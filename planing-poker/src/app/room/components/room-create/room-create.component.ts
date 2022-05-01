@@ -1,8 +1,8 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent, MatChipList } from '@angular/material/chips';
-import { MatDialogRef } from '@angular/material/dialog';
-import { RoomRole } from '@common/models';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Room, RoomRole } from '@common/models';
 import { debounceTime, distinctUntilChanged, map, of, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 
@@ -15,7 +15,7 @@ type RoomRoleData = { role: RoomRole, name: string, checked: boolean }
 })
 export class RoomCreateComponent implements OnDestroy {
   @ViewChild('pointsChipList') pointsChipList!: MatChipList;
-  readonly location = window?.location;
+  readonly location = window?.location.host;
   readonly form = this.fb.group({
     name: ['', Validators.required],
     alias: ['', [
@@ -40,20 +40,36 @@ export class RoomCreateComponent implements OnDestroy {
       ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'],
       [Validators.minLength(2), Validators.required]
     ),
-    canPreviewVotes: []
+    canPreviewVotes: [[RoomRole.admin, RoomRole.observer]]
   });
   readonly roomRoles = this.fb.array([
-    this.fb.group({ role: RoomRole.admin, name: 'Модератор', checked: true }),
-    this.fb.group({ role: RoomRole.observer, name: 'Наблюдатели', checked: true }),
+    this.fb.group({ role: RoomRole.admin, name: 'Модератор', checked: false }),
+    this.fb.group({ role: RoomRole.observer, name: 'Наблюдатели', checked: false }),
     this.fb.group({ role: RoomRole.user, name: 'Голосующие', checked: false })
   ]);
   readonly asFormGroup = (c: AbstractControl) => c as FormGroup;
   readonly destroy$ = new Subject<void>();
-  customize = false;
+  customize = !!this.data?.room;
 
-  constructor(private fb: FormBuilder, public matDialogRef: MatDialogRef<RoomCreateComponent>, private pp: PlaningPokerWsService) {
-    this.roomRoles.valueChanges.pipe(startWith(this.roomRoles.value), takeUntil(this.destroy$)).subscribe((value: RoomRoleData[]) => {
+  constructor(
+    private fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: { room: Room<true> },
+    public matDialogRef: MatDialogRef<RoomCreateComponent>,
+    private pp: PlaningPokerWsService
+  ) {
+    if (data?.room) { // Если редактируем комнату, а не создаём новую, проставляем начальные значения в форму
+      this.form.patchValue(data.room, { emitEvent: false });
+      this.points.clear({ emitEvent: false });
+      data.room.points.map(p => this.fb.control(p)).forEach(c => this.points.push(c, { emitEvent: false }));
+    }
+
+    // Если меняем чекбокс в roomRoles, то синхронизируем роли в основной форме
+    this.roomRoles.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: RoomRoleData[]) => {
       this.form.get('canPreviewVotes')?.setValue(value.filter(({ checked }) => checked).map(({ role }) => role));
+    });
+    // Проставляем изначальные значения из формы в чекбоксы
+    this.roomRoles.controls.forEach(c => {
+      c.get('checked')?.setValue(this.form.get('canPreviewVotes')?.value.includes(c.get('role')?.value), { emitEvent: false });
     });
   }
 

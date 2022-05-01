@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Handshake, Role, RoomRole, Token, Uuid, WsAction, WsEvent } from '@common/models';
+import { Handshake, Role, Room, RoomRole, Token, Uuid, WsAction, WsEvent } from '@common/models';
 import { merge, Observable, tap } from 'rxjs';
 import { WsService } from './ws.service';
 
@@ -100,6 +100,10 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
   deleteRoom(roomId: Uuid) {
     this.ws.send('deleteRoom', { roomId });
+  }
+
+  updateRoom(room: Room<true>) {
+    this.ws.send('updateRoom', { room });
   }
 
   leaveRoom(roomId: Uuid, userId?: Uuid) {

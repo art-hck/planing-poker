@@ -1,15 +1,14 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDialogConfig } from '@angular/material/dialog/dialog-config';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { filter, Subject, takeUntil } from 'rxjs';
-import { Users } from '../../actions/users.actions';
-import { Votings } from '../../actions/votings.actions';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { ResolutionService } from '../../../app/services/resolution.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
+import { Users } from '../../actions/users.actions';
+import { Votings } from '../../actions/votings.actions';
 import { RoomCreateComponent } from '../room-create/room-create.component';
 
 @Component({
@@ -46,8 +45,8 @@ export class RoomsComponent implements OnInit, OnDestroy {
     }).pipe(takeUntil(this.destroy$)).subscribe();
   }
 
-  newRoom(config: MatDialogConfig = {}) {
-    this.dialog.open(RoomCreateComponent, { ...config, id: 'new_room', width: '500px' }).afterClosed()
+  newRoom() {
+    this.dialog.open(RoomCreateComponent, { width: '500px' }).afterClosed()
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name, points, canPreviewVotes, alias }) => name ? this.pp.newRoom(name, points, canPreviewVotes, alias) : null);
   }

@@ -14,6 +14,7 @@ export const routes: Routes = {
   disconnectRoom: RoomController.disconnect,
   leaveRoom: RoomController.leave,
   newRoom: RoomController.create,
+  updateRoom: RoomController.update,
   deleteRoom: RoomController.delete,
   checkAlias: RoomController.checkAlias,
   rooms: RoomController.rooms,
