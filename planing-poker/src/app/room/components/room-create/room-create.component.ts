@@ -15,9 +15,14 @@ type RoomRoleData = { role: RoomRole, name: string, checked: boolean }
 })
 export class RoomCreateComponent implements OnDestroy {
   @ViewChild('pointsChipList') pointsChipList!: MatChipList;
+  readonly location = window?.location;
   readonly form = this.fb.group({
     name: ['', Validators.required],
-    alias: ['', [Validators.minLength(4)], [
+    alias: ['', [
+      Validators.minLength(4),
+      Validators.maxLength(32),
+      Validators.pattern('[a-zA-Z0-9\-]*')
+    ], [
       (control: FormControl) => control.valueChanges.pipe(
         startWith(null),
         debounceTime(400),
@@ -44,6 +49,7 @@ export class RoomCreateComponent implements OnDestroy {
   ]);
   readonly asFormGroup = (c: AbstractControl) => c as FormGroup;
   readonly destroy$ = new Subject<void>();
+  customize = false;
 
   constructor(private fb: FormBuilder, public matDialogRef: MatDialogRef<RoomCreateComponent>, private pp: PlaningPokerWsService) {
     this.roomRoles.valueChanges.pipe(startWith(this.roomRoles.value), takeUntil(this.destroy$)).subscribe((value: RoomRoleData[]) => {

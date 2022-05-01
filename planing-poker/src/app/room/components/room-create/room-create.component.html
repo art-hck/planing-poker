@@ -8,38 +8,55 @@
     </mat-form-field>
 
 
-    <mat-form-field appearance='outline'>
-      <mat-label>Адрес (необязательно)</mat-label>
-      <input matInput formControlName='alias'>
-      <mat-spinner *ngIf='form.get("alias")?.pending' matSuffix diameter="21" style="display: inline-flex"></mat-spinner>
+    <h4 *ngIf='!customize' [align]="'center'" class='mat-gray'>
+      <button mat-button (click)='customize = true'>
+        <div style='display: flex; align-items: center'>
+          <mat-icon>settings</mat-icon>
+          <span>&nbsp; Расширенные настройки</span>
+        </div>
+      </button>
+    </h4>
+    <ng-container *ngIf='customize'>
+      <mat-form-field appearance='outline' floatLabel='always' *ngIf='form.get("alias") as c'>
+        <mat-label>Адрес (необязательно)</mat-label>
 
-      <mat-error *ngIf="form.get('alias')?.hasError('alreadyInUse')">Адрес уже используется, выберите другой</mat-error>
-      <mat-error *ngIf="form.get('alias')?.hasError('minlength')">Минимум 4 символа</mat-error>
-    </mat-form-field>
+        <span matPrefix class='mat-gray'>{{location}}room/</span>
+        <input matInput formControlName='alias'>
 
-    <mat-form-field appearance='outline' class='pointerChip'>
-      <mat-label>Кто видит голоса в процессе голосования?</mat-label>
-      <mat-chip-list multiple>
-        <mat-chip *ngFor='let c of roomRoles.controls' [selected]='c.value.checked' (click)='c.get("checked")?.setValue(!c.value.checked)'>
-          {{c.value.name}}
-        </mat-chip>
-      </mat-chip-list>
-    </mat-form-field>
+        <mat-spinner *ngIf='c.pending' matSuffix diameter="21" ></mat-spinner>
+        <mat-icon *ngIf='c.valid && c.value' matSuffix color='success'>check</mat-icon>
 
-    <mat-form-field appearance='outline'>
-      <mat-label>Варианты голосования</mat-label>
-      <mat-chip-list #pointsChipList>
-        <mat-chip *ngFor='let point of points.value' (removed)='removePoint(point)' disableRipple [selectable]='false'>
-          {{point}}
-          <button matChipRemove >
-            <mat-icon>cancel</mat-icon>
-          </button>
-        </mat-chip>
-        <input placeholder='Еще...' maxlength='4' [matChipInputFor]='pointsChipList' [matChipInputAddOnBlur]='true' (matChipInputTokenEnd)='addPoint($event)' />
-      </mat-chip-list>
-      <mat-error *ngIf="points.invalid">Минимум 2 варианта</mat-error>
+        <mat-error *ngIf="c.hasError('alreadyInUse')">Адрес уже используется, выберите другой</mat-error>
+        <mat-error *ngIf="c.hasError('minlength')">Минимум {{c.getError('minlength').requiredLength}} символа</mat-error>
+        <mat-error *ngIf="c.hasError('maxlength')">Максимум {{c.getError('maxlength').requiredLength}} символа</mat-error>
+        <mat-error *ngIf="c.hasError('pattern')">Может содержать только латинские буквы, цифры «_» или «-»,</mat-error>
+      </mat-form-field>
+  <!--    {{form.get("alias")?.errors | json}}-->
 
-    </mat-form-field>
+      <mat-form-field appearance='outline' class='pointerChip'>
+        <mat-label>Кто видит голоса в процессе голосования?</mat-label>
+        <mat-chip-list multiple>
+          <mat-chip *ngFor='let c of roomRoles.controls' [selected]='c.value.checked' (click)='c.get("checked")?.setValue(!c.value.checked)'>
+            {{c.value.name}}
+          </mat-chip>
+        </mat-chip-list>
+      </mat-form-field>
+
+      <mat-form-field appearance='outline'>
+        <mat-label>Варианты голосования</mat-label>
+        <mat-chip-list #pointsChipList>
+          <mat-chip *ngFor='let point of points.value' (removed)='removePoint(point)' disableRipple [selectable]='false'>
+            {{point}}
+            <button matChipRemove >
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+          <input placeholder='Еще...' maxlength='4' [matChipInputFor]='pointsChipList' [matChipInputAddOnBlur]='true' (matChipInputTokenEnd)='addPoint($event)' />
+        </mat-chip-list>
+        <mat-error *ngIf="points.invalid">Минимум 2 варианта</mat-error>
+
+      </mat-form-field>
+    </ng-container>
   </div>
   <div mat-dialog-actions [align]="'end'">
     <button mat-flat-button [mat-dialog-close]='false' *ngIf='!matDialogRef.disableClose'>Отмена</button>

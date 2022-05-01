@@ -59,6 +59,10 @@ mat-form-field {
   }
 }
 
+.mat-form-field.mat-form-field-appearance-outline .mat-form-field-prefix {
+  top:0;
+}
+
 .mat-success {
   color: mat.get-color-from-palette(mat.define-palette(mat.$green-palette), 800);
 }
