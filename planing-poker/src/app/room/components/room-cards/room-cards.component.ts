@@ -15,7 +15,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { Room, RoomRole, User, Voting } from '@common/models';
 import * as confetti from 'canvas-confetti';
 import { CreateTypes as Confetti } from 'canvas-confetti';
-import { concatMap, filter, range, Subject, takeUntil, timer } from 'rxjs';
+import { concatMap, filter, range, Subject, switchMap, takeUntil, timer, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { ConfirmComponent } from '../../../shared/component/confirm/confirm.component';
@@ -34,30 +34,16 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   @Input() currentVoting?: Voting<true> | null;
 
   @ViewChild('confettiCanvas') set confettiCanvas(el: ElementRef<HTMLCanvasElement>) {
-    this.confetti = el ? confetti.create(el.nativeElement, { resize: true }) : undefined;
+    el ? this.confetti$.next(confetti.create(el.nativeElement, { resize: true })) : undefined;
   }
 
   readonly roomRole = RoomRole;
   readonly destroy$ = new Subject<void>();
+  readonly confetti$ = new Subject<Confetti>();
+  readonly currentVotingEnd$ = new Subject<void>();
   active?: string;
-  confetti?: Confetti;
 
   constructor(public pp: PlaningPokerWsService, private cd: ChangeDetectorRef, public authService: AuthService, private dialog: MatDialog) {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.confetti && changes['currentVoting'] && changes['currentVoting'].previousValue?.id === changes['currentVoting'].currentValue?.id) {
-      if (this.groupedVotes.length === 1 && this.groupedVotes[0][1] > 1) { // Если голоса в одной группе и их больше одного
-        range(1, 10)
-          .pipe(concatMap(() => timer(100 + (Math.random() * 700))), takeUntil(this.destroy$))
-          .subscribe(() => this.confetti && this.confetti({
-            particleCount: 100,
-            spread: 90,
-            angle: Math.random() * (45 - (135)) + (135),
-            scalar: .7,
-          }));
-      }
-    }
   }
 
   get selected() {
@@ -78,11 +64,32 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
     return this.groupedVotes.filter((v, i, [f]) => v[1] === f[1]).map(v => v[0]).join(' или ');
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    const prev: Voting<true> = changes['currentVoting']?.previousValue;
+    const curr: Voting<true> = changes['currentVoting']?.currentValue;
+    if (prev?.id === curr?.id && prev?.status !== 'end' && curr?.status === 'end') {
+      this.currentVotingEnd$.next();
+    }
+  }
+
   ngOnInit() {
     this.pp.events(['restartVoting', 'activateVoting']).pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.active = undefined;
       this.cd.detectChanges();
     });
+
+    this.currentVotingEnd$.pipe(
+      filter(() => this.groupedVotes.length === 1 && this.groupedVotes[0][1] > 1), // Если голоса в одной группе и их больше одного
+      switchMap(() => range(1, 10)),
+      concatMap(() => timer(100 + (Math.random() * 700))),
+      withLatestFrom(this.confetti$),
+      takeUntil(this.destroy$)
+    ).subscribe(([, confetti]) => confetti({
+      particleCount: 100,
+      spread: 90,
+      angle: Math.random() * (45 - (135)) + (135),
+      scalar: .7,
+    }));
   }
 
   vote(point: string) {
