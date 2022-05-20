@@ -7,6 +7,7 @@
         <mat-select formControlName="subject">
           <mat-option [value]="'Предложение'">Предложение</mat-option>
           <mat-option [value]="'Ошибка'">Ошибка</mat-option>
+          <mat-option [value]="'Увеличение лимитов'">Увеличение лимитов</mat-option>
           <mat-option [value]="'Другое'">Другое</mat-option>
         </mat-select>
       </mat-form-field>
@@ -25,6 +26,7 @@
   </div>
   <div mat-dialog-actions>
     <div class="flex-space"></div>
+    <button mat-flat-button [mat-dialog-close]='false'>Отмена</button>
     <button mat-flat-button color="primary" >Создать</button>
   </div>
 </form>

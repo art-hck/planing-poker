@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Handshake, Role, Room, RoomRole, Token, Uuid, WsAction, WsEvent } from '@common/models';
-import { merge, Observable, tap } from 'rxjs';
+import { merge, Observable, shareReplay, tap } from 'rxjs';
 import { WsService } from './ws.service';
 
 type PlaningPokerWsServiceEventsType = { [K in keyof WsEvent as K extends string ? `${K}$` : never]: Observable<WsEvent[K]> };
@@ -17,7 +17,7 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   readonly restartVoting$ = this.ws.read('restartVoting');
   readonly flip$ = this.ws.read('flip');
   readonly voted$ = this.ws.read('voted');
-  readonly rooms$ = this.ws.read('rooms');
+  readonly rooms$ = this.ws.read('rooms').pipe(shareReplay(1));
   readonly room$ = this.ws.read('room');
   readonly leaveRoom$ = this.ws.read('leaveRoom');
   readonly checkAlias$ = this.ws.read('checkAlias');

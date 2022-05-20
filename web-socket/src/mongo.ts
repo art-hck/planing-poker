@@ -3,6 +3,7 @@ import { Config } from './config';
 import { GoogleRepository } from './repository/google.repository';
 import { RefreshTokenRepository } from './repository/refresh-token.repository';
 import { RoomRepository } from './repository/room.repository';
+import { UserLimitsRepository } from './repository/user-limits.repository';
 import { UserRepository } from './repository/user.repository';
 import { VotingRepository } from './repository/voting.repository';
 import { log } from './utils/log';
@@ -11,6 +12,7 @@ export const refreshTokenRepo = new RefreshTokenRepository();
 export const roomRepo = new RoomRepository();
 export const votingRepo = new VotingRepository();
 export const usersRepo = new UserRepository();
+export const limitsRepo = new UserLimitsRepository();
 export const googleRepo = new GoogleRepository();
 
 const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, googleRepo];
@@ -18,8 +20,8 @@ const { dbName, dbPassword, dbUsername, dbHost, dbPort } = Config;
 const mongo = new MongoClient(`mongodb://${dbUsername}:${dbPassword}@${dbHost}:${dbPort}`);
 
 log.normal('MongoDB', 'Connecting...');
-const c = mongo.connect();
-c.then(() => {
+export const onMongoConnect = mongo.connect();
+onMongoConnect.then(() => {
   log.success('MongoDB', `Started at ${dbPort} port`);
   const db = mongo.db(dbName);
   repoDeclaration.forEach(instance => instance.init(db.collection(instance.repositoryName) as Collection<any>));

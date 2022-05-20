@@ -19,5 +19,7 @@ export const Config = {
   tmChatId: process.env['TELEGRAM_CHAT_ID'],
   googleClientId: process.env['GOOGLE_CLIENT_ID'],
   googleClientSecret: process.env['GOOGLE_CLIENT_SECRET'],
-  googleRedirectUri: process.env['GOOGLE_REDIRECT_URI']
+  googleRedirectUri: process.env['GOOGLE_REDIRECT_URI'],
+  limitsMaxRooms: process.env['LIMITS_MAX_ROOMS'],
+  limitsMaxVotings: process.env['LIMITS_MAX_VOTINGS']
 };

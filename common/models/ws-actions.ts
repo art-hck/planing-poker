@@ -4,6 +4,7 @@ import { Room } from './room';
 import { RoomRole } from './room-role';
 import { Token } from './token';
 import { User } from './user';
+import { UserLimits } from './user-limits';
 import { Uuid } from './uuid';
 import { Voting } from './voting';
 
@@ -53,4 +54,5 @@ export interface WsEvent<serialized = true> {
   googleAlreadyLinked: {}; // Гугл аккаунт уже привязан
   user: User; // Информация о пользователе
   checkAlias: { success: boolean } // Проверка адреса на доступность
+  limitsError: { limits: Partial<UserLimits> };
 }

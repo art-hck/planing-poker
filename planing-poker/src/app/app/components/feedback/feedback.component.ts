@@ -11,14 +11,14 @@ import { take } from 'rxjs';
 export class FeedbackComponent {
   @ViewChild('autosize') autosize!: CdkTextareaAutosize;
   readonly form = this.fb.group({
-    subject: ['', Validators.required],
+    subject: [this.data?.subject, Validators.required],
     message: ['', Validators.required],
   });
 
   constructor(
     public dialogRef: MatDialogRef<FeedbackComponent>,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: unknown,
+    @Inject(MAT_DIALOG_DATA) public data: { subject: string } | undefined,
     private _ngZone: NgZone,
   ) {
   }

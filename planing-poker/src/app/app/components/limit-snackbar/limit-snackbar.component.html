@@ -1,0 +1,12 @@
+<div class="limit-snackbar">
+  <div *ngIf='limits'>
+    <span class='app-strong'>Внимание ошибка выполнения операции!</span><br/>
+    <span *ngIf='limits.maxRooms'>Максимальное количество комнат - {{limits.maxRooms}}.</span>
+    <span *ngIf='limits.maxVotings'>Максимальное количество сторей - {{limits.maxVotings}}.</span>
+  </div>
+  <br/>
+  <div class="limit-snackbar__footer" [align]='"right"'>
+    <button mat-button (click)='snackBar.dismiss()'>Закрыть</button>
+    <button mat-flat-button (click)='snackBar.dismiss(); feedback()'>Увеличить лимиты</button>
+  </div>
+</div>

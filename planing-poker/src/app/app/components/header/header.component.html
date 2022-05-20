@@ -2,7 +2,7 @@
   <button mat-icon-button (click)='showPlayersChange.emit(!showPlayers)' *ngIf='showPlayersChange.observed && (resolution.isMobile$ | async)'>
     <mat-icon>menu</mat-icon>
   </button>
-  <h1>Planing Poker</h1>
+  <h1><a routerLink='/'>Planing Poker</a></h1>
   <div class='flex-space'></div>
 
   <button mat-icon-button (click)='showVotingsChange.emit(!showVotings)' *ngIf='showVotingsChange.observed && (resolution.isMobile$ | async)'>

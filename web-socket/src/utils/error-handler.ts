@@ -3,6 +3,7 @@ import { JsonWebTokenError } from 'jsonwebtoken';
 import { NotFoundError, RoutePayload } from '../models';
 import { DeniedError } from '../models/denied-error.ts';
 import { InvalidParamsError } from '../models/invalid-params-error';
+import { LimitsError } from '../models/limits-error';
 import { routes } from '../routes';
 import { log } from './log';
 
@@ -25,6 +26,9 @@ export function errorHandler(e: unknown, route: RoutePayload) {
         route.send('invalidToken', {});
         routes.bye(route);
         log.error('WebSocket', `Недействительный токен или ошибка google авторизации`);
+        break;
+      case e instanceof LimitsError:
+        route.send('limitsError', { limits: (e as LimitsError).limits });
         break;
       default:
         log.error('WebSocket', e.stack);

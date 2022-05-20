@@ -124,6 +124,14 @@ export class RoomRepository implements Repository<Room> {
   }
 
   /**
+   * Список комнат, где пользователь является админом
+   * @param userId
+   */
+  ownRooms(userId: Uuid): Room[] {
+    return Array.from(this.rooms.values()).filter(room => room.users.get(userId)?.has(RoomRole.admin));
+  }
+
+  /**
    * Найти комнату по голосованию
    * @param votingId
    */

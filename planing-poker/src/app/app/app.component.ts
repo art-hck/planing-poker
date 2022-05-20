@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
+import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { AuthService } from './services/auth.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
 import { SidebarsService } from './services/sidebars.service';
@@ -61,6 +62,7 @@ export class AppComponent implements OnInit {
         this.authService.logout$.next();
       },
       invalidToken: () => this.authService.logout$.next({ emitEvent: false }),
+      limitsError: ({ limits }) => this.snackBar.openFromComponent(LimitSnackbarComponent, { data: limits }),
       feedback: ({ success }) => {
         if (success) {
           this.snackBar.open('Большое спасибо за обратную связь!', undefined, { duration: 1000 });

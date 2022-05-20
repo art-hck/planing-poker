@@ -1,6 +1,7 @@
 import { NotFoundError, RoutePayload } from '../models';
 import { InvalidParamsError } from '../models/invalid-params-error';
-import { roomRepo, usersRepo, votingRepo } from '../mongo';
+import { LimitsError } from '../models/limits-error';
+import { roomRepo, limitsRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 import { broadcast } from '../utils/broadcast';
 import { replacer } from '../utils/set-map-utils';
@@ -63,8 +64,12 @@ export class RoomController {
   /**
    * Создать комнату
    */
-  static create({ payload: { name, points, alias, canPreviewVotes }, send, userId }: RoutePayload<'newRoom'>) {
+  static async create({ payload: { name, points, alias, canPreviewVotes }, send, userId }: RoutePayload<'newRoom'>) {
     if (points.length < 2) throw new InvalidParamsError(`points: ${points}`);
+
+    const limits = await limitsRepo.find(userId);
+    if (roomRepo.ownRooms(userId).length >= limits.maxRooms) throw new LimitsError({ maxRooms: limits.maxRooms });
+
     roomRepo.create(name, userId, points, canPreviewVotes, alias || null).then(room => {
       send('newRoom', { roomId: room.alias || room.id });
       send('rooms', roomRepo.availableRooms(userId));

@@ -28,9 +28,8 @@ export class HeaderComponent {
   }
 
   feedback() {
-    this.dialog.open(FeedbackComponent, { width: '500px' }).afterClosed().pipe(filter(v => !!v)).subscribe(({ subject, message }) => {
-      this.pp.feedback(subject, message);
-    });
+    this.dialog.open(FeedbackComponent, { autoFocus: false, width: '500px' }).afterClosed().pipe(filter(v => !!v))
+      .subscribe(({ subject, message }) => this.pp.feedback(subject, message));
   }
 
   settings(user: User) {

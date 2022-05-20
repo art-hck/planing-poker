@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 
 @Component({
   selector: 'pp-rooms-home',
@@ -6,4 +7,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./rooms-home.component.scss']
 })
 export class RoomsHomeComponent {
+  constructor(public pp: PlaningPokerWsService) {
+  }
 }

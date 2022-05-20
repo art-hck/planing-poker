@@ -1,5 +1,23 @@
-<mat-drawer-content>
-  <h1 class="mat-display-3 app-strong">
-    <span>Выберите комнату</span>
-  </h1>
-</mat-drawer-content>
+<ng-container *ngIf='pp.rooms$ | async as rooms'>
+  <ng-container *ngIf='rooms.length === 0'>
+    <h1 class='mat-display-3 app-strong'>
+      <span>Для начала работы создайте комнату</span>
+    </h1>
+  </ng-container>
+
+  <ng-container *ngIf='rooms.length > 0'>
+    <div class='room-cards'>
+      <a [routerLink]="['room', room.alias || room.id]" *ngFor='let room of rooms'>
+        <mat-card>
+          <div mat-card-image [style.background-color]='room.name | stringToColor'>
+            <span>{{ room.name | abbreviation }}</span>
+          </div>
+          <mat-card-header>
+            <mat-card-title>{{room.name}}</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+      </a>
+    </div>
+  </ng-container>
+</ng-container>
+
