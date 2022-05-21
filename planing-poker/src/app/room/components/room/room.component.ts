@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogState } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
@@ -16,7 +17,7 @@ import {
   startWith,
   Subject,
   switchMap,
-  takeUntil,
+  takeUntil, tap,
   withLatestFrom
 } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
@@ -49,12 +50,13 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.pp.flip$.pipe(mapTo(2))
   );
   readonly destroy$ = new Subject<void>();
-  readonly room$ = this.pp.room$.pipe(shareReplay(1));
+  readonly room$ = this.pp.room$.pipe(tap(room => this.title.setTitle(`${room.name} - PlaningPoker`)), shareReplay(1));
 
   constructor(
     public sidebars: SidebarsService,
     public authService: AuthService,
     public pp: PlaningPokerWsService,
+    private title: Title,
     private ws: WsService,
     private dialog: MatDialog,
     private store: Store,

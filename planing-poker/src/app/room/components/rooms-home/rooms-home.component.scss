@@ -1,5 +1,7 @@
 @use 'node_modules/@angular/material/index' as mat;
-$size: 35vmin;
+@use "sass:math";
+
+$size: 8vmin;
 
 :host {
   height: 100%;
@@ -8,9 +10,9 @@ $size: 35vmin;
   color: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 300);
 
   h1 {
-    font-size: $size - 27;
+    font-size: $size;
     line-height: normal;
-    margin-bottom: ($size - 27)/3;
+    margin-bottom: math.div($size, 3);
     align-self: center;
   }
 }

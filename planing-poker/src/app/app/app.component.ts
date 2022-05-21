@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
+import { filter, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { AuthService } from './services/auth.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
@@ -21,11 +24,12 @@ import { WsService } from './services/ws.service';
       (showVotingsChange)='sidebars.saveSidebarsState();'
     ></pp-header>
     <router-outlet></router-outlet>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
   constructor(
     private router: Router,
+    @Inject(PLATFORM_ID) private platform: any,
     private authService: AuthService,
     private activatedRoute: ActivatedRoute,
     private dialog: MatDialog,
@@ -35,9 +39,19 @@ export class AppComponent implements OnInit {
     private snackBar: MatSnackBar,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    public sidebars: SidebarsService,
+    public sidebars: SidebarsService
   ) {
-    matIconRegistry.addSvgIcon('google', this.domSanitizer.bypassSecurityTrustResourceUrl("assets/google-icon.svg"));
+    if (isPlatformBrowser(this.platform) && environment.yandexMetrikaId) {
+      const ym = (window as any)?.ym;
+      ym(environment.yandexMetrikaId, "init", environment.yandexMetrikaOptions ?? {});
+
+      this.router.events.pipe(
+        filter(e => e instanceof NavigationEnd),
+        tap(e => ym(environment.yandexMetrikaId, 'hit', (e as NavigationEnd).urlAfterRedirects))
+      ).subscribe();
+    }
+
+    matIconRegistry.addSvgIcon('google', this.domSanitizer.bypassSecurityTrustResourceUrl('assets/google-icon.svg'));
 
     this.authService.beforeLogout$.subscribe(options => {
       if (!options || options.emitEvent) this.pp.bye();
@@ -70,11 +84,11 @@ export class AppComponent implements OnInit {
       },
       deleteRoom: () => {
         this.snackBar.open('Комната удалена, вы были перемещены на список комнат', 'Ну ок');
-        this.router.navigate(["/"]);
+        this.router.navigate(['/']);
       },
       googleAlreadyLinked: () => {
         this.snackBar.open('Данный google аккаунт уже привязан к пользователю.', 'Ну ок');
-        this.router.navigate(["/"]);
+        this.router.navigate(['/']);
       }
     }).subscribe();
   }

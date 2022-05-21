@@ -19,9 +19,9 @@ import { AuthGuard } from './components/auth/auth.guard';
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { HeaderComponent } from './components/header/header.component';
+import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { UserComponent } from './components/user/user.component';
-import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 
 @NgModule({
   declarations: [

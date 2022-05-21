@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 
 @Component({
@@ -7,6 +8,10 @@ import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.se
   styleUrls: ['./rooms-home.component.scss']
 })
 export class RoomsHomeComponent {
-  constructor(public pp: PlaningPokerWsService) {
+  constructor(
+    public pp: PlaningPokerWsService,
+    public title: Title
+  ) {
+    this.title.setTitle('Список комнат - PlaningPoker');
   }
 }

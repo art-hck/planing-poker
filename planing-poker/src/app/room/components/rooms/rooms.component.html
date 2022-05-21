@@ -1,6 +1,6 @@
 <ng-container *ngIf='pp.rooms$ | async as rooms'>
   <mat-drawer-container>
-    <mat-drawer mode='side' [opened]='true'>
+    <mat-drawer mode='side' [opened]='!isRoot'>
       <div class='rooms-list'>
         <a class='rooms-list__item' routerLinkActive='active' [routerLink]="['room', room.alias || room.id]" *ngFor='let room of rooms'>
           <div

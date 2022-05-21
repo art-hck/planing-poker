@@ -6,7 +6,9 @@ export const environment = {
   production: false,
   websocketHost: '',
   googleClientId: '',
-  googleRedirectUri: ''
+  googleRedirectUri: '',
+  yandexMetrikaId: '',
+  yandexMetrikaOptions: ''
 };
 
 /*

@@ -31,6 +31,10 @@ export class RoomsComponent implements OnInit, OnDestroy {
   ) {
   }
 
+  get isRoot() {
+    return this.router.isActive("/", { fragment: 'exact', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });
+  }
+
   ngOnInit() {
     this.authService.user$.pipe(filter(u => !!u), takeUntil(this.destroy$)).subscribe(() => this.pp.rooms());
 
