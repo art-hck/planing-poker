@@ -1,24 +1,35 @@
 @use 'node_modules/@angular/material/index' as mat;
 @use "sass:math";
 
-$size: 8vmin;
+$size: 5vmin;
 
 :host {
   height: 100%;
   display: flex;
   justify-content: center;
-  color: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 300);
 
   h1 {
-    font-size: $size;
+    font-size: max(5vmin, 26px);
     line-height: normal;
     margin-bottom: math.div($size, 3);
     align-self: center;
+    color: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 300);
+    text-align: center;
+    cursor: pointer;
+    padding: 24px;
+    border-radius: 10px;
+    transition: 300ms all;
+
+    &:hover {
+      background: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 100);
+      color: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 400);
+    }
   }
 }
 
 .room-cards {
   align-self: flex-start;
+  justify-content: center;
   display: flex;
   flex-wrap: wrap;
   padding: 15px;
@@ -26,6 +37,7 @@ $size: 8vmin;
   a {
     text-decoration: none;
     margin: 15px;
+    cursor: pointer;
   }
 
   .mat-card {
@@ -51,6 +63,7 @@ $size: 8vmin;
       align-items: center;
       justify-content: center;
       color: #fff;
+      background: mat.get-color-from-palette(mat.define-palette(mat.$gray-palette), 300);
 
       span {
         transition: all 500ms;

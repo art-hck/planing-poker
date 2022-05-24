@@ -1,6 +1,6 @@
 <ng-container *ngIf='pp.rooms$ | async as rooms'>
   <ng-container *ngIf='rooms.length === 0'>
-    <h1 class='mat-display-3 app-strong'>
+    <h1 class='mat-display-3 app-strong' (click)='newRoom()'>
       <span>Для начала работы создайте комнату</span>
     </h1>
   </ng-container>
@@ -14,6 +14,16 @@
           </div>
           <mat-card-header>
             <mat-card-title>{{room.name}}</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+      </a>
+      <a (click)='newRoom()'>
+        <mat-card>
+          <div mat-card-image>
+            <span>+</span>
+          </div>
+          <mat-card-header>
+            <mat-card-title>Создать комнату</mat-card-title>
           </mat-card-header>
         </mat-card>
       </a>
