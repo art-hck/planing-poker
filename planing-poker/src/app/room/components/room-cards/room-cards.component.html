@@ -15,7 +15,7 @@
       <mat-card *ngFor="let point of room.points" class="mat-display-2 poker-cards__item poker-cards__item-disabled">{{point}}</mat-card>
     </div>
   </ng-container>
-  <ng-container *ngIf="currentVoting" [ngSwitch]="step">
+  <ng-container *ngIf="currentVoting && (timer$ | async)" [ngSwitch]="step">
     <div class="mat-headline app-center">
       {{ currentVoting.name}}
     </div>
