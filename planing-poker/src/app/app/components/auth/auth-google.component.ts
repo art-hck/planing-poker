@@ -20,7 +20,7 @@ export class AuthGoogleComponent implements OnDestroy {
       });
 
     this.pp.events({
-      handshake: () => router.navigate(["/"]),
+      user: () => router.navigate(["/"]),
       invalidToken: () => router.navigate(["/"]),
     }).pipe(takeUntil(this.destroy$)).subscribe();
   }

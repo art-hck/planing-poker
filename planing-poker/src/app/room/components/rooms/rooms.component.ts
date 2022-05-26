@@ -50,7 +50,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
   }
 
   newRoom() {
-    this.dialog.open(RoomCreateComponent, { width: '500px' }).afterClosed()
+    this.dialog.open(RoomCreateComponent, { autoFocus: false, width: '500px' }).afterClosed()
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name, points, canPreviewVotes, alias }) => name ? this.pp.newRoom(name, points, canPreviewVotes, alias) : null);
   }

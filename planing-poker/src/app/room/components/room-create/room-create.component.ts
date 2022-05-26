@@ -2,8 +2,11 @@ import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent, MatChipList } from '@angular/material/chips';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Room, RoomRole } from '@common/models';
 import { debounceTime, distinctUntilChanged, map, of, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 
 type RoomRoleData = { role: RoomRole, name: string, checked: boolean }
@@ -49,12 +52,24 @@ export class RoomCreateComponent implements OnDestroy {
   ]);
   readonly asFormGroup = (c: AbstractControl) => c as FormGroup;
   readonly destroy$ = new Subject<void>();
+  readonly googleLink: string = 'https://accounts.google.com/o/oauth2/v2/auth' + this.router.createUrlTree(['.'], {
+    queryParams: {
+      access_type: 'offline',
+      scope: 'https://www.googleapis.com/auth/userinfo.profile',
+      client_id: environment.googleClientId,
+      redirect_uri: environment.googleRedirectUri,
+      response_type: 'code'
+    }
+  }).toString().slice(1);
+
   customize = !!this.data?.room;
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: { room: Room<true> },
     public matDialogRef: MatDialogRef<RoomCreateComponent>,
+    public authService: AuthService,
     private pp: PlaningPokerWsService
   ) {
     if (data?.room) { // Если редактируем комнату, а не создаём новую, проставляем начальные значения в форму

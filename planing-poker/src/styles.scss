@@ -74,3 +74,9 @@ mat-form-field {
 .mat-orange {
   color: mat.get-color-from-palette(mat.define-palette(mat.$orange-palette), 500);
 }
+
+.mat-dialog-container .mat-dialog-close {
+  position: absolute;
+  right: -13px;
+  top: -4px;
+}

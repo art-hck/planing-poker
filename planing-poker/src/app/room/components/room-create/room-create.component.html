@@ -1,9 +1,15 @@
-<h1 mat-dialog-title *ngIf='!data?.room'>Создать новую комнату</h1>
-<h1 mat-dialog-title *ngIf='data?.room'>Настройки комнаты</h1>
-<form [formGroup]='form' (ngSubmit)='form.valid && matDialogRef.close(form.value)'>
-  <div mat-dialog-content>
+<div class='app-relative' *ngIf='authService.user$ | async as me'>
+  <h1 mat-dialog-title *ngIf='me.verified && !data?.room'>Создать новую комнату</h1>
+  <h1 mat-dialog-title *ngIf='me.verified && data?.room'>Настройки комнаты</h1>
+  <h1 mat-dialog-title *ngIf='!me.verified'>Пройдите верификацию</h1>
+  <button color='gray' class='mat-dialog-close' mat-icon-button [mat-dialog-close]='false'>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 
-    <mat-form-field appearance='outline' hideRequiredMarker >
+<form [formGroup]='form' (ngSubmit)='form.valid && matDialogRef.close(form.value)' *ngIf='authService.user$ | async as me'>
+  <div mat-dialog-content *ngIf='me.verified'>
+    <mat-form-field appearance='outline' hideRequiredMarker>
       <mat-label>Название</mat-label>
       <input matInput formControlName='name'>
     </mat-form-field>
@@ -24,7 +30,7 @@
         <span matPrefix class='mat-gray'>{{location}}/room/</span>
         <input matInput formControlName='alias'>
 
-        <mat-spinner *ngIf='c.pending' matSuffix diameter="21" ></mat-spinner>
+        <mat-spinner *ngIf='c.pending' matSuffix diameter='21'></mat-spinner>
         <mat-icon *ngIf='c.valid && c.value' matSuffix color='success'>check</mat-icon>
 
         <mat-error *ngIf="c.hasError('alreadyInUse')">Адрес уже используется, выберите другой</mat-error>
@@ -32,7 +38,6 @@
         <mat-error *ngIf="c.hasError('maxlength')">Максимум {{c.getError('maxlength').requiredLength}} символа</mat-error>
         <mat-error *ngIf="c.hasError('pattern')">Может содержать только латинские буквы, цифры «_» или «-»,</mat-error>
       </mat-form-field>
-  <!--    {{form.get("alias")?.errors | json}}-->
 
       <mat-form-field appearance='outline' class='pointerChip'>
         <mat-label>Кто видит голоса в процессе голосования?</mat-label>
@@ -48,20 +53,37 @@
         <mat-chip-list #pointsChipList>
           <mat-chip *ngFor='let point of points.value' (removed)='removePoint(point)' disableRipple [selectable]='false'>
             {{point}}
-            <button matChipRemove >
+            <button matChipRemove>
               <mat-icon>cancel</mat-icon>
             </button>
           </mat-chip>
-          <input placeholder='Еще...' maxlength='4' [matChipInputFor]='pointsChipList' [matChipInputAddOnBlur]='true' (matChipInputTokenEnd)='addPoint($event)' />
+          <input placeholder='Еще...' maxlength='4' [matChipInputFor]='pointsChipList' [matChipInputAddOnBlur]='true'
+                 (matChipInputTokenEnd)='addPoint($event)' />
         </mat-chip-list>
-        <mat-error *ngIf="points.invalid">Минимум 2 варианта</mat-error>
+        <mat-error *ngIf='points.invalid'>Минимум 2 варианта</mat-error>
 
       </mat-form-field>
     </ng-container>
   </div>
+
+  <div mat-dialog-content *ngIf='!me.verified'>
+    <div class='mat-caption' [style.margin]='"12px 0"' *ngIf='!me.verified'>
+      <span class='app-strong'>Аккаунт не верифицирован.</span> При выходе или неактивности течение 30 дней все данные <span
+      class='app-strong'>удалятся</span>.
+      Вы не можете использовать аккаунт более чем на одном устройстве, а также быть создателем комнаты.
+    </div>
+  </div>
+
   <div mat-dialog-actions [align]="'end'">
     <button mat-flat-button [mat-dialog-close]='false' *ngIf='!matDialogRef.disableClose'>Отмена</button>
-    <button mat-flat-button color='primary' *ngIf='!data?.room'>Создать</button>
-    <button mat-flat-button color='primary' *ngIf='data?.room'>Сохранить</button>
+    <button mat-flat-button color='primary' *ngIf='!data?.room && me.verified'>Создать</button>
+    <button mat-flat-button color='primary' *ngIf='data?.room && me.verified'>Сохранить</button>
+    <ng-container *ngIf='!me.verified'>
+      <button mat-stroked-button matTooltip='Временно недоступно' matTooltipPosition='above'>По почте</button>
+      <a mat-stroked-button [href]='googleLink'>
+        <mat-icon svgIcon='google'></mat-icon>
+        <span>&nbsp;Привязать аккаунт Google</span>
+      </a>
+    </ng-container>
   </div>
 </form>

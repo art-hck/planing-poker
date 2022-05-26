@@ -70,7 +70,7 @@ export class RoomController {
     const limits = await limitsRepo.find(userId);
     if (roomRepo.ownRooms(userId).length >= limits.maxRooms) throw new LimitsError({ maxRooms: limits.maxRooms });
 
-    roomRepo.create(name, userId, points, canPreviewVotes, alias || null).then(room => {
+    await roomRepo.create(name, userId, points, canPreviewVotes, alias || null).then(room => {
       send('newRoom', { roomId: room.alias || room.id });
       send('rooms', roomRepo.availableRooms(userId));
     });

@@ -3,6 +3,7 @@ import * as uuid from 'uuid';
 import { WebSocket } from 'ws';
 import { Room, RoomRole, Uuid } from '../../../common/models';
 import { DeniedError } from '../models/denied-error.ts';
+import { InvalidParamsError } from '../models/invalid-params-error';
 import { Repository } from '../models/repository';
 import { roomRepo, usersRepo } from '../mongo';
 import { deserialize, serialize } from '../utils/set-map-utils';
@@ -36,6 +37,12 @@ export class RoomRepository implements Repository<Room> {
   async create(name: string, userId: Uuid, points: string[], canPreviewVotes: RoomRole[], alias: string | null) {
     const id = uuid.v4();
     const users = new Map<Uuid, Set<RoomRole>>().set(userId, new Set([RoomRole.admin, RoomRole.user]));
+    const user = usersRepo.get(userId);
+
+    if (user && !user?.su && !user.verified) {
+      throw new InvalidParamsError(`User is not verified`);
+    }
+
     alias = alias && Array.from(this.rooms.values()).every(room => room.alias !== alias && room.id !== alias) ? alias.toLowerCase() : null;
     const room: Room = { id, name, votingIds: new Set(), users, points, canPreviewVotes, alias };
     this.rooms.set(room.id, room);
