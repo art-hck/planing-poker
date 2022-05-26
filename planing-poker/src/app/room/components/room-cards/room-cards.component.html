@@ -1,66 +1,66 @@
-<ng-container *ngIf="authService.user$ | async as me">
-  <mat-horizontal-stepper #stepper [selectedIndex]="step" [disableRipple]="true" labelPosition="bottom">
-    <mat-step label="Подготовка" [completed]="false"></mat-step>
-    <mat-step label="Оценка" [completed]="false"></mat-step>
-    <mat-step label="Результаты" [completed]="false"></mat-step>
+<ng-container *ngIf='authService.user$ | async as me'>
+  <mat-horizontal-stepper #stepper [selectedIndex]='step' [disableRipple]='true' labelPosition='bottom'>
+    <mat-step label='Подготовка' [completed]='false'></mat-step>
+    <mat-step label='Оценка' [completed]='false'></mat-step>
+    <mat-step label='Результаты' [completed]='false'></mat-step>
   </mat-horizontal-stepper>
 
-  <ng-container *ngIf="!currentVoting">
-    <div class="mat-headline app-center" *ngIf="authService.isAdmin(me, room); else waiting">
+  <ng-container *ngIf='!currentVoting'>
+    <div class='mat-headline app-center' *ngIf='authService.isAdmin(me, room); else waiting'>
       Выберите стори для начала голосования
     </div>
-    <ng-template #waiting><div class="mat-headline app-center" >Ожидаем начала голосования...</div></ng-template>
+    <ng-template #waiting><div class='mat-headline app-center'>Ожидаем начала голосования...</div></ng-template>
 
-    <div class="poker-cards" *ngIf='room'>
-      <mat-card *ngFor="let point of room.points" class="mat-display-2 poker-cards__item poker-cards__item-disabled">{{point}}</mat-card>
+    <div class='poker-cards' *ngIf='room'>
+      <mat-card *ngFor='let point of room.points' class='mat-display-2 poker-cards__item poker-cards__item-disabled'>{{point}}</mat-card>
     </div>
   </ng-container>
-  <ng-container *ngIf="currentVoting && (timer$ | async)" [ngSwitch]="step">
-    <div class="mat-headline app-center">
+  <ng-container *ngIf='currentVoting && (timer$ | async)' [ngSwitch]='step'>
+    <div class='mat-headline app-center'>
       {{ currentVoting.name}}
     </div>
-    <ng-container *ngSwitchCase="1">
-        <div class="poker-cards" *ngIf='room'>
-          <mat-card
-            *ngFor="let point of room.points"
-            matRipple
-            class="mat-display-2 poker-cards__item"
-            [class.mat-elevation-z8]="active === point"
-            [class.poker-cards__item-disabled]="room && authService.hasRole(me, roomRole.observer, room)"
-            (click)="vote(point)"
-          >{{point}}</mat-card>
-        </div>
-      <ng-container *ngIf="authService.isAdmin(me, room) && currentVoting?.votes!.length">
-        <br/>
-        <button mat-flat-button color="primary" (click)="flip()">Открыть карты</button>
+    <ng-container *ngSwitchCase='1'>
+      <div class='poker-cards' *ngIf='room'>
+        <mat-card
+          *ngFor='let point of room.points'
+          matRipple
+          class='mat-display-2 poker-cards__item'
+          [class.mat-elevation-z8]='active === point'
+          [class.poker-cards__item-disabled]='room && authService.hasRole(me, roomRole.observer, room)'
+          (click)='vote(point)'
+        >{{point}}</mat-card>
+      </div>
+      <ng-container *ngIf='authService.isAdmin(me, room) && currentVoting?.votes!.length'>
+        <br />
+        <button mat-flat-button color='primary' (click)='flip()'>Открыть карты</button>
       </ng-container>
     </ng-container>
-    <ng-container *ngSwitchCase="2">
-      <canvas class="confetti" #confettiCanvas></canvas>
-      <div class="summary">
-        <div class="summary__aside"></div>
-        <div class="summary__content">
-          <canvas ppDoughnut [groupedVotes]="groupedVotes" [voting]="currentVoting"></canvas>
-          <div class="doughnut-result mat-display-1">{{winner}}</div>
+    <ng-container *ngSwitchCase='2'>
+      <canvas class='confetti' #confettiCanvas></canvas>
+      <div class='summary'>
+        <div class='summary__aside'></div>
+        <div class='summary__content'>
+          <canvas ppDoughnut [groupedVotes]='groupedVotes' [voting]='currentVoting'></canvas>
+          <div class='doughnut-result mat-display-1'>{{winner}}</div>
         </div>
-        <table class="summary__aside">
-          <tr class="mat-row" *ngFor="let groupedVote of groupedVotes">
-            <td class="mat-cell">{{ groupedVote[1] | pluralize: 'голос' : 'голоса' : 'голосов' }} за</td>
-            <td class="mat-cell mat-body-strong">{{ groupedVote[0] }}</td>
+        <table class='summary__aside'>
+          <tr class='mat-row' *ngFor='let groupedVote of groupedVotes'>
+            <td class='mat-cell'>{{ groupedVote[1] | pluralize: 'голос' : 'голоса' : 'голосов' }} за</td>
+            <td class='mat-cell mat-body-strong'>{{ groupedVote[0] }}</td>
           </tr>
         </table>
       </div>
-      <div class="summary">
-        <div class="summary__aside"></div>
-        <div class="summary__content">
-          <ng-container *ngIf="authService.isAdmin(me, room)">
-            <br/>
-            <button color="primary" mat-flat-button (click)="restart()">Перезапустить</button>
+      <div class='summary'>
+        <div class='summary__aside'></div>
+        <div>
+          <ng-container *ngIf='authService.isAdmin(me, room)'>
+            <br />
+            <button color='primary' mat-flat-button (click)='restart()'>Перезапустить</button>
           </ng-container>
         </div>
-        <div class="summary__aside"></div>
+        <div class='summary__aside'></div>
       </div>
     </ng-container>
   </ng-container>
-  <div class="flex-space"></div>
+  <div class='flex-space'></div>
 </ng-container>
