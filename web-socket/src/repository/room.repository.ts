@@ -173,6 +173,6 @@ export class RoomRepository implements Repository<Room> {
    * @param alias
    */
   async checkAlias(alias: string): Promise<boolean> {
-    return !Array.from(this.rooms.values()).some(room => room.alias && room.alias.toLowerCase() === alias.toLowerCase() && room.id === alias.toLowerCase());
+    return !Array.from(this.rooms.values()).some(room => room.alias && room.alias.toLowerCase() === alias.toLowerCase());
   }
 }
