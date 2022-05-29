@@ -60,7 +60,7 @@ mat-form-field {
 }
 
 .mat-form-field.mat-form-field-appearance-outline .mat-form-field-prefix {
-  top:0;
+  top: 0;
 }
 
 .mat-success {
@@ -86,9 +86,13 @@ mat-form-field {
     padding: 0;
   }
 
-  .mat-step-header .mat-step-label {
+  .mat-step-header {
     @media screen and (max-width: 560px) {
-      padding-top: 5px;
+      padding: 24px 15px;
+
+      .mat-step-label {
+        padding-top: 5px;
+      }
     }
   }
 }
