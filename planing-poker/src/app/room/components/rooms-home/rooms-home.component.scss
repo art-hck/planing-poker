@@ -36,21 +36,30 @@ $max-width: 560px;
   padding: 15px;
   min-width: 330px;
 
+  @media screen and (max-width: $max-width) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 90px);
+    justify-content: center;
+    grid-gap: 20px;
+    width: 100%;
+  }
+
   a {
     text-decoration: none;
     margin: 15px;
     cursor: pointer;
 
     @media screen and (max-width: $max-width) {
-      margin: 10px;
+      margin: 0;
     }
   }
 
   .mat-card {
     width: 200px;
     white-space: nowrap;
+
     @media screen and (max-width: $max-width) {
-      width: 58px;
+      width: auto;
     }
 
     ::ng-deep .mat-card-header-text {
