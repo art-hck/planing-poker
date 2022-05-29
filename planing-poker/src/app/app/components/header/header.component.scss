@@ -1,5 +1,9 @@
 @use '@angular/material' as mat;
 
+button + h1 {
+  margin-left: 16px;
+}
+
 h1 a {
   text-decoration: none;
   color: #fff;

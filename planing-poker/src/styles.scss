@@ -80,3 +80,15 @@ mat-form-field {
   right: -13px;
   top: -4px;
 }
+
+.mat-stepper-horizontal.app-stepper {
+  .mat-horizontal-content-container {
+    padding: 0;
+  }
+
+  .mat-step-header .mat-step-label {
+    @media screen and (max-width: 560px) {
+      padding-top: 5px;
+    }
+  }
+}
