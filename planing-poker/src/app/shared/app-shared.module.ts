@@ -15,6 +15,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../app/components/header/header.component';
 import { AbbreviationPipe } from './pipes/abbreviation.pipe';
 import { PluralizePipe } from './pipes/pluralize-pipe';
 import { StringToColorPipe } from './pipes/string-to-color.pipe';
@@ -26,7 +27,7 @@ import { ConfirmComponent } from './component/confirm/confirm.component';
     AbbreviationPipe,
     StringToColorPipe,
     ConfirmComponent,
-
+    HeaderComponent
   ],
   imports: [
     CommonModule,
@@ -60,7 +61,8 @@ import { ConfirmComponent } from './component/confirm/confirm.component';
     MatToolbarModule,
     MatTooltipModule,
     MatBadgeModule,
-  ],
+    HeaderComponent
+  ]
 })
 export class AppSharedModule {
 }

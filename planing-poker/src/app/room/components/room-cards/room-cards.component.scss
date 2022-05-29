@@ -4,6 +4,7 @@
   width: 100%;
   align-items: center;
   position: relative;
+  min-width: 330px;
 
   .confetti {
     position: absolute;
@@ -83,7 +84,24 @@ mat-horizontal-stepper {
     &__item {
       width: 90px;
       height: 60px;
-      margin: 1px;
+      margin: 3px;
+    }
+  }
+}
+
+@media screen and (max-width: 460px) {
+  .mat-headline {
+    max-width: 330px;
+  }
+
+  .poker-cards {
+    max-width: 330px;
+
+    &__item {
+      width: 70px;
+      height: 40px;
+      margin: 3px;
+      font-size: 30px;
     }
   }
 }

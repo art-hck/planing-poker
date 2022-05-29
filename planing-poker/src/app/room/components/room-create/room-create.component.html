@@ -1,5 +1,5 @@
 <div class='app-relative' *ngIf='authService.user$ | async as me'>
-  <h1 mat-dialog-title *ngIf='me.verified && !data?.room'>Создать новую комнату</h1>
+  <h1 mat-dialog-title *ngIf='me.verified && !data?.room'>Новая комната</h1>
   <h1 mat-dialog-title *ngIf='me.verified && data?.room'>Настройки комнаты</h1>
   <h1 mat-dialog-title *ngIf='!me.verified'>Пройдите верификацию</h1>
   <button color='gray' class='mat-dialog-close' mat-icon-button [mat-dialog-close]='false'>

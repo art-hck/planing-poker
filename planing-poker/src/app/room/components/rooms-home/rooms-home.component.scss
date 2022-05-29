@@ -2,6 +2,7 @@
 @use "sass:math";
 
 $size: 5vmin;
+$max-width: 560px;
 
 :host {
   height: 100%;
@@ -33,19 +34,31 @@ $size: 5vmin;
   display: flex;
   flex-wrap: wrap;
   padding: 15px;
+  min-width: 330px;
 
   a {
     text-decoration: none;
     margin: 15px;
     cursor: pointer;
+
+    @media screen and (max-width: $max-width) {
+      margin: 10px;
+    }
   }
 
   .mat-card {
     width: 200px;
     white-space: nowrap;
+    @media screen and (max-width: $max-width) {
+      width: 58px;
+    }
 
     ::ng-deep .mat-card-header-text {
       overflow: hidden;
+
+      @media screen and (max-width: $max-width) {
+        margin: 0;
+      }
     }
 
     .mat-card-title {
@@ -53,6 +66,11 @@ $size: 5vmin;
       overflow: hidden;
       height: 25px;
       margin-bottom: 0;
+
+      @media screen and (max-width: $max-width) {
+        font-size: 14px;
+        height: 18px;
+      }
     }
 
 
@@ -64,6 +82,11 @@ $size: 5vmin;
       justify-content: center;
       color: #fff;
       background: mat.get-color-from-palette(mat.define-palette(mat.$gray-palette), 300);
+
+      @media screen and (max-width: $max-width) {
+        font-size: 2em;
+        height: 70px;
+      }
 
       span {
         transition: all 500ms;

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
@@ -15,6 +15,7 @@ import { RoomCreateComponent } from '../room-create/room-create.component';
   selector: 'pp-rooms',
   templateUrl: './rooms.component.html',
   styleUrls: ['./rooms.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoomsComponent implements OnInit, OnDestroy {
   readonly destroy$ = new Subject<void>();
@@ -28,8 +29,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
     public cd: ChangeDetectorRef,
     public sidebars: SidebarsService,
     public resolutionService: ResolutionService
-  ) {
-  }
+  ) {}
 
   get isRoot() {
     return this.router.isActive("/", { fragment: 'exact', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });

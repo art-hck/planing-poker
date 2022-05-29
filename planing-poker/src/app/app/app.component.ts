@@ -16,14 +16,7 @@ import { WsService } from './services/ws.service';
 
 @Component({
   selector: 'pp-root',
-  template: `
-    <pp-header
-      [(showPlayers)]='sidebars.showPlayers'
-      [(showVotings)]='sidebars.showVotings'
-      (showPlayersChange)='sidebars.saveSidebarsState();'
-      (showVotingsChange)='sidebars.saveSidebarsState();'
-    ></pp-header>
-    <router-outlet></router-outlet>`,
+  template: `<router-outlet></router-outlet>`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
