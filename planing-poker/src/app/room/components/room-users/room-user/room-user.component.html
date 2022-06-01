@@ -34,7 +34,7 @@
 
     <div class="flex-space"></div>
     <mat-chip-list>
-      <mat-chip disableRipple *ngIf="user.id === me?.id"><small>Вы</small></mat-chip>
+      <mat-chip class='mat-chip-me' disableRipple *ngIf="user.id === me?.id"><small>Вы</small></mat-chip>
       <ng-container *ngIf="isVoted">
         <mat-chip disableRipple [style.background]="voteColors?.get(votes?.get(user.id) || null)" [selected]="true">
           <small>{{ votes?.get(user.id) ?? "?" }}</small>

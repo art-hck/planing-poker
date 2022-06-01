@@ -41,6 +41,12 @@
   animation: 200ms ease-in-out show-chip;
 }
 
+@media screen and (max-width: 1200px) and (min-width: 1001px)  {
+  .mat-chip-me {
+    display: none;
+  }
+}
+
 @keyframes show-chip {
   from {
     transform: scale(0);
