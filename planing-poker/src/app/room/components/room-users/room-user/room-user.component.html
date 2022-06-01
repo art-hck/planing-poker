@@ -13,7 +13,7 @@
         <mat-icon>remove_red_eye</mat-icon>
         <span>Наблюдатель</span>
       </button>
-      <button mat-menu-item (click)="kick(user.id, room.id)" *ngIf='me.id !== user.id'>
+      <button mat-menu-item (click)="kick(user.id, room.id)" *ngIf='me.id !== user.id && !user.su'>
         <mat-icon>block</mat-icon>
         <span>Исключить</span>
       </button>
@@ -27,7 +27,8 @@
       [class.menu]="authService.isAdmin(me, room)"
     >
       {{ user.name | abbreviation }}
-      <mat-icon *ngIf="authService.isAdmin(user, room)">grade</mat-icon>
+      <mat-icon *ngIf="!user.su && authService.isAdmin(user, room)">grade</mat-icon>
+      <mat-icon *ngIf="user.su" class="su">whatshot</mat-icon>
     </div>
     <div class="overflow-hidden" matLine>{{ user.name }}</div>
     <div class="overflow-hidden" matLine *ngIf="user.role && role[user.role]">{{ role[user.role] }}</div>

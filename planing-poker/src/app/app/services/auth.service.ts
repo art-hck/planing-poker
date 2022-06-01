@@ -27,6 +27,6 @@ export class AuthService {
   }
 
   isAdmin(user: User, room?: Room<true>): boolean {
-    return this.hasRole(user, RoomRole.admin, room);
+    return user.su || this.hasRole(user, RoomRole.admin, room);
   }
 }

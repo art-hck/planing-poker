@@ -27,6 +27,10 @@
     font-size: 10px;
     padding: 5px;
     box-sizing: border-box;
+
+    &.su {
+      background: #ff4500;
+    }
   }
 
   ::ng-deep {
