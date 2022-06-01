@@ -8,7 +8,7 @@
 <pp-header *ngIf='isRoot'></pp-header>
 <ng-container *ngIf='pp.rooms$ | async as rooms'>
   <mat-drawer-container *ngIf='authService.user$ | async'>
-    <mat-drawer mode='side' [opened]='!isRoot'>
+    <mat-drawer *ngIf='(resolution.isMobile$ | async) !== true' mode='side' [opened]='!isRoot'>
       <div class='rooms-list'>
         <a class='rooms-list__item' routerLinkActive='active' [routerLink]="['room', room.alias || room.id]" *ngFor='let room of rooms'>
           <div

@@ -28,7 +28,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     public cd: ChangeDetectorRef,
     public sidebars: SidebarsService,
-    public resolutionService: ResolutionService
+    public resolution: ResolutionService
   ) {}
 
   get isRoot() {
