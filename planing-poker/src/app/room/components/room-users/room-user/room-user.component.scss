@@ -35,7 +35,9 @@
     }
   }
 }
+
 .mat-chip-list {
+  flex-shrink: 0;
   animation: 200ms ease-in-out show-chip;
 }
 
