@@ -1,7 +1,7 @@
 <ng-container *ngIf="authService.user$ | async as me">
   <mat-list-item *ngIf="user && room">
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="changeModerator(user.id, room.id)" *ngIf="user.online && !authService.isAdmin(user, room)">
+      <button mat-menu-item (click)="changeModerator(user.id, room.id)" *ngIf="!authService.isAdmin(user, room)">
         <mat-icon>verified_user</mat-icon>
         <span>Модератор</span>
       </button>
