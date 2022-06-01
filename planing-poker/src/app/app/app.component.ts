@@ -5,6 +5,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import { Store } from '@ngxs/store';
 import { filter, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -32,8 +33,13 @@ export class AppComponent implements OnInit {
     private snackBar: MatSnackBar,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    public sidebars: SidebarsService
+    public sidebars: SidebarsService,
+    private sw: SwUpdate
   ) {
+    this.sw.versionUpdates.pipe(filter(e => e.type === 'VERSION_READY')).subscribe(() => {
+      this.snackBar.open('Доступна новая версия приложения!', 'Обновить').onAction().subscribe(() => document?.location.reload());
+    });
+
     if (isPlatformBrowser(this.platform) && environment.yandexMetrikaId) {
       const ym = (window as any)?.ym;
       ym(environment.yandexMetrikaId, "init", environment.yandexMetrikaOptions ?? {});
