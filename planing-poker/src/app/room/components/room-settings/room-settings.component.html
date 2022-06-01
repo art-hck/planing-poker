@@ -21,7 +21,7 @@
         <h4 matLine class='mat-error'>Удалить комнату</h4>
       </mat-list-option>
 
-      <mat-list-option [selected]='false' *ngIf='!authService.isAdmin(me, room)' (click)='leaveRoom(); item4.selected = false' #item4>
+      <mat-list-option [selected]='false' *ngIf='me.su || !authService.isAdmin(me, room)' (click)='leaveRoom(); item4.selected = false' #item4>
         <mat-icon color='gray' matListIcon>logout</mat-icon>
         <h4 matLine>Покинуть из комнату</h4>
       </mat-list-option>
