@@ -19,6 +19,12 @@ type RoomRoleData = { role: RoomRole, name: string, checked: boolean }
 export class RoomCreateComponent implements OnDestroy {
   @ViewChild('pointsChipList') pointsChipList!: MatChipList;
   readonly location = window?.location.host;
+  readonly presets = [
+    { name: 'Scrum', values: ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40', '100', '?', '☕'] },
+    { name: 'Fibonacci', values: ['0', '1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?', '☕'] },
+    { name: 'Sequential', values: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '?', '☕'] },
+    { name: 'T-Shirt', values: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '?', '☕'] }
+  ];
   readonly form = this.fb.group({
     name: ['', Validators.required],
     alias: ['', [
@@ -40,7 +46,7 @@ export class RoomCreateComponent implements OnDestroy {
       )
     ]],
     points: this.fb.array(
-      ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'],
+      this.presets[0].values,
       [Validators.minLength(2), Validators.required]
     ),
     canPreviewVotes: [[RoomRole.admin, RoomRole.observer]]
@@ -75,7 +81,7 @@ export class RoomCreateComponent implements OnDestroy {
     if (data?.room) { // Если редактируем комнату, а не создаём новую, проставляем начальные значения в форму
       this.form.patchValue(data.room, { emitEvent: false });
       this.points.clear({ emitEvent: false });
-      data.room.points.map(p => this.fb.control(p)).forEach(c => this.points.push(c, { emitEvent: false }));
+      this.setPoints(data.room.points);
     }
 
     // Если меняем чекбокс в roomRoles, то синхронизируем роли в основной форме
@@ -90,6 +96,11 @@ export class RoomCreateComponent implements OnDestroy {
 
   get points() {
     return (this.form.get('points') as FormArray);
+  }
+
+  setPoints(points: string[]) {
+    this.points.clear({ emitEvent: false });
+    points.map(p => this.fb.control(p)).forEach(c => this.points.push(c, { emitEvent: false }));
   }
 
   addPoint(event: MatChipInputEvent) {

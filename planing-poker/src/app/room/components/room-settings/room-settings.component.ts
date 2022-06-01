@@ -58,8 +58,8 @@ export class RoomSettingsComponent implements OnDestroy {
     this.dialog.open(RoomCreateComponent, { autoFocus: false, data: this.data, width: '500px' }).afterClosed()
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe((room: Partial<Room<true>>) => {
-        if (room.alias && this.data.room.alias !== room.alias) {
-          this.router.navigate(['room', room.alias], { replaceUrl: true });
+        if (this.data.room.alias !== room.alias) {
+          this.router.navigate(['room', room.alias || this.data.room.id], { replaceUrl: true });
         }
         this.data.room = { ...this.data.room, ...room };
         this.pp.updateRoom(this.data.room);

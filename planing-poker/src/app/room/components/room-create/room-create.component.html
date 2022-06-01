@@ -14,10 +14,9 @@
       <input matInput formControlName='name' cdkFocusInitial>
     </mat-form-field>
 
-
     <h4 *ngIf='!customize' [align]="'center'" class='mat-gray'>
       <button mat-button type='button' (click)='customize = true'>
-        <div style='display: flex; align-items: center'>
+        <div class='app-flex-center'>
           <mat-icon>settings</mat-icon>
           <span>&nbsp; Расширенные настройки</span>
         </div>
@@ -64,6 +63,17 @@
 
       </mat-form-field>
     </ng-container>
+
+    <div class='app-flex-center'>
+      <span class='mat-gray' style='padding: 0 16px'>Пресеты: </span>
+      <button
+        *ngFor='let p of presets'
+        mat-button
+        type='button'
+        [color]='points.value.toString() === p.values.toString() ? "primary" : null'
+        (click)='setPoints(p.values)'
+      >{{p.name}}</button>
+    </div>
   </div>
 
   <div mat-dialog-content *ngIf='!me.verified'>

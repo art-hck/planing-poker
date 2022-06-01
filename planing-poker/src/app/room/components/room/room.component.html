@@ -11,7 +11,7 @@
 
       <!--- CREATE --->
       <div class="new-voting-button-wrap" *ngIf="authService.isAdmin(me, room)">
-        <div class="new-voting-button-tooltip" *ngIf="!(votings$ | async)?.length" style="">
+        <div class="new-voting-button-tooltip" *ngIf="!(votings$ | async)?.length">
           <div>Для начала добавьте стори</div>
         </div>
         <button mat-fab color="primary" class="new-voting-button" (click)="openNewVotingModal()">
