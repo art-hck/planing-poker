@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
+import { TitleService } from '../../../app/services/title.service';
 import { RoomCreateComponent } from '../room-create/room-create.component';
 
 @Component({
@@ -16,8 +17,10 @@ export class RoomsHomeComponent implements OnDestroy {
   constructor(
     private dialog: MatDialog,
     public pp: PlaningPokerWsService,
-    public title: Title
+    public title: Title,
+    public titleService: TitleService
   ) {
+    this.titleService.reset();
     this.title.setTitle('Список комнат - PlaningPoker');
   }
 

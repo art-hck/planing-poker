@@ -23,6 +23,7 @@ import {
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
+import { TitleService } from '../../../app/services/title.service';
 import { WsService } from '../../../app/services/ws.service';
 import { Users } from '../../actions/users.actions';
 import { Votings } from '../../actions/votings.actions';
@@ -50,13 +51,18 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.pp.flip$.pipe(mapTo(2))
   );
   readonly destroy$ = new Subject<void>();
-  readonly room$ = this.pp.room$.pipe(tap(room => this.title.setTitle(`${room.name} - PlaningPoker`)), shareReplay(1));
+  readonly room$ = this.pp.room$.pipe(
+    tap(room => {
+      this.titleService.title$.next(room.name);
+      this.title.setTitle(`${room.name} - PlaningPoker`);
+    }), shareReplay(1));
 
   constructor(
     public sidebars: SidebarsService,
     public authService: AuthService,
     public pp: PlaningPokerWsService,
     private title: Title,
+    private titleService: TitleService,
     private ws: WsService,
     private dialog: MatDialog,
     private store: Store,

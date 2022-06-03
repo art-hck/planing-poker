@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { User } from '@common/models';
 import { filter } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { ResolutionService } from '../../services/resolution.service';
+import { TitleService } from '../../services/title.service';
 import { FeedbackComponent } from '../feedback/feedback.component';
 import { UserComponent } from '../user/user.component';
 
@@ -23,13 +25,19 @@ export class HeaderComponent {
     public authService: AuthService,
     private dialog: MatDialog,
     private pp: PlaningPokerWsService,
-    public resolution: ResolutionService
+    private router: Router,
+    public resolution: ResolutionService,
+    public titleService: TitleService
   ) {
   }
 
   feedback() {
     this.dialog.open(FeedbackComponent, { autoFocus: false, width: '500px' }).afterClosed().pipe(filter(v => !!v))
       .subscribe(({ subject, message }) => this.pp.feedback(subject, message));
+  }
+
+  get isRoot() {
+    return this.router.isActive("/", { fragment: 'exact', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });
   }
 
   settings(user: User) {
