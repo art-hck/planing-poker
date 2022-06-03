@@ -1,13 +1,5 @@
 @use '@angular/material' as mat;
 
-* + h1 {
-  margin-left: 16px;
-}
-
-h1.active {
-  cursor: pointer;
-}
-
 button.mat-badge-overlap.mat-badge-after ::ng-deep .mat-badge-content {
   top: 0;
   right: 0;
