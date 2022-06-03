@@ -5,31 +5,38 @@
     <mat-step label='Результаты' [completed]='false'></mat-step>
   </mat-horizontal-stepper>
 
+  <ng-template #cards>
+    <div class='poker-cards' *ngIf='room'>
+      <mat-card
+        *ngFor='let point of room.points'
+        matRipple
+        class='mat-display-2 poker-cards__item'
+        [class.mat-elevation-z8]='active === point'
+        [class.poker-cards__item-disabled]='authService.hasRole(me, roomRole.observer, room) || step !== 1'
+        (click)='vote(point)'
+      >{{point}}</mat-card>
+    </div>
+  </ng-template>
+
   <ng-container *ngIf='!currentVoting'>
     <div class='mat-headline app-center' *ngIf='authService.isAdmin(me, room); else waiting'>
       Выберите стори для начала голосования
     </div>
     <ng-template #waiting><div class='mat-headline app-center'>Ожидаем начала голосования...</div></ng-template>
 
-    <div class='poker-cards' *ngIf='room'>
-      <mat-card *ngFor='let point of room.points' class='mat-display-2 poker-cards__item poker-cards__item-disabled'>{{point}}</mat-card>
-    </div>
+    <ng-container *ngTemplateOutlet='cards'></ng-container>
   </ng-container>
   <ng-container *ngIf='currentVoting && (timer$ | async)' [ngSwitch]='step'>
     <div class='mat-headline app-center'>
       {{ currentVoting.name}}
     </div>
     <ng-container *ngSwitchCase='1'>
-      <div class='poker-cards' *ngIf='room'>
-        <mat-card
-          *ngFor='let point of room.points'
-          matRipple
-          class='mat-display-2 poker-cards__item'
-          [class.mat-elevation-z8]='active === point'
-          [class.poker-cards__item-disabled]='room && authService.hasRole(me, roomRole.observer, room)'
-          (click)='vote(point)'
-        >{{point}}</mat-card>
+      <div class='loader' *ngIf='authService.hasRole(me, roomRole.observer, room); else cards'>
+        <div class="loader__eye loader__eye-left"></div>
+        <div class="loader__eye loader__eye-right"></div>
+        <div class="loader__mouth"></div>
       </div>
+      <span class='loader__text'>Идет голосование...</span>
       <ng-container *ngIf='authService.isAdmin(me, room) && currentVoting?.votes!.length'>
         <br />
         <button mat-flat-button color='primary' (click)='flip()'>Открыть карты</button>
@@ -64,3 +71,4 @@
   </ng-container>
   <div class='flex-space'></div>
 </ng-container>
+
