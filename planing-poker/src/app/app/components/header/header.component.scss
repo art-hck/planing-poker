@@ -4,9 +4,8 @@
   margin-left: 16px;
 }
 
-h1 a {
-  text-decoration: none;
-  color: #fff;
+h1.active {
+  cursor: pointer;
 }
 
 button.mat-badge-overlap.mat-badge-after ::ng-deep .mat-badge-content {

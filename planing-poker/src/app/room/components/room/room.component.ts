@@ -29,6 +29,7 @@ import { Users } from '../../actions/users.actions';
 import { Votings } from '../../actions/votings.actions';
 import { UsersState } from '../../states/users.state';
 import { VotingsState } from '../../states/votings.state';
+import { RoomSettingsComponent } from '../room-settings/room-settings.component';
 import { RoomVotingsCreateComponent } from '../room-votings-create/room-votings-create.component';
 
 @Component({
@@ -74,6 +75,13 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.titleService.click$.pipe(
+      withLatestFrom(this.room$),
+      takeUntil(this.destroy$)
+    ).subscribe(([, room]) => {
+      this.dialog.open(RoomSettingsComponent, { data: { room }, width: '350px', autoFocus: false, restoreFocus: false });
+    });
+
     this.route.params.pipe(
       mergeMap(p => this.authService.user$.pipe(
         distinctUntilChanged((p, c) => p?.id === c?.id),

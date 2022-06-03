@@ -5,7 +5,7 @@
   <button mat-icon-button (click)='showPlayersChange.emit(!showPlayers)' *ngIf='showPlayersChange.observed && (resolution.isMobile$ | async)'>
     <mat-icon>group</mat-icon>
   </button>
-  <h1>{{titleService.title$ | async}}</h1>
+  <h1 [class.active]='titleService.click$.observed' (click)='titleService.click()'>{{titleService.title$ | async}}</h1>
   <div class='flex-space'></div>
 
   <button mat-icon-button (click)='showVotingsChange.emit(!showVotings)' *ngIf='showVotingsChange.observed && (resolution.isMobile$ | async)'>

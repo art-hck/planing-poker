@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,8 +7,13 @@ import { BehaviorSubject } from 'rxjs';
 export class TitleService {
   private defaultTitle = 'Planing Poker';
   title$ = new BehaviorSubject(this.defaultTitle);
+  click$ = new Subject<void>();
 
   reset() {
     this.title$.next(this.defaultTitle);
+  }
+
+  click() {
+    this.click$.next();
   }
 }
