@@ -1,0 +1,78 @@
+@use 'node_modules/@angular/material/index' as mat;
+@use "sass:math";
+
+.loader {
+  $loader-size: 250px;
+  $loader-color: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 200);
+  $border-size: math.div($loader-size, 8);
+
+  position: relative;
+  margin-top: 16px;
+  height: $loader-size + $border-size * 2;
+  width: 100%;
+
+  &__eye, &__mouth {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+  }
+
+  &__eye {
+    width: math.div($loader-size, 2);
+    height: math.div($loader-size, 2);
+    background: $loader-color;
+    transform: translate(-50%, -50%);
+    animation: leftEyeAnimation 3s infinite cubic-bezier(0.455, 0.03, 0.515, 0.955);
+    &-right {
+      animation: rightEyeAnimation 3s infinite cubic-bezier(0.455, 0.03, 0.515, 0.955);
+    }
+  }
+
+  &__mouth {
+    width: $loader-size;
+    height: $loader-size;
+    border: solid $border-size $loader-color;
+    border-right: solid $border-size transparent;
+    border-left: solid $border-size transparent;
+    border-bottom: solid $border-size transparent;
+    transform: translate(-50%, -50%) rotate(360deg);
+    animation: mouthAnimation 3s infinite cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  }
+
+  &__text {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    color: mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 300);
+    font-size: 16px;
+    top: 100%;
+    width: 100%;
+    text-align: center;
+  }
+
+  @keyframes mouthAnimation {
+    0% { transform: translate(-50%, -50%) rotateX(180deg); }
+    10% { transform: translate(-50%, -50%) rotateZ(360deg); }
+    40% { transform: translate(-50%, -50%) rotateZ(320deg); }
+    60% { transform: translate(-50%, -50%) rotateZ(900deg); }
+    100% { transform: translate(-50%, -50%) rotateZ(900deg); }
+  }
+
+  @keyframes leftEyeAnimation {
+    50% { width: math.div($loader-size, 2); height: math.div($loader-size, 2); transform: translate(-50%, -50%); }
+    60% { width: math.div($loader-size, 5); height: math.div($loader-size, 5); transform: translate(-150%, -50%); }
+    90% { width: math.div($loader-size, 5); height: math.div($loader-size, 5); transform: translate(-150%, -50%); }
+    100% { width: math.div($loader-size, 2); height: math.div($loader-size, 2); transform: translate(-50%, -50%); }
+  }
+
+  @keyframes rightEyeAnimation {
+    50% { width: math.div($loader-size, 2); height: math.div($loader-size, 2); transform: translate(-50%, -50%); }
+    60% { width: math.div($loader-size, 5); height: math.div($loader-size, 5); transform: translate(50%, -50%); }
+    70% { width: math.div($loader-size, 5); height: math.div($loader-size, 5); transform: translate(50%, -50%); }
+    75% { width: math.div($loader-size, 5); height: 2px; transform: translate(50%, -50%); }
+    80% { width: math.div($loader-size, 5); height: math.div($loader-size, 5); transform: translate(50%, -50%); }
+    90% { width: math.div($loader-size, 5); height: math.div($loader-size, 5); transform: translate(50%, -50%); }
+    100% { width: math.div($loader-size, 2); height: math.div($loader-size, 2); transform: translate(-50%, -50%); }
+  }
+}
+

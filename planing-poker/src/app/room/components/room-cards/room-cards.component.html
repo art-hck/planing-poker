@@ -31,12 +31,14 @@
       {{ currentVoting.name}}
     </div>
     <ng-container *ngSwitchCase='1'>
-      <div class='loader' *ngIf='authService.hasRole(me, roomRole.observer, room); else cards'>
-        <div class="loader__eye loader__eye-left"></div>
-        <div class="loader__eye loader__eye-right"></div>
-        <div class="loader__mouth"></div>
-      </div>
-      <span class='loader__text'>Идет голосование...</span>
+      <ng-container *ngIf='authService.hasRole(me, roomRole.observer, room); else cards'>
+        <div class='loader'>
+          <div class="loader__eye loader__eye-left"></div>
+          <div class="loader__eye loader__eye-right"></div>
+          <div class="loader__mouth"></div>
+        </div>
+        <span class='loader__text'>Идет голосование...</span>
+      </ng-container>
       <ng-container *ngIf='authService.isAdmin(me, room) && currentVoting?.votes!.length'>
         <br />
         <button mat-flat-button color='primary' (click)='flip()'>Открыть карты</button>

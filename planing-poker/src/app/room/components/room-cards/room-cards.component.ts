@@ -23,7 +23,7 @@ import { ConfirmComponent } from '../../../shared/component/confirm/confirm.comp
 @Component({
   selector: 'pp-room-cards',
   templateUrl: './room-cards.component.html',
-  styleUrls: ['./room-cards.component.scss'],
+  styleUrls: ['./room-cards.component.scss', './room-cards-loader.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
