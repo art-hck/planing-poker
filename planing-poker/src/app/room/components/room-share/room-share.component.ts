@@ -16,7 +16,7 @@ import { Room } from '@common/models';
   `,
 })
 export class RoomShareDialogComponent {
-  readonly location = window?.location.host + '/room/' + (this.data.room.alias || this.data.room.id);
+  readonly location = window?.location?.origin + '/room/' + (this.data.room.alias || this.data.room.id);
   @ViewChild('input') input?: ElementRef<HTMLInputElement>;
 
   constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: { room: Room<true> }, public ref: MatBottomSheetRef) {

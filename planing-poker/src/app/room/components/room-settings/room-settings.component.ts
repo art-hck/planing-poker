@@ -31,7 +31,14 @@ export class RoomSettingsComponent implements OnDestroy {
   }
 
   inviteRoom() {
-    this.bottomSheet.open(RoomShareDialogComponent, { data: this.data, restoreFocus: false });
+    if (navigator?.share) {
+      navigator.share({
+        title: this.data.room.name,
+        url: window?.location?.origin + '/room/' + (this.data.room.alias || this.data.room.id)
+      });
+    } else {
+      this.bottomSheet.open(RoomShareDialogComponent, { data: this.data, restoreFocus: false });
+    }
   }
 
   deleteRoom() {
