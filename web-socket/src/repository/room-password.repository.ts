@@ -1,7 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import { Collection } from 'mongodb';
 import { Uuid } from '../../../common/models';
-import { Config } from '../config';
 import { Repository } from '../models/repository';
 import { serialize } from '../utils/set-map-utils';
 
@@ -11,7 +10,6 @@ export class RoomPasswordRepository implements Repository<RoomPassword> {
   readonly repositoryName = 'room-password';
   readonly roomPasswords = new Map<Uuid, RoomPassword>();
   private collection?: Collection<RoomPassword>;
-  private readonly jwtRoomSecret = Config.jwtRoomSecret;
 
   init(collection: Collection<RoomPassword>) {
     this.collection = collection;
@@ -23,8 +21,7 @@ export class RoomPasswordRepository implements Repository<RoomPassword> {
    * @param password
    */
   async create(roomId: Uuid, password: string) {
-    const { jwtRoomSecret } = Config;
-    const roomPassword: RoomPassword = { roomId, token: jwt.sign(password, jwtRoomSecret) };
+    const roomPassword: RoomPassword = { roomId, token: jwt.sign("", password) };
     this.roomPasswords.set(roomId, roomPassword);
     await this.collection?.updateOne({ roomId }, { $set: serialize(roomPassword) }, { upsert: true });
   }
@@ -45,6 +42,6 @@ export class RoomPasswordRepository implements Repository<RoomPassword> {
    */
   async verify(roomId: Uuid, password: string): Promise<boolean> {
     const roomPassword = this.roomPasswords.get(roomId) || await this.collection?.findOne({ roomId }, { projection: { _id: 0 } });
-    return roomPassword?.token === jwt.sign(password, this.jwtRoomSecret);
+    return roomPassword?.token === jwt.sign("", password);
   }
 }
