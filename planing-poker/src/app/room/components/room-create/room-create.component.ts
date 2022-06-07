@@ -21,7 +21,7 @@ export class RoomCreateComponent implements OnDestroy {
   readonly location = window?.location?.origin;
   readonly presets = [
     { name: 'Scrum', values: ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'] },
-    // { name: 'Fibonacci', values: ['0', '1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?', '☕'] },
+    { name: 'Fibonacci', values: ['0', '1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?', '☕'] },
     // { name: 'Sequential', values: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '?', '☕'] },
     { name: 'T-Shirt', values: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '?', '☕'] }
   ];
