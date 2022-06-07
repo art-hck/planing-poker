@@ -21,6 +21,7 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
   readonly room$ = this.ws.read('room');
   readonly leaveRoom$ = this.ws.read('leaveRoom');
   readonly checkAlias$ = this.ws.read('checkAlias');
+  readonly requireRoomPassword$ = this.ws.read('requireRoomPassword');
 
   events(events: PlaningPokerWsServiceEventsArrType['events'] | (keyof WsEvent)[]) {
     return merge(...(Array.isArray(events) ? events.map(e => this.ws.read(e)) : Object.entries(events).map(([e, fn]) => this.ws.read(e as keyof WsEvent).pipe(tap(d => fn(d as any))))));
@@ -66,12 +67,12 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('newVoting', { names, roomId });
   }
 
-  newRoom(name: string, points: string[], canPreviewVotes: RoomRole[], alias: string) {
-    this.ws.send('newRoom', { name, points, canPreviewVotes, alias });
+  newRoom(name: string, points: string[], canPreviewVotes: RoomRole[], alias: string, password?: string) {
+    this.ws.send('newRoom', { name, points, canPreviewVotes, alias, password });
   }
 
-  joinRoom(roomId: Uuid) {
-    this.ws.send('joinRoom', { roomId });
+  joinRoom(roomId: Uuid, password?: string) {
+    this.ws.send('joinRoom', { roomId, password });
   }
 
   disconnectRoom(roomId: Uuid) {

@@ -4,6 +4,7 @@ import { NotFoundError, RoutePayload } from '../models';
 import { DeniedError } from '../models/denied-error.ts';
 import { InvalidParamsError } from '../models/invalid-params-error';
 import { LimitsError } from '../models/limits-error';
+import { RoomAccessError } from '../models/room-access-error';
 import { routes } from '../routes';
 import { log } from './log';
 
@@ -19,6 +20,9 @@ export function errorHandler(e: unknown, route: RoutePayload) {
         break;
       case e instanceof InvalidParamsError:
         log.warning('WebSocket', `Неверные данные от клиента`, e.message);
+        break;
+      case e instanceof RoomAccessError:
+        route.send('requireRoomPassword', {});
         break;
       case e instanceof GaxiosError:
       case e instanceof JsonWebTokenError:

@@ -8,6 +8,7 @@ export interface Room<serialized = false> {
   canPreviewVotes: RoomRole[],
   votingIds: serialized extends false ? Set<Uuid> : Uuid[];
   users: serialized extends false ? Map<Uuid, Set<RoomRole>> : [Uuid, RoomRole[]][];
-  activeVotingId?: Uuid
-  points: string[]
+  activeVotingId?: Uuid;
+  points: string[];
+  private: boolean;
 }

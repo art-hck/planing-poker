@@ -23,6 +23,11 @@
       </button>
     </h4>
     <ng-container *ngIf='customize'>
+      <mat-form-field appearance='outline' floatLabel='always'>
+        <mat-label>Пароль для входа (необязательно)</mat-label>
+        <input matInput formControlName='password'>
+      </mat-form-field>
+
       <mat-form-field appearance='outline' floatLabel='always' *ngIf='form.get("alias") as c'>
         <mat-label>Адрес (необязательно)</mat-label>
 

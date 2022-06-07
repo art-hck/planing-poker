@@ -27,6 +27,7 @@ export class RoomCreateComponent implements OnDestroy {
   ];
   readonly form = this.fb.group({
     name: ['', Validators.required],
+    password: [''],
     alias: ['', [
       Validators.minLength(4),
       Validators.maxLength(32),

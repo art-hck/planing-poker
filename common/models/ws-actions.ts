@@ -20,10 +20,10 @@ export interface WsAction {
   newVoting: { names: string[], roomId: Uuid }; // Создать голосвание
   deleteVoting: { votingId: Uuid }; // Удалить голосование
   editVoting: { votingId: Uuid, name: string }; // Изменить голосование
-  newRoom: { name: string, canPreviewVotes: RoomRole[], alias: string, points: string[] }; // Создать комнату
+  newRoom: { name: string, canPreviewVotes: RoomRole[], alias: string, points: string[], password?: string }; // Создать комнату
   updateRoom: { room: Room<true> }; // Создать комнату
   rooms: {}; // Список комнат
-  joinRoom: { roomId: Uuid }; // Присоединиться к комнате
+  joinRoom: { roomId: Uuid, password?: string }; // Присоединиться к комнате
   leaveRoom: { roomId: Uuid, userId?: Uuid }; // Покинуть комнату
   disconnectRoom: { roomId: Uuid }; // Отключиться от комнаты (отличие от leaveRoom в том что из комнаты удаляется только соединение пользователя)
   deleteRoom: { roomId: Uuid }; // Удалить комнату
@@ -43,6 +43,7 @@ export interface WsEvent<serialized = true> {
   votings: [Uuid, Voting<serialized>][]; // Список голосований
   activateVoting: { votingId: Uuid }; // Активация голосования
   denied: {}; // Доступ запрещен
+  requireRoomPassword: {}; // Запрос пароля на вход в комнату
   newRoom: { roomId: Uuid }; // Новая комната
   notFound: {}; // Ресурс не найден
   rooms: Room<serialized>[]; // Комнаты

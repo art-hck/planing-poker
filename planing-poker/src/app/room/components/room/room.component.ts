@@ -29,6 +29,7 @@ import { Users } from '../../actions/users.actions';
 import { Votings } from '../../actions/votings.actions';
 import { UsersState } from '../../states/users.state';
 import { VotingsState } from '../../states/votings.state';
+import { RoomPasswordComponent } from '../room-password/room-password.component';
 import { RoomSettingsComponent } from '../room-settings/room-settings.component';
 import { RoomVotingsCreateComponent } from '../room-votings-create/room-votings-create.component';
 
@@ -95,6 +96,12 @@ export class RoomComponent implements OnInit, OnDestroy {
       }
       this.pp.joinRoom(id);
     });
+
+    this.pp.requireRoomPassword$.pipe(
+      switchMap(() => this.dialog.open(RoomPasswordComponent, { width: '350px', disableClose: true }).afterClosed()),
+      filter(v => !!v),
+      takeUntil(this.destroy$)
+    ).subscribe(({ password }) => this.pp.joinRoom(this.route.snapshot.params['id'], password));
 
     this.sidebars.detectChanges$.subscribe(() => this.cd.detectChanges());
 

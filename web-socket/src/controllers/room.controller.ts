@@ -1,7 +1,7 @@
 import { NotFoundError, RoutePayload } from '../models';
 import { InvalidParamsError } from '../models/invalid-params-error';
 import { LimitsError } from '../models/limits-error';
-import { roomRepo, limitsRepo, usersRepo, votingRepo } from '../mongo';
+import { limitsRepo, roomRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 import { broadcast } from '../utils/broadcast';
 import { replacer } from '../utils/set-map-utils';
@@ -10,7 +10,7 @@ export class RoomController {
   /**
    * Присоединиться к комнате
    */
-  static async join({ payload: { roomId }, send, broadcast, userId, ws }: RoutePayload<'joinRoom'>) {
+  static async join({ payload: { roomId, password }, send, broadcast, userId, ws }: RoutePayload<'joinRoom'>) {
     const room = roomRepo.get(roomId);
 
     if (!room) {
@@ -19,7 +19,7 @@ export class RoomController {
     }
     const sendAvailableRooms = !room.users.has(userId);
 
-    await roomRepo.join(room, userId, ws).then(async () => {
+    await roomRepo.join(room, userId, ws, password).then(async () => {
       send('votings', votingRepo.list(room.id, userId));
       if (room.activeVotingId && votingRepo.votings.has(room.activeVotingId)) {
         send('activateVoting', { votingId: room.activeVotingId });
@@ -64,13 +64,13 @@ export class RoomController {
   /**
    * Создать комнату
    */
-  static async create({ payload: { name, points, alias, canPreviewVotes }, send, userId }: RoutePayload<'newRoom'>) {
+  static async create({ payload: { name, points, alias, canPreviewVotes, password }, send, userId }: RoutePayload<'newRoom'>) {
     if (points.length < 2) throw new InvalidParamsError(`points: ${points}`);
 
     const limits = await limitsRepo.find(userId);
     if (roomRepo.ownRooms(userId).length >= limits.maxRooms) throw new LimitsError({ maxRooms: limits.maxRooms });
 
-    await roomRepo.create(name, userId, points, canPreviewVotes, alias || null).then(room => {
+    await roomRepo.create(name, userId, points, canPreviewVotes, alias || null, password).then(room => {
       send('newRoom', { roomId: room.alias || room.id });
       send('rooms', roomRepo.availableRooms(userId));
     });

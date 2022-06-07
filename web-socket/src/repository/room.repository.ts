@@ -5,7 +5,8 @@ import { Room, RoomRole, Uuid } from '../../../common/models';
 import { DeniedError } from '../models/denied-error.ts';
 import { InvalidParamsError } from '../models/invalid-params-error';
 import { Repository } from '../models/repository';
-import { roomRepo, usersRepo } from '../mongo';
+import { RoomAccessError } from '../models/room-access-error';
+import { roomPasswordRepo, roomRepo, usersRepo } from '../mongo';
 import { deserialize, serialize } from '../utils/set-map-utils';
 import { connections } from './connections.repository';
 
@@ -15,7 +16,8 @@ export class RoomRepository implements Repository<Room> {
   private collection?: Collection<Room>;
   private defaultValues: Partial<Room> = { // Fallback for old rooms
     points: ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'],
-    canPreviewVotes: [RoomRole.observer, RoomRole.admin]
+    canPreviewVotes: [RoomRole.observer, RoomRole.admin],
+    private: false
   };
 
   init(collection: Collection<Room>) {
@@ -31,7 +33,7 @@ export class RoomRepository implements Repository<Room> {
     return this.rooms.get(id) ?? Array.from(this.rooms.values()).find(room => room.alias && room.alias.toLowerCase() === id.toLowerCase());
   }
 
-  async create(name: string, userId: Uuid, points: string[], canPreviewVotes: RoomRole[], alias: string | null) {
+  async create(name: string, userId: Uuid, points: string[], canPreviewVotes: RoomRole[], alias: string | null, password?: string) {
     const id = uuid.v4();
     const users = new Map<Uuid, Set<RoomRole>>().set(userId, new Set([RoomRole.admin, RoomRole.user]));
     const user = usersRepo.get(userId);
@@ -41,7 +43,12 @@ export class RoomRepository implements Repository<Room> {
     }
 
     alias = alias && Array.from(this.rooms.values()).every(room => room.alias !== alias && room.id !== alias) ? alias.toLowerCase() : null;
-    const room: Room = { id, name, votingIds: new Set(), users, points, canPreviewVotes, alias };
+    const room: Room = { id, name, votingIds: new Set(), users, points, canPreviewVotes, alias, private: !!password };
+
+    if (password) {
+      await roomPasswordRepo.create(room.id, password);
+    }
+
     this.rooms.set(room.id, room);
     await this.collection?.insertOne(serialize(room));
 
@@ -69,8 +76,14 @@ export class RoomRepository implements Repository<Room> {
    * @param room
    * @param userId
    * @param ws
+   * @param password
    */
-  async join(room: Room, userId: Uuid, ws: WebSocket) {
+  async join(room: Room, userId: Uuid, ws: WebSocket, password?: string) {
+
+    if (!room.users.has(userId) && room.private &&  (!password || !await roomPasswordRepo.verify(room.id, password))) {
+      throw new RoomAccessError();
+    }
+
     if (!room.users.has(userId)) {
       room.users.set(userId, new Set([RoomRole.user]));
     }

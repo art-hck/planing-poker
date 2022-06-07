@@ -2,6 +2,7 @@ import { Collection, MongoClient, MongoServerSelectionError } from 'mongodb';
 import { Config } from './config';
 import { GoogleRepository } from './repository/google.repository';
 import { RefreshTokenRepository } from './repository/refresh-token.repository';
+import { RoomPasswordRepository } from './repository/room-password.repository';
 import { RoomRepository } from './repository/room.repository';
 import { UserLimitsRepository } from './repository/user-limits.repository';
 import { UserRepository } from './repository/user.repository';
@@ -10,12 +11,13 @@ import { log } from './utils/log';
 
 export const refreshTokenRepo = new RefreshTokenRepository();
 export const roomRepo = new RoomRepository();
+export const roomPasswordRepo = new RoomPasswordRepository();
 export const votingRepo = new VotingRepository();
 export const usersRepo = new UserRepository();
 export const limitsRepo = new UserLimitsRepository();
 export const googleRepo = new GoogleRepository();
 
-const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, googleRepo];
+const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, googleRepo, roomPasswordRepo];
 const { dbName, dbPassword, dbUsername, dbHost, dbPort } = Config;
 const mongo = new MongoClient(`mongodb://${dbUsername}:${dbPassword}@${dbHost}:${dbPort}`);
 

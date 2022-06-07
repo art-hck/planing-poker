@@ -13,6 +13,7 @@ export const Config = {
   wsKey: process.env['WS_KEY'],
   jwtSecret: process.env['JWT_SECRET'] || 'JWT_SECRET',
   jwtRtSecret: process.env['JWT_RT_SECRET'] || 'JWT_RT_SECRET',
+  jwtRoomSecret: process.env['JWT_ROOM_SECRET'] || 'JWT_ROOM_SECRET',
   jwtExp: process.env['JWT_EXP'],
   jwtRtExp: process.env['JWT_RT_EXP'],
   tmBotToken: process.env['TELEGRAM_BOT_TOKEN'],

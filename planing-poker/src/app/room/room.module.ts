@@ -15,6 +15,7 @@ import { NgxsModule } from '@ngxs/store';
 import { AppSharedModule } from '../shared/app-shared.module';
 import { RoomCardsComponent } from './components/room-cards/room-cards.component';
 import { RoomCreateComponent } from './components/room-create/room-create.component';
+import { RoomPasswordComponent } from './components/room-password/room-password.component';
 import { RoomSettingsComponent } from './components/room-settings/room-settings.component';
 import { RoomShareDialogComponent } from './components/room-share/room-share.component';
 import { RoomUserComponent } from './components/room-users/room-user/room-user.component';
@@ -50,6 +51,7 @@ import { VotingsState } from './states/votings.state';
     RoomSettingsComponent,
     DoughnutDirective,
     RoomVotingsEditComponent,
+    RoomPasswordComponent,
   ],
   imports: [
     RoomRoutingModule,
