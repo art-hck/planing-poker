@@ -64,12 +64,12 @@ export class RoomSettingsComponent implements OnDestroy {
   updateRoom() {
     this.dialog.open(RoomCreateComponent, { autoFocus: false, data: this.data, width: '500px', panelClass: 'app-responsive-modal' }).afterClosed()
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
-      .subscribe((room: Partial<Room<true>>) => {
+      .subscribe((room: Partial<Room<true>> & { password?: string }) => {
         if (this.data.room.alias !== room.alias) {
           this.router.navigate(['room', room.alias || this.data.room.id], { replaceUrl: true });
         }
         this.data.room = { ...this.data.room, ...room };
-        this.pp.updateRoom(this.data.room);
+        this.pp.updateRoom(this.data.room, room.password);
       });
   }
 

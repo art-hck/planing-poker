@@ -103,8 +103,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('deleteRoom', { roomId });
   }
 
-  updateRoom(room: Room<true>) {
-    this.ws.send('updateRoom', { room });
+  updateRoom(room: Room<true>, password?: string) {
+    this.ws.send('updateRoom', { room, password });
   }
 
   leaveRoom(roomId: Uuid, userId?: Uuid) {

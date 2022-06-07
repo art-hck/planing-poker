@@ -1,7 +1,7 @@
 import { NotFoundError, RoutePayload } from '../models';
 import { InvalidParamsError } from '../models/invalid-params-error';
 import { LimitsError } from '../models/limits-error';
-import { limitsRepo, roomRepo, usersRepo, votingRepo } from '../mongo';
+import { limitsRepo, roomPasswordRepo, roomRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 import { broadcast } from '../utils/broadcast';
 import { replacer } from '../utils/set-map-utils';
@@ -91,6 +91,13 @@ export class RoomController {
     room.alias = payload.room.alias;
     room.canPreviewVotes = payload.room.canPreviewVotes;
     room.points = payload.room.points;
+    room.private = !!payload.password;
+
+    if (payload.password) {
+      roomPasswordRepo.create(room.id, payload.password);
+    } else {
+      roomPasswordRepo.delete(room.id);
+    }
 
     roomRepo.update(room).then(room => {
       send('rooms', roomRepo.availableRooms(userId));

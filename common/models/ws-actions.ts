@@ -21,7 +21,7 @@ export interface WsAction {
   deleteVoting: { votingId: Uuid }; // Удалить голосование
   editVoting: { votingId: Uuid, name: string }; // Изменить голосование
   newRoom: { name: string, canPreviewVotes: RoomRole[], alias: string, points: string[], password?: string }; // Создать комнату
-  updateRoom: { room: Room<true> }; // Создать комнату
+  updateRoom: { room: Room<true>, password?: string }; // Изменить комнату
   rooms: {}; // Список комнат
   joinRoom: { roomId: Uuid, password?: string }; // Присоединиться к комнате
   leaveRoom: { roomId: Uuid, userId?: Uuid }; // Покинуть комнату

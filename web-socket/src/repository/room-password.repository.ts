@@ -26,7 +26,16 @@ export class RoomPasswordRepository implements Repository<RoomPassword> {
     const { jwtRoomSecret } = Config;
     const roomPassword: RoomPassword = { roomId, token: jwt.sign(password, jwtRoomSecret) };
     this.roomPasswords.set(roomId, roomPassword);
-    await this.collection?.insertOne(serialize(roomPassword));
+    await this.collection?.updateOne({ roomId }, { $set: serialize(roomPassword) }, { upsert: true });
+  }
+
+  /**
+   * Удалить пароль комнаты
+   * @param roomId
+   */
+  async delete(roomId: Uuid) {
+    this.roomPasswords.delete(roomId);
+    this.collection?.deleteOne({ roomId });
   }
 
   /**
