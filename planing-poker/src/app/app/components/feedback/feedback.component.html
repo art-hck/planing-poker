@@ -1,5 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="form.valid && dialogRef.close(form.value)">
-  <h1 mat-dialog-title>Обратная связь</h1>
+  <div class='app-relative'>
+    <h2 mat-dialog-title>Обратная связь</h2>
+    <button color='gray' class='mat-dialog-close' mat-icon-button [mat-dialog-close]='false'>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
   <div mat-dialog-content>
     <div>
       <mat-form-field appearance="outline">

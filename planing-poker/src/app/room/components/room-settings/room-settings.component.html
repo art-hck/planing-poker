@@ -1,7 +1,7 @@
 <ng-container *ngIf='data.room as room'>
   <div class='app-relative'>
     <h2 mat-dialog-title>{{room.name}}</h2>
-    <button color='gray' class='close' mat-icon-button [mat-dialog-close]='false'>
+    <button color='gray' class='mat-dialog-close' mat-icon-button [mat-dialog-close]='false'>
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -13,7 +13,7 @@
         <h4 matLine>Настройки</h4>
       </mat-list-option>
       <mat-list-option (click)='inviteRoom(); item2.selected = false' #item2>
-        <mat-icon color='gray' matListIcon>group_add</mat-icon>
+        <mat-icon color='gray' matListIcon>share</mat-icon>
         <h4 matLine>Пригласить людей</h4>
       </mat-list-option>
       <mat-list-option [selected]='false' *ngIf='authService.isAdmin(me, room)' (click)='deleteRoom(); item3.selected = false' #item3>

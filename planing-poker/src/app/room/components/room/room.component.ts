@@ -111,7 +111,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   openNewVotingModal() {
     if (this.dialog.getDialogById('NewVotingModal')?.getState() === MatDialogState.OPEN) return;
-    this.dialog.open(RoomVotingsCreateComponent, { id: 'NewVotingModal', width: '500px' }).afterClosed().pipe(
+    this.dialog.open(RoomVotingsCreateComponent, { id: 'NewVotingModal', width: '500px', panelClass: 'app-responsive-modal' }).afterClosed().pipe(
       filter(v => !!v),
       withLatestFrom(this.room$)
     ).subscribe(([data, room]) => this.pp.newVoting(room.id, data.names.split('\n')));

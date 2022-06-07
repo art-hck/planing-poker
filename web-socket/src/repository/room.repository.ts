@@ -13,21 +13,18 @@ export class RoomRepository implements Repository<Room> {
   readonly repositoryName = 'room';
   readonly rooms = new Map<Uuid, Room>();
   private collection?: Collection<Room>;
+  private defaultValues: Partial<Room> = { // Fallback for old rooms
+    points: ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'],
+    canPreviewVotes: [RoomRole.observer, RoomRole.admin]
+  };
 
   init(collection: Collection<Room>) {
     this.collection = collection;
     collection
       .find({})
       .toArray()
-      .then(rooms => rooms.map(({ _id: {}, ...room }) => room).forEach(room => {
-        if (!room.points?.length) { // Fallback for old rooms without points
-          room.points = ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'];
-        }
-        if (!room.canPreviewVotes) { // Fallback for old rooms without votesVisibility
-          room.canPreviewVotes = [RoomRole.observer, RoomRole.admin];
-        }
-        this.rooms.set(room.id, deserialize(room));
-      }));
+      .then(rooms => rooms.map(({ _id: {}, ...room }) => room)
+        .forEach(room => this.rooms.set(room.id, deserialize({ ...this.defaultValues, ...room }))));
   }
 
   get(id: Uuid) {
@@ -52,7 +49,7 @@ export class RoomRepository implements Repository<Room> {
   }
 
   async update(room: Room) {
-    room.alias = room.alias && Array.from(this.rooms.values()).every(({id, alias}) => {
+    room.alias = room.alias && Array.from(this.rooms.values()).every(({ id, alias }) => {
       return id === room.id || (alias !== room.alias && id !== room.alias);
     }) ? room.alias.toLowerCase() : null;
     this.rooms.set(room.id, room);

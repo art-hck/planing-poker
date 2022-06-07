@@ -110,3 +110,28 @@ mat-form-field {
     }
   }
 }
+
+@media screen and (max-width: 560px) {
+  .app-responsive-modal {
+    max-width: unset !important;
+    max-height: unset !important;
+    width: 100vw !important;
+    height: 100vh !important;
+
+    .mat-dialog-content {
+      max-height: calc(100vh - 140px);
+    }
+
+    .mat-dialog-container {
+      border-radius: 0;
+    }
+
+    .mat-dialog-actions {
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      right: 0;
+      margin: 0 24px;
+    }
+  }
+}
