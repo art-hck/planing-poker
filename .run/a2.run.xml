@@ -5,7 +5,7 @@
     <scripts>
       <script value="start" />
     </scripts>
-    <node-interpreter value="wsl://Ubuntu-18.04@/usr/bin/node" />
+    <node-interpreter value="project" />
     <envs />
     <method v="2" />
   </configuration>
