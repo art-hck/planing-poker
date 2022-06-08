@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+// import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 
 import { environment } from '../../environments/environment';
@@ -41,7 +41,7 @@ import { UserComponent } from './components/user/user.component';
     AppRoutingModule,
     HttpClientModule,
     NgxsModule.forRoot([], { developmentMode: !environment.production }),
-    NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
+    // NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
     MatButtonToggleModule,
     MatSelectModule,
     MatMenuModule,

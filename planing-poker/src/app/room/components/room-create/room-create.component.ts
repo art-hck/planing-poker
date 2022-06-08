@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent, MatChipList } from '@angular/material/chips';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -8,8 +8,6 @@ import { debounceTime, distinctUntilChanged, map, of, startWith, Subject, switch
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
-
-type RoomRoleData = { role: RoomRole, name: string, checked: boolean }
 
 @Component({
   selector: 'pp-room-create',
@@ -33,7 +31,7 @@ export class RoomCreateComponent implements OnDestroy {
       Validators.maxLength(32),
       Validators.pattern('[a-zA-Z0-9\-]*')
     ], [
-      (control: FormControl) => control.valueChanges.pipe(
+      control => control.valueChanges.pipe(
         startWith(null),
         debounceTime(400),
         distinctUntilChanged(),
@@ -86,12 +84,12 @@ export class RoomCreateComponent implements OnDestroy {
     }
 
     // Если меняем чекбокс в roomRoles, то синхронизируем роли в основной форме
-    this.roomRoles.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: RoomRoleData[]) => {
-      this.form.get('canPreviewVotes')?.setValue(value.filter(({ checked }) => checked).map(({ role }) => role));
+    this.roomRoles.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
+      this.form.get('canPreviewVotes')?.setValue(value.filter(({ checked }) => checked).map(({ role }) => role as RoomRole));
     });
     // Проставляем изначальные значения из формы в чекбоксы
     this.roomRoles.controls.forEach(c => {
-      c.get('checked')?.setValue(this.form.get('canPreviewVotes')?.value.includes(c.get('role')?.value), { emitEvent: false });
+      c.get('checked')?.setValue(!!c.value.role && !!this.form.value.canPreviewVotes?.includes(c.value.role), { emitEvent: false });
     });
   }
 

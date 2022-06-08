@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDrawerMode } from '@angular/material/sidenav/drawer';
+import { MatDrawerMode } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, Subject, switchMapTo } from 'rxjs';
 import { ResolutionService } from './resolution.service';

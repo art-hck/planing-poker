@@ -131,8 +131,9 @@
       }
     }
   },
-  "defaultProject": "planing-poker",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
