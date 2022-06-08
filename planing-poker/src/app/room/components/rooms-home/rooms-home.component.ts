@@ -25,7 +25,7 @@ export class RoomsHomeComponent implements OnDestroy {
   }
 
   newRoom() {
-    this.dialog.open(RoomCreateComponent, { width: '500px', panelClass: 'app-responsive-modal' }).afterClosed()
+    this.dialog.open(RoomCreateComponent, { width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop' }).afterClosed()
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(r => r.name ? this.pp.newRoom(r.name, r.points, r.canPreviewVotes, r.alias, r.password) : null);
   }

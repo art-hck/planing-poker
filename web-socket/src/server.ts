@@ -25,7 +25,7 @@ new WebSocketServer(server ? { server } : { port: Number(wsPort) }).on('connecti
   ws.on('message', (message: string) => {
     type Payload = Routes[keyof Routes] extends (arg: RoutePayload<infer R>) => any ? R : never; // @TODO: payload always never :(
     const { action, payload }: WsMessage<Payload> = JSON.parse(message);
-    const userId = getUserId((payload as Handshake).token ?? session.token); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
+    const userId = getUserId((payload as Handshake)?.token ?? session.token); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
 
     try {
       if (!['handshake', 'linkGoogle'].includes(action || '')) verifyToken({ ...routePayloadPart, payload, userId });

@@ -38,7 +38,7 @@ export class RoomVotingsComponent implements OnDestroy {
   }
 
   editVoting(voting: Voting<true>) {
-    this.dialog.open(RoomVotingsEditComponent, { width: '500px', panelClass: 'app-responsive-modal', data: { voting } }).afterClosed().pipe(filter(v => !!v), takeUntil(this.destroy$))
+    this.dialog.open(RoomVotingsEditComponent, { width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop', data: { voting } }).afterClosed().pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name }) => this.pp.editVoting(voting.id, name));
   }
 

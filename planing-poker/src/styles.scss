@@ -57,7 +57,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   justify-content: center;
 }
 
-mat-form-field {
+.mat-form-field {
   width: 100%;
 }
 
@@ -111,12 +111,29 @@ mat-form-field {
   }
 }
 
-@media screen and (max-width: 560px) {
+.app-responsive-backdrop {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+@media screen and (max-width: 600px) {
+  .app-responsive-backdrop {
+    display: none;
+  }
+
   .app-responsive-modal {
     max-width: unset !important;
     max-height: unset !important;
     width: 100vw !important;
     height: 100vh !important;
+
+    .mat-toolbar {
+      background: mat.get-color-from-palette(mat.$indigo-palette, 500);
+      color: mat.get-contrast-color-from-palette(mat.$indigo-palette, 500);
+
+      .mat-gray {
+        color: mat.get-contrast-color-from-palette(mat.$indigo-palette, 500);
+      }
+    }
 
     .mat-dialog-content {
       max-height: calc(100vh - 140px);
@@ -124,6 +141,7 @@ mat-form-field {
 
     .mat-dialog-container {
       border-radius: 0;
+      box-shadow: none;
     }
 
     .mat-dialog-actions {

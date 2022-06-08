@@ -32,7 +32,7 @@ export class HeaderComponent {
   }
 
   feedback() {
-    this.dialog.open(FeedbackComponent, { autoFocus: false, width: '500px', panelClass: 'app-responsive-modal' }).afterClosed().pipe(filter(v => !!v))
+    this.dialog.open(FeedbackComponent, { autoFocus: false, width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop' }).afterClosed().pipe(filter(v => !!v))
       .subscribe(({ subject, message }) => this.pp.feedback(subject, message));
   }
 

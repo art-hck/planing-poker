@@ -30,7 +30,7 @@ export class LimitSnackbarComponent {
 
 
   feedback() {
-    this.dialog.open(FeedbackComponent, { autoFocus: false, width: '500px', panelClass: 'app-responsive-modal', data: { subject: 'Увеличение лимитов' } })
+    this.dialog.open(FeedbackComponent, { autoFocus: false, width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop', data: { subject: 'Увеличение лимитов' } })
       .afterClosed().pipe(filter(v => !!v))
       .subscribe(({ subject, message }) => this.pp.feedback(subject, message));
   }
