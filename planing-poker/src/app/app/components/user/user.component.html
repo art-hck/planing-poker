@@ -1,9 +1,6 @@
-<div class='app-relative'>
-  <h2 mat-dialog-title>Профиль</h2>
-  <button color='gray' class='mat-dialog-close' mat-icon-button [mat-dialog-close]='false'>
-    <mat-icon>close</mat-icon>
-  </button>
-</div>
+<pp-dialog-toolbar>
+  <h1>Профиль</h1>
+</pp-dialog-toolbar>
 <mat-dialog-content *ngIf='data.user as me'>
   <div class='avatar' [style.background-color]='me.name | stringToColor'>
     {{ me.name | abbreviation }}

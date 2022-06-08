@@ -1,9 +1,11 @@
 <form [formGroup]="form" (ngSubmit)="form.valid && dialogRef.close(form.value)">
-  <h1 mat-dialog-title>Изменить стори</h1>
+  <pp-dialog-toolbar>
+    <h1>Изменить стори</h1>
+  </pp-dialog-toolbar>
   <div mat-dialog-content>
     <mat-form-field appearance="outline" hideRequiredMarker>
       <mat-label>Название</mat-label>
-      <input matInput formControlName="name">
+      <input matInput formControlName="name" cdkFocusInitial>
     </mat-form-field>
   </div>
   <div mat-dialog-actions>

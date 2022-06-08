@@ -1,5 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="form.valid && dialogRef.close(form.value)">
-  <h1 mat-dialog-title>Добавить стори</h1>
+  <pp-dialog-toolbar>
+    <h1>Добавить стори</h1>
+  </pp-dialog-toolbar>
   <div mat-dialog-content>
     <mat-form-field appearance="outline" hideRequiredMarker>
       <mat-label>Каждая стори начинается с новой строки</mat-label>
@@ -8,7 +10,8 @@
                 cdkTextareaAutosize
                 #autosize="cdkTextareaAutosize"
                 cdkAutosizeMinRows="3"
-                cdkAutosizeMaxRows="15"></textarea>
+                cdkAutosizeMaxRows="15"
+                cdkFocusInitial></textarea>
     </mat-form-field>
   </div>
   <div mat-dialog-actions>

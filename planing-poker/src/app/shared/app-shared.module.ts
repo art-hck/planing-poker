@@ -20,6 +20,7 @@ import { AbbreviationPipe } from './pipes/abbreviation.pipe';
 import { PluralizePipe } from './pipes/pluralize-pipe';
 import { StringToColorPipe } from './pipes/string-to-color.pipe';
 import { ConfirmComponent } from './component/confirm/confirm.component';
+import { DialogToolbarComponent } from './component/dialog-toolbar/dialog-toolbar.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ConfirmComponent } from './component/confirm/confirm.component';
     AbbreviationPipe,
     StringToColorPipe,
     ConfirmComponent,
-    HeaderComponent
+    HeaderComponent,
+    DialogToolbarComponent
   ],
   imports: [
     CommonModule,
@@ -61,7 +63,8 @@ import { ConfirmComponent } from './component/confirm/confirm.component';
     MatToolbarModule,
     MatTooltipModule,
     MatBadgeModule,
-    HeaderComponent
+    HeaderComponent,
+    DialogToolbarComponent
   ]
 })
 export class AppSharedModule {

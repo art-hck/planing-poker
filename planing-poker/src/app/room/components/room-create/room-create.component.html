@@ -1,11 +1,8 @@
-<div class='app-relative' *ngIf='authService.user$ | async as me'>
-  <h1 mat-dialog-title *ngIf='me.verified && !data?.room'>Новая комната</h1>
-  <h1 mat-dialog-title *ngIf='me.verified && data?.room'>Настройки комнаты</h1>
-  <h1 mat-dialog-title *ngIf='!me.verified'>Пройдите верификацию</h1>
-  <button color='gray' class='mat-dialog-close' mat-icon-button [mat-dialog-close]='false'>
-    <mat-icon>close</mat-icon>
-  </button>
-</div>
+<pp-dialog-toolbar *ngIf='authService.user$ | async as me'>
+  <h1 *ngIf='me.verified && !data?.room'>Новая комната</h1>
+  <h1 *ngIf='me.verified && data?.room'>Настройки комнаты</h1>
+  <h1 *ngIf='!me.verified'>Пройдите верификацию</h1>
+</pp-dialog-toolbar>
 
 <form [formGroup]='form' (ngSubmit)='form.valid && matDialogRef.close(form.value)' *ngIf='authService.user$ | async as me'>
   <div mat-dialog-content *ngIf='me.verified'>
