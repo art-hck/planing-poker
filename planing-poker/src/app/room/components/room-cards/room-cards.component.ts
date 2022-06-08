@@ -113,7 +113,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
       submit: 'Перезапустить'
     };
 
-    this.dialog.open(ConfirmComponent, { width: '360px', data, restoreFocus: false }).afterClosed().pipe(filter(Boolean))
+    this.dialog.open(ConfirmComponent, { width: '360px', data }).afterClosed().pipe(filter(Boolean))
       .subscribe(() => {
         if (this.currentVoting) this.pp.restartVoting(this.currentVoting?.id);
       });
@@ -133,7 +133,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
         submit: 'Открыть карты'
       };
 
-      this.dialog.open(ConfirmComponent, { width: '360px', data, restoreFocus: false }).afterClosed().pipe(filter(Boolean))
+      this.dialog.open(ConfirmComponent, { width: '360px', data }).afterClosed().pipe(filter(Boolean))
         .subscribe(() => {
           if (this.currentVoting) this.pp.flip(this.currentVoting?.id);
         });

@@ -37,7 +37,7 @@ export class RoomSettingsComponent implements OnDestroy {
         url: window?.location?.origin + '/room/' + (this.data.room.alias || this.data.room.id)
       });
     } else {
-      this.bottomSheet.open(RoomShareDialogComponent, { data: this.data, restoreFocus: false });
+      this.bottomSheet.open(RoomShareDialogComponent, { data: this.data });
     }
   }
 
@@ -49,7 +49,7 @@ export class RoomSettingsComponent implements OnDestroy {
       submit: 'Удалить'
     };
 
-    this.dialog.open(ConfirmComponent, { width: '360px', data, restoreFocus: false }).afterClosed().pipe(filter(Boolean))
+    this.dialog.open(ConfirmComponent, { width: '360px', data }).afterClosed().pipe(filter(Boolean))
       .subscribe(() => {
         this.pp.deleteRoom(this.data.room.id);
         this.dialogRef.close();

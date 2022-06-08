@@ -47,7 +47,7 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
   }
 
   openRoomSettings() {
-    this.dialog.open(RoomSettingsComponent, { data: { room: this.room }, width: '350px', autoFocus: false, restoreFocus: false });
+    this.dialog.open(RoomSettingsComponent, { data: { room: this.room }, width: '350px', autoFocus: false });
   }
 
   trackByFn = (index: number, item: User) => item.id;

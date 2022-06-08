@@ -80,7 +80,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       withLatestFrom(this.room$),
       takeUntil(this.destroy$)
     ).subscribe(([, room]) => {
-      this.dialog.open(RoomSettingsComponent, { data: { room }, width: '350px', autoFocus: false, restoreFocus: false });
+      this.dialog.open(RoomSettingsComponent, { data: { room }, width: '350px', autoFocus: false });
     });
 
     this.route.params.pipe(
