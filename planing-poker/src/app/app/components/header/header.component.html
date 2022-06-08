@@ -1,5 +1,5 @@
 <mat-toolbar color='primary'>
-  <a mat-icon-button routerLink='..' *ngIf='!isRoot' routerLinkActive='active'>
+  <a mat-icon-button routerLink='..' *ngIf='!isRoot'>
     <mat-icon>arrow_back</mat-icon>
   </a>
   <button mat-icon-button (click)='showPlayersChange.emit(!showPlayers)' *ngIf='showPlayersChange.observed && (resolution.isMobile$ | async)'>

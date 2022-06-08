@@ -1,4 +1,4 @@
-<pp-dialog-toolbar *ngIf='authService.user$ | async as me'>
+<pp-dialog-toolbar *ngIf='authService.user$ | async as me' [closable]='false' [back]='true'>
   <h1 *ngIf='me.verified && !data?.room'>Новая комната</h1>
   <h1 *ngIf='me.verified && data?.room'>Настройки комнаты</h1>
   <h1 *ngIf='!me.verified'>Пройдите верификацию</h1>

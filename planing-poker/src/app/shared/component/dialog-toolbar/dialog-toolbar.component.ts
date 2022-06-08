@@ -7,4 +7,5 @@ import { Component, Input } from '@angular/core';
 })
 export class DialogToolbarComponent {
   @Input() closable = true;
+  @Input() back = false;
 }

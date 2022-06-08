@@ -1,9 +1,12 @@
 <div mat-dialog-content>
   <mat-toolbar>
+    <button mat-icon-button [mat-dialog-close]='false' *ngIf='back'>
+      <mat-icon color='gray'>arrow_back</mat-icon>
+    </button>
     <ng-content></ng-content>
     <ng-container *ngIf='closable'>
       <div class='flex-space'></div>
-      <button color='gray' mat-icon-button [mat-dialog-close]='false'>
+      <button color='gray' mat-icon-button [mat-dialog-close]='false' *ngIf='closable'>
         <mat-icon>close</mat-icon>
       </button>
     </ng-container>
