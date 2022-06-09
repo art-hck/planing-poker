@@ -15,7 +15,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { Room, RoomRole, User, Voting } from '@common/models';
 import * as confetti from 'canvas-confetti';
 import { CreateTypes as Confetti } from 'canvas-confetti';
-import { concatMap, filter, mapTo, range, Subject, switchMap, takeUntil, timer, withLatestFrom } from 'rxjs';
+import { concatMap, filter, map, range, Subject, switchMap, takeUntil, timer, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { ConfirmComponent } from '../../../shared/component/confirm/confirm.component';
@@ -41,7 +41,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   readonly destroy$ = new Subject<void>();
   readonly confetti$ = new Subject<Confetti>();
   readonly currentVotingEnd$ = new Subject<void>();
-  readonly timer$ = timer(300).pipe(mapTo(true));
+  readonly timer$ = timer(300).pipe(map(() => true));
   active?: string;
 
   constructor(public pp: PlaningPokerWsService, private cd: ChangeDetectorRef, public authService: AuthService, private dialog: MatDialog) {

@@ -5,21 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  mapTo,
-  merge,
-  mergeMap,
-  Observable,
-  shareReplay,
-  startWith,
-  Subject,
-  switchMap,
-  takeUntil, tap,
-  withLatestFrom
-} from 'rxjs';
+import { filter, map, merge, Observable, shareReplay, skip, startWith, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
@@ -48,9 +34,9 @@ export class RoomComponent implements OnInit, OnDestroy {
     return this.store.select(VotingsState.voting(votingId));
   }));
   step$ = merge(
-    this.pp.restartVoting$.pipe(mapTo(1)),
+    this.pp.restartVoting$.pipe(map(() => 1)),
     this.currentVoting$.pipe(map(v => v ? v?.status === 'end' ? 2 : 1 : 0)),
-    this.pp.flip$.pipe(mapTo(2))
+    this.pp.flip$.pipe(map(() => 2))
   );
   readonly destroy$ = new Subject<void>();
   readonly room$ = this.pp.room$.pipe(
@@ -83,11 +69,11 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.dialog.open(RoomSettingsComponent, { data: { room }, width: '350px', autoFocus: false });
     });
 
-    this.route.params.pipe(
-      mergeMap(p => this.authService.user$.pipe(
-        distinctUntilChanged((p, c) => p?.id === c?.id),
-        filter(u => !!u), mapTo(p)
-      )),
+    // Если меняется роут, или пользователь (разлогин / переподключение)
+    merge(
+      this.authService.user$.pipe(filter(u => !!u), map(() => this.route.snapshot.params)),
+      this.route.params.pipe(skip(1))
+    ).pipe(
       withLatestFrom(this.room$.pipe(startWith(null))),
       takeUntil(this.destroy$)
     ).subscribe(([{ id }, room]) => {

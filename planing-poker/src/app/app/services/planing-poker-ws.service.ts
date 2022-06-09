@@ -32,7 +32,6 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
   handshake(payload: Handshake) {
     this.ws.send('handshake', payload, { force: true });
-    return this.ws.read('handshake');
   }
 
   bye() {

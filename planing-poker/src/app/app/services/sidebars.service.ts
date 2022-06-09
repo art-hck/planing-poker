@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDrawerMode } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, map, Subject, switchMapTo } from 'rxjs';
+import { filter, map, Subject, switchMap } from 'rxjs';
 import { ResolutionService } from './resolution.service';
 
 @Injectable({
@@ -49,7 +49,7 @@ export class SidebarsService {
 
   constructor(private router: Router, private resolutionService: ResolutionService) {
     router.events.pipe(filter(e => e instanceof NavigationEnd)).pipe(
-      switchMapTo(this.resolutionService.isMobile$),
+      switchMap(() => this.resolutionService.isMobile$),
       filter(isMobile => isMobile)
     ).subscribe(() => this.showPlayers = this.showVotings = false);
 
