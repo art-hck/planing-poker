@@ -5,6 +5,7 @@
     "start": "tsc-watch --onSuccess 'node ./dist/server.js'",
     "build": "tsc -b",
     "clean": "tsc -b --clean",
+    "serve": "node ./dist/server.js",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "version": "1.0.0",
