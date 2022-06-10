@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogState } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { Select, Store } from '@ngxs/store';
 import { filter, map, merge, Observable, shareReplay, skip, startWith, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
+import { RoutedDialog } from '../../../app/services/routed-dialog.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
 import { TitleService } from '../../../app/services/title.service';
 import { Users } from '../../actions/users.actions';
@@ -51,6 +52,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     private title: Title,
     private titleService: TitleService,
     private dialog: MatDialog,
+    private routedDialog: RoutedDialog,
     private store: Store,
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
@@ -66,6 +68,12 @@ export class RoomComponent implements OnInit, OnDestroy {
     ).subscribe(([, room]) => {
       this.dialog.open(RoomSettingsComponent, { data: { room }, width: '350px', autoFocus: false });
     });
+
+    this.routedDialog.register(RoomVotingsCreateComponent, { id: 'new-voting' }).pipe(
+      filter(v => !!v),
+      withLatestFrom(this.room$),
+      takeUntil(this.destroy$)
+    ).subscribe(([data, room]) => this.pp.newVoting(room.id, data.names.split('\n')));
 
     // Если меняется роут, или пользователь (разлогин / переподключение)
     merge(
@@ -98,14 +106,6 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.router.navigate(['/']);
       }
     });
-  }
-
-  openNewVotingModal() {
-    if (this.dialog.getDialogById('NewVotingModal')?.getState() === MatDialogState.OPEN) return;
-    this.dialog.open(RoomVotingsCreateComponent, { id: 'NewVotingModal', width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop' }).afterClosed().pipe(
-      filter(v => !!v),
-      withLatestFrom(this.room$)
-    ).subscribe(([data, room]) => this.pp.newVoting(room.id, data.names.split('\n')));
   }
 
   ngOnDestroy() {

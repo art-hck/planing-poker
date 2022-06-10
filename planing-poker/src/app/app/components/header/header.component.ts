@@ -7,7 +7,6 @@ import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { ResolutionService } from '../../services/resolution.service';
 import { TitleService } from '../../services/title.service';
-import { FeedbackComponent } from '../feedback/feedback.component';
 import { UserComponent } from '../user/user.component';
 
 @Component({
@@ -25,16 +24,10 @@ export class HeaderComponent {
     public authService: AuthService,
     private dialog: MatDialog,
     private pp: PlaningPokerWsService,
-    private router: Router,
+    public router: Router,
     public resolution: ResolutionService,
     public titleService: TitleService
-  ) {
-  }
-
-  feedback() {
-    this.dialog.open(FeedbackComponent, { autoFocus: false, width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop' }).afterClosed().pipe(filter(v => !!v))
-      .subscribe(({ subject, message }) => this.pp.feedback(subject, message));
-  }
+  ) {}
 
   get isRoot() {
     return this.router.isActive("/", { fragment: 'exact', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });

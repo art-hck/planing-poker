@@ -14,9 +14,9 @@
         <div class="new-voting-button-tooltip" *ngIf="!(votings$ | async)?.length">
           <div>Для начала добавьте стори</div>
         </div>
-        <button mat-fab color="primary" class="new-voting-button" (click)="openNewVotingModal()">
+        <a mat-fab color="primary" class="new-voting-button" routerLink='.' fragment='new-voting'>
           <mat-icon>add</mat-icon>
-        </button>
+        </a>
       </div>
     </mat-drawer-content>
 

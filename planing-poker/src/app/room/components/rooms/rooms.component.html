@@ -18,7 +18,7 @@
           >{{ room.name | abbreviation }}</div>
           <div [routerLink]="['room', room.id]" ></div>
         </a>
-        <div class='rooms-list__create' (click)='newRoom()'>
+        <div class='rooms-list__create' [routerLink]='router.url' fragment='room-create'>
           <div class='rooms-list__create__avatar' matTooltip='Создать комнату' matTooltipClass='app-big-tooltip' matTooltipPosition='right'>+</div>
         </div>
       </div>

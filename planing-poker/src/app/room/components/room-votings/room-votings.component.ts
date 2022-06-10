@@ -31,7 +31,6 @@ export class RoomVotingsComponent implements OnDestroy {
 
   trackByFn = (index: number, item: Voting<true>) => item.id;
 
-
   deleteVoting(voting: Voting<true>) {
     this.sheet.open(RoomVotingsDeleteComponent, { data: { voting } }).afterDismissed().pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(() => this.pp.deleteVoting(voting.id));

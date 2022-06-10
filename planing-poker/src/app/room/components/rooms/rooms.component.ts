@@ -9,7 +9,6 @@ import { ResolutionService } from '../../../app/services/resolution.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
 import { Users } from '../../actions/users.actions';
 import { Votings } from '../../actions/votings.actions';
-import { RoomCreateComponent } from '../room-create/room-create.component';
 
 @Component({
   selector: 'pp-rooms',
@@ -22,7 +21,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    private router: Router,
+    public router: Router,
     private store: Store,
     public pp: PlaningPokerWsService,
     public authService: AuthService,
@@ -32,7 +31,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
   ) {}
 
   get isRoot() {
-    return this.router.isActive("/", { fragment: 'exact', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });
+    return this.router.isActive("/", { fragment: 'ignored', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });
   }
 
   ngOnInit() {
@@ -47,14 +46,6 @@ export class RoomsComponent implements OnInit, OnDestroy {
       activateVoting: ({ votingId }) => this.store.dispatch(new Votings.Activate(votingId)),
       restartVoting: voting => this.store.dispatch(new Votings.Restart(voting)),
     }).pipe(takeUntil(this.destroy$)).subscribe();
-  }
-
-  newRoom() {
-    //cdk-overlay-backdrop app-responsive-backdrop cdk-overlay-backdrop-showing
-    //cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing
-    this.dialog.open(RoomCreateComponent, { width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop' }).afterClosed()
-      .pipe(filter(v => !!v), takeUntil(this.destroy$))
-      .subscribe(r => r.name ? this.pp.newRoom(r.name, r.points, r.canPreviewVotes, r.alias, r.password) : null);
   }
 
   ngOnDestroy() {

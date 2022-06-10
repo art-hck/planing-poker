@@ -37,10 +37,10 @@
         </mat-icon>
         <span>Профиль</span>
       </button>
-      <button mat-menu-item (click)='feedback()'>
+      <a mat-menu-item [routerLink]='router.url' fragment='feedback'>
         <mat-icon>feedback</mat-icon>
         <span>Обратная связь</span>
-      </button>
+      </a>
       <button mat-menu-item (click)='authService.logout$.next(undefined)'>
         <mat-icon>logout</mat-icon>
         <span>Выйти</span>
