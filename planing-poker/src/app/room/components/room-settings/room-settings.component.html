@@ -1,6 +1,6 @@
 <ng-container *ngIf='data.room as room'>
   <pp-dialog-toolbar>
-    <h1>{{room.name}}</h1>
+    <h1 class="app-text-ellipsis">{{room.name}}</h1>
   </pp-dialog-toolbar>
 
   <mat-dialog-content *ngIf='authService.user$ | async as me'>

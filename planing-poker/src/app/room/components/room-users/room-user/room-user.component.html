@@ -30,8 +30,8 @@
       <mat-icon *ngIf="!user.su && authService.isAdmin(user, room)">grade</mat-icon>
       <mat-icon *ngIf="user.su" class="su">whatshot</mat-icon>
     </div>
-    <div class="overflow-hidden" matLine>{{ user.name }}</div>
-    <div class="overflow-hidden" matLine *ngIf="user.role && role[user.role]">{{ role[user.role] }}</div>
+    <div class="app-text-ellipsis" matLine>{{ user.name }}</div>
+    <div class="app-text-ellipsis" matLine *ngIf="user.role && role[user.role]">{{ role[user.role] }}</div>
 
     <div class="flex-space"></div>
     <mat-chip-list>

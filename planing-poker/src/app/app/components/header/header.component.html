@@ -5,7 +5,7 @@
   <button mat-icon-button (click)='showPlayersChange.emit(!showPlayers)' *ngIf='showPlayersChange.observed && (resolution.isMobile$ | async)'>
     <mat-icon>group</mat-icon>
   </button>
-  <ng-template #title><h1>{{titleService.title$ | async}}</h1></ng-template>
+  <ng-template #title><h1 class="app-text-ellipsis">{{titleService.title$ | async}}</h1></ng-template>
   <button *ngIf='titleService.click$.observed; else title' mat-button (click)='titleService.click()'>
     <ng-container *ngTemplateOutlet='title'></ng-container>
   </button>

@@ -27,7 +27,7 @@
     <ng-container *ngTemplateOutlet='cards'></ng-container>
   </ng-container>
   <ng-container *ngIf='currentVoting && (timer$ | async)' [ngSwitch]='step'>
-    <div class='mat-headline app-center'>
+    <div class='mat-headline app-center app-text-ellipsis'>
       {{ currentVoting.name}}
     </div>
     <ng-container *ngSwitchCase='1'>

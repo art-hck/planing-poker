@@ -10,7 +10,6 @@ import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
 import { TitleService } from '../../../app/services/title.service';
-import { WsService } from '../../../app/services/ws.service';
 import { Users } from '../../actions/users.actions';
 import { Votings } from '../../actions/votings.actions';
 import { UsersState } from '../../states/users.state';
@@ -51,7 +50,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     public pp: PlaningPokerWsService,
     private title: Title,
     private titleService: TitleService,
-    private ws: WsService,
     private dialog: MatDialog,
     private store: Store,
     private snackBar: MatSnackBar,

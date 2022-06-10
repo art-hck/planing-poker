@@ -1,27 +1,8 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { WsAction, WsEvent, WsMessage } from '@common/models';
-import {
-  BehaviorSubject,
-  bufferToggle,
-  distinctUntilChanged,
-  filter,
-  fromEvent,
-  map,
-  merge,
-  mergeMap,
-  Observable,
-  ReplaySubject,
-  Subject,
-  switchMap,
-  takeUntil,
-  tap,
-  timer,
-  windowToggle
-} from 'rxjs';
+import { BehaviorSubject, bufferToggle, distinctUntilChanged, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../../../environments/environment';
-import { ConfirmComponent } from '../../shared/component/confirm/confirm.component';
 
 @Injectable({
   providedIn: 'root'
@@ -30,38 +11,21 @@ export class WsService {
   private ws$!: WebSocketSubject<WsMessage<any>>;
   private readonly read$ = new Subject<WsMessage<any>>();
   private readonly send$ = new Subject<WsMessage<any>>();
-  public readonly connected$ = new BehaviorSubject<boolean>(false);
-  public readonly openWs$ = new ReplaySubject<void>(1);
+  private readonly _connected$ = new BehaviorSubject<boolean>(false);
+  public readonly handshaked$ = new BehaviorSubject<boolean>(false);
   private autoReconnect = true;
 
-  constructor(private dialog: MatDialog) {
-    const hide$ = fromEvent(document, 'visibilitychange').pipe(filter(() => document.hidden));
-    const show$ = fromEvent(document, 'visibilitychange').pipe(filter(() => !document.hidden));
+  get connected$() {
+    return this._connected$.asObservable();
+  }
 
-    hide$.pipe(
-      filter(() => !this.dialog.getDialogById('reconnectDialog')),
-      switchMap(() => timer(15 * 60 * 1000).pipe(takeUntil(show$))),
-      tap(() => this.autoReconnect = false),
-      tap(() => this.disconnect()),
-      // @TODO: диалогу не место в этом сервисе
-      switchMap(() => this.dialog.open(ConfirmComponent, {
-          id: 'reconnectDialog',
-          data: {
-            title: 'Соединение с сервером закрыто',
-            content: 'Вы не активны более 15 минут и были отключены',
-            submit: 'Переподключиться'
-          }, disableClose: true
-        }).afterClosed()
-      ),
-      tap(() => this.autoReconnect = true)
-    ).subscribe(() => this.connect());
-
+  constructor() {
     this.connect();
 
     // Все эмиты разлогина
-    const off$ = this.connected$.pipe(distinctUntilChanged(), filter(v => !v));
+    const off$ = this.handshaked$.pipe(distinctUntilChanged(), filter(v => !v));
     // Все эмиты успешной авторизации
-    const on$ = this.connected$.pipe(distinctUntilChanged(), filter(v => v));
+    const on$ = this.handshaked$.pipe(distinctUntilChanged(), filter(v => v));
 
     merge(
       this.send$.pipe(bufferToggle(off$, () => on$)),
@@ -69,18 +33,21 @@ export class WsService {
     ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
   }
 
-  private disconnect() {
+  disconnect(reconnect = true) {
+    this.autoReconnect = reconnect;
     this.ws$?.unsubscribe();
     this.ws$?.complete();
   }
 
-  private connect() {
+  connect() {
     this.disconnect();
     this.ws$ = new WebSocketSubject<WsMessage>({
       url: environment.websocketHost || `ws://${window?.location.hostname}:9000`,
-      openObserver: { next: () => this.openWs$.next() },
+      openObserver: { next: () => this._connected$.next(true) },
       closeObserver: {
         next: () => {
+          this._connected$.next(false);
+          this.handshaked$.next(false);
           if (this.autoReconnect) {
             timer(2000).subscribe(() => this.connect());
           }

@@ -7,8 +7,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { Store } from '@ngxs/store';
-import { filter, tap } from 'rxjs';
+import { filter, fromEvent, switchMap, takeUntil, tap, timer, withLatestFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { ConfirmComponent } from '../shared/component/confirm/confirm.component';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { AuthService } from './services/auth.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
@@ -54,18 +55,38 @@ export class AppComponent implements OnInit {
 
     this.authService.beforeLogout$.subscribe(options => {
       if (!options || options.emitEvent) this.pp.bye();
-      this.ws.connected$.next(false);
+      this.ws.handshaked$.next(false);
     });
 
     this.authService.login$.subscribe(payload => this.pp.handshake(payload));
   }
 
   ngOnInit() {
+    const hide$ = fromEvent(document, 'visibilitychange').pipe(filter(() => document.hidden));
+    const show$ = fromEvent(document, 'visibilitychange').pipe(filter(() => !document.hidden));
+
+    hide$.pipe(
+      withLatestFrom(this.ws.connected$),
+      filter(([, c]) => c && !this.dialog.getDialogById('reconnectDialog')),
+      switchMap(() => timer( 15 * 60 * 1000).pipe(takeUntil(show$))),
+      tap(() => this.ws.disconnect(false)),
+      switchMap(() => this.dialog.open(ConfirmComponent, {
+          id: 'reconnectDialog',
+          data: {
+            title: 'Соединение с сервером закрыто',
+            content: 'Вы не активны более 15 минут и были отключены',
+            submit: 'Переподключиться'
+          }, disableClose: true
+        }).afterClosed()
+      ),
+    ).subscribe(() => this.ws.connect());
+
+
     this.pp.events({
       handshake: ({ refreshToken, token }) => {
         window?.localStorage.setItem('token', token);
         window?.localStorage.setItem('refreshToken', refreshToken);
-        this.ws.connected$.next(true);
+        this.ws.handshaked$.next(true);
       },
       user: user => this.authService.user$.next(user),
       newRoom: ({ roomId }) => this.router.navigate(['room', roomId]),

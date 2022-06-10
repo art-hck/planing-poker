@@ -20,6 +20,9 @@
 
 .mat-headline {
   max-width: 660px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 mat-horizontal-stepper {

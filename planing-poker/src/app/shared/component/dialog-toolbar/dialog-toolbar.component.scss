@@ -1,4 +1,8 @@
 .mat-dialog-content {
   padding: 0;
-  margin: -24px -24px 24px
+  margin: -24px -24px 24px;
+
+  .mat-icon-button:not(:last-child) {
+    margin-right: 16px;
+  }
 }

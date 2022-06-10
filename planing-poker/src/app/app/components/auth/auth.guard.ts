@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
     private ws: WsService
   ) {
     // handshake если разлогин или подключение к сокетам
-    merge(this.ws.openWs$, this.authService.logout$).pipe(
+    merge(this.ws.connected$.pipe(filter(v => v)), this.authService.logout$).pipe(
       filter(() => !this.dialog.getDialogById('auth-modal')),
       switchMap(() => {
         const token = window?.localStorage.getItem('token');

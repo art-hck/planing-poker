@@ -15,8 +15,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   text-align: center;
 }
 
-.overflow-hidden {
+.app-text-ellipsis {
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mat-tooltip.app-big-tooltip {
