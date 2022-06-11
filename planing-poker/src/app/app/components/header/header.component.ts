@@ -2,13 +2,11 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '@common/models';
-import { filter } from 'rxjs';
 import { activatedRouteFirstChild } from '../../../shared/util/activated-route-first-child';
 import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { ResolutionService } from '../../services/resolution.service';
 import { TitleService } from '../../services/title.service';
-import { UserComponent } from '../user/user.component';
 
 @Component({
   selector: 'pp-header',
@@ -35,7 +33,7 @@ export class HeaderComponent {
   ) {}
 
   get isRoot() {
-    return this.router.isActive('/', { fragment: 'exact', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });
+    return !this.router.isActive("/room", { fragment: 'ignored', matrixParams: 'ignored', paths: 'subset', queryParams: 'ignored' });
   }
 
   verifications(user: User) {
