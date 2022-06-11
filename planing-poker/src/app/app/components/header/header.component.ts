@@ -38,13 +38,6 @@ export class HeaderComponent {
     return this.router.isActive('/', { fragment: 'exact', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });
   }
 
-  settings(user: User) {
-    this.dialog.open(UserComponent, { width: '385px', data: { user }, autoFocus: false }).afterClosed().pipe(filter(v => v)).subscribe(payload => {
-      const { name, role } = payload;
-      this.pp.editUser(name, role);
-    });
-  }
-
   verifications(user: User) {
     return {
       verified: user.verified,

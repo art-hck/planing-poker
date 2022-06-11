@@ -27,7 +27,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   @Select(UsersState.users) users$!: Observable<User[]>;
   @Select(VotingsState.votings) votings$!: Observable<Voting<true>[]>;
   @Select(VotingsState.activeVoting) activeVoting$!: Observable<Voting<true>>;
-  currentVoting$ = this.route.queryParams.pipe(switchMap(({ votingId }) => {
+  readonly currentVoting$ = this.route.queryParams.pipe(switchMap(({ votingId }) => {
     return this.store.select(VotingsState.voting(votingId));
   }));
   step$ = merge(

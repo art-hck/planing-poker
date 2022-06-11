@@ -23,6 +23,7 @@ import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { UserComponent } from './components/user/user.component';
+import { UserRouteComponent } from './components/user/user.route';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { UserComponent } from './components/user/user.component';
     NotFoundComponent,
     ForbiddenComponent,
     UserComponent,
+    UserRouteComponent,
     LimitSnackbarComponent,
   ],
   imports: [
