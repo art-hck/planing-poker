@@ -124,8 +124,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   .app-responsive-modal {
     max-width: unset !important;
     max-height: unset !important;
-    width: 100vw !important;
-    height: 100vh !important;
+    width: 100% !important;
+    height: 100% !important;
 
     .mat-toolbar {
       background: mat.get-color-from-palette(mat.$indigo-palette, 500);
