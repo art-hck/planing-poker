@@ -5,6 +5,7 @@ import { Room, Voting } from '@common/models';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
+import { DefaultDialogConfig } from '../../../shared/util/default-dialog-config';
 import { RoomVotingsDeleteComponent } from '../room-votings-delete/room-votings-delete.component';
 import { RoomVotingsEditComponent } from '../room-votings-edit/room-votings-edit.component';
 
@@ -37,7 +38,8 @@ export class RoomVotingsComponent implements OnDestroy {
   }
 
   editVoting(voting: Voting<true>) {
-    this.dialog.open(RoomVotingsEditComponent, { width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop', data: { voting } }).afterClosed().pipe(filter(v => !!v), takeUntil(this.destroy$))
+    this.dialog.open(RoomVotingsEditComponent, { ...DefaultDialogConfig, data: { voting } }).afterClosed()
+      .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name }) => this.pp.editVoting(voting.id, name));
   }
 

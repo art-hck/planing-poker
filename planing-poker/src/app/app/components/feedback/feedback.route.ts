@@ -1,7 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { DefaultDialogConfig } from '../../../shared/util/default-dialog-config';
+import { HistoryService } from '../../services/history.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { FeedbackComponent } from './feedback.component';
 
@@ -9,18 +11,10 @@ import { FeedbackComponent } from './feedback.component';
 export class FeedbackRouteComponent implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
-  constructor(private dialog: MatDialog, private pp: PlaningPokerWsService, private router: Router, private route: ActivatedRoute) {
-    this.dialog.open(FeedbackComponent, {
-      width: '500px',
-      panelClass: 'app-responsive-modal',
-      backdropClass: 'app-responsive-backdrop', data: { subject: this.route.snapshot.queryParams['subject'] }
-    }).afterClosed().pipe(takeUntil(this.destroy$)).subscribe(r => {
-      if (r) {
-        this.pp.feedback(r.subject, r.message);
-      } else {
-        this.router.navigate(['..'], { relativeTo: this.route });
-      }
-    });
+  constructor(private dialog: MatDialog, private pp: PlaningPokerWsService, private route: ActivatedRoute, private history: HistoryService) {
+    this.dialog.open(FeedbackComponent, { ...DefaultDialogConfig, data: { subject: this.route.snapshot.queryParams['subject'] } }).afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(r => r ? this.pp.feedback(r.subject, r.message) : this.history.back(this.route));
   }
 
   ngOnDestroy() {

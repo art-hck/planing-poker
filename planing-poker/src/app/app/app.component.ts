@@ -12,6 +12,7 @@ import { environment } from '../../environments/environment';
 import { ConfirmComponent } from '../shared/component/confirm/confirm.component';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { AuthService } from './services/auth.service';
+import { HistoryService } from './services/history.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
 import { SidebarsService } from './services/sidebars.service';
 import { WsService } from './services/ws.service';
@@ -35,8 +36,11 @@ export class AppComponent implements OnInit {
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
     public sidebars: SidebarsService,
-    private sw: SwUpdate
+    private sw: SwUpdate,
+    private historyService: HistoryService
   ) {
+    historyService.init();
+
     this.sw.versionUpdates.pipe(filter(e => e.type === 'VERSION_READY')).subscribe(() => {
       this.snackBar.open('Доступна новая версия приложения!', 'Обновить').onAction().subscribe(() => document?.location.reload());
     });
