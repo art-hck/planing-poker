@@ -1,13 +1,13 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Room } from '@common/models';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { filter, Subject } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { ConfirmComponent } from '../../../shared/component/confirm/confirm.component';
-import { RoomCreateComponent } from '../room-create/room-create.component';
+import { activatedRouteFirstChild } from '../../../shared/util/activated-route-first-child';
 import { RoomShareDialogComponent } from '../room-share/room-share.component';
 
 @Component({
@@ -18,17 +18,18 @@ import { RoomShareDialogComponent } from '../room-share/room-share.component';
 export class RoomSettingsComponent implements OnDestroy {
 
   readonly destroy$ = new Subject<void>();
+  readonly activatedRouteFirstChild = activatedRouteFirstChild;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { room: Room<true> },
-    public dialogRef: MatDialogRef<RoomSettingsComponent>,
+    private dialogRef: MatDialogRef<RoomSettingsComponent>,
     private dialog: MatDialog,
     private bottomSheet: MatBottomSheet,
-    public pp: PlaningPokerWsService,
-    public authService: AuthService,
     private router: Router,
-  ) {
-  }
+    private pp: PlaningPokerWsService,
+    public authService: AuthService,
+    public route: ActivatedRoute,
+  ) {}
 
   inviteRoom() {
     if (navigator?.share) {
@@ -59,18 +60,6 @@ export class RoomSettingsComponent implements OnDestroy {
   leaveRoom() {
     this.pp.leaveRoom(this.data.room.id);
     this.dialogRef.close();
-  }
-
-  updateRoom() {
-    this.dialog.open(RoomCreateComponent, { autoFocus: false, data: this.data, width: '500px', panelClass: 'app-responsive-modal', backdropClass: 'app-responsive-backdrop' }).afterClosed()
-      .pipe(filter(v => !!v), takeUntil(this.destroy$))
-      .subscribe((room: Partial<Room<true>> & { password?: string }) => {
-        if (this.data.room.alias !== room.alias) {
-          this.router.navigate(['room', room.alias || this.data.room.id], { replaceUrl: true });
-        }
-        this.data.room = { ...this.data.room, ...room };
-        this.pp.updateRoom(this.data.room, room.password);
-      });
   }
 
   ngOnDestroy() {

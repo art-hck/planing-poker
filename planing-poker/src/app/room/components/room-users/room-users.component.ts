@@ -5,7 +5,6 @@ import { Subject } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { Colors } from '../../../shared/util/colors';
-import { RoomSettingsComponent } from '../room-settings/room-settings.component';
 
 @Component({
   selector: 'pp-room-users',
@@ -44,10 +43,6 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
       this.voteColors.clear();
       Array.from(new Set(this.votes.values())).sort().forEach(vote => this.voteColors.set(vote, Colors[this.voteColors.size]));
     }
-  }
-
-  openRoomSettings() {
-    this.dialog.open(RoomSettingsComponent, { data: { room: this.room }, width: '350px', autoFocus: false });
   }
 
   trackByFn = (index: number, item: User) => item.id;

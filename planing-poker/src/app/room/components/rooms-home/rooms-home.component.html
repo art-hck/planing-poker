@@ -1,6 +1,6 @@
 <ng-container *ngIf='pp.rooms$ | async as rooms'>
   <ng-container *ngIf='rooms.length === 0'>
-    <h1 class='mat-display-3 app-strong' routerLink='.' fragment='room-create'>
+    <h1 class='mat-display-3 app-strong' routerLink='create'>
       <span>Для начала работы создайте комнату</span>
     </h1>
   </ng-container>
@@ -17,7 +17,7 @@
           </mat-card-header>
         </mat-card>
       </a>
-      <a routerLink='.' fragment='room-create'>
+      <a routerLink='create'>
         <mat-card>
           <div mat-card-image>
             <span>+</span>
@@ -30,4 +30,4 @@
     </div>
   </ng-container>
 </ng-container>
-
+<router-outlet></router-outlet>

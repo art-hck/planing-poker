@@ -9,13 +9,10 @@ import { SwUpdate } from '@angular/service-worker';
 import { Store } from '@ngxs/store';
 import { filter, fromEvent, switchMap, takeUntil, tap, timer, withLatestFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { RoomCreateComponent } from '../room/components/room-create/room-create.component';
 import { ConfirmComponent } from '../shared/component/confirm/confirm.component';
-import { FeedbackComponent } from './components/feedback/feedback.component';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { AuthService } from './services/auth.service';
 import { PlaningPokerWsService } from './services/planing-poker-ws.service';
-import { RoutedDialog } from './services/routed-dialog.service';
 import { SidebarsService } from './services/sidebars.service';
 import { WsService } from './services/ws.service';
 
@@ -38,8 +35,7 @@ export class AppComponent implements OnInit {
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
     public sidebars: SidebarsService,
-    private sw: SwUpdate,
-    private routedDialog: RoutedDialog
+    private sw: SwUpdate
   ) {
     this.sw.versionUpdates.pipe(filter(e => e.type === 'VERSION_READY')).subscribe(() => {
       this.snackBar.open('Доступна новая версия приложения!', 'Обновить').onAction().subscribe(() => document?.location.reload());
@@ -115,18 +111,5 @@ export class AppComponent implements OnInit {
         this.router.navigate(['/']);
       }
     }).subscribe();
-
-    this.routedDialog.register(RoomCreateComponent, { id: 'room-create' })
-      .pipe(filter(v => !!v))
-      .subscribe(r => r.name ? this.pp.newRoom(r.name, r.points, r.canPreviewVotes, r.alias, r.password) : null);
-
-    this.routedDialog.register(FeedbackComponent, { id: 'feedback', autoFocus: false })
-      .pipe(filter(v => !!v))
-      .subscribe(({ subject, message }) => this.pp.feedback(subject, message));
-
-    this.routedDialog.register(FeedbackComponent, { id: 'feedback-limits', autoFocus: false, data: { subject: 'Увеличение лимитов' }})
-      .pipe(filter(v => !!v))
-      .subscribe(({ subject, message }) => this.pp.feedback(subject, message));
-
   }
 }

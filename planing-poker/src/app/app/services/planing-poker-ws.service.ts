@@ -16,9 +16,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
 
   readonly restartVoting$ = this.ws.read('restartVoting');
   readonly flip$ = this.ws.read('flip');
-  readonly voted$ = this.ws.read('voted');
   readonly rooms$ = this.ws.read('rooms').pipe(shareReplay(1));
-  readonly room$ = this.ws.read('room');
+  readonly room$ = this.ws.read('room').pipe(shareReplay(1));
   readonly leaveRoom$ = this.ws.read('leaveRoom');
   readonly checkAlias$ = this.ws.read('checkAlias');
   readonly requireRoomPassword$ = this.ws.read('requireRoomPassword');

@@ -6,10 +6,12 @@
   <mat-dialog-content *ngIf='authService.user$ | async as me'>
     <div class='avatar' [style.background-color]='room.name | stringToColor'>{{ room.name | abbreviation }}</div>
     <mat-selection-list [multiple]='false'>
-      <mat-list-option (click)='item1.selected = false; updateRoom()' #item1 *ngIf='authService.isAdmin(me, room)'>
-        <mat-icon color='gray' matListIcon>settings</mat-icon>
-        <h4 matLine>Настройки</h4>
-      </mat-list-option>
+      <ng-container *ngIf='authService.isAdmin(me, room)'>
+        <mat-list-option (click)='item1.selected = false' [routerLink]='["..", "edit"]' [relativeTo]='activatedRouteFirstChild(route)' #item1 >
+          <mat-icon color='gray' matListIcon>settings</mat-icon>
+          <h4 matLine>Настройки</h4>
+        </mat-list-option>
+      </ng-container>
       <mat-list-option (click)='inviteRoom(); item2.selected = false' #item2>
         <mat-icon color='gray' matListIcon>share</mat-icon>
         <h4 matLine>Пригласить людей</h4>

@@ -11,7 +11,7 @@ import { take } from 'rxjs';
 })
 export class RoomVotingsCreateComponent {
   @ViewChild('autosize') autosize!: CdkTextareaAutosize;
-  readonly form = this.fb.group({
+  readonly form = this.fb.nonNullable.group({
     names: ['', Validators.required],
   });
 

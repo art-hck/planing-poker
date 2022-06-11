@@ -8,7 +8,6 @@ import { Select, Store } from '@ngxs/store';
 import { filter, map, merge, Observable, shareReplay, skip, startWith, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
-import { RoutedDialog } from '../../../app/services/routed-dialog.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
 import { TitleService } from '../../../app/services/title.service';
 import { Users } from '../../actions/users.actions';
@@ -16,8 +15,6 @@ import { Votings } from '../../actions/votings.actions';
 import { UsersState } from '../../states/users.state';
 import { VotingsState } from '../../states/votings.state';
 import { RoomPasswordComponent } from '../room-password/room-password.component';
-import { RoomSettingsComponent } from '../room-settings/room-settings.component';
-import { RoomVotingsCreateComponent } from '../room-votings-create/room-votings-create.component';
 
 @Component({
   selector: 'pp-room',
@@ -52,7 +49,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     private title: Title,
     private titleService: TitleService,
     private dialog: MatDialog,
-    private routedDialog: RoutedDialog,
     private store: Store,
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
@@ -62,18 +58,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.titleService.click$.pipe(
-      withLatestFrom(this.room$),
-      takeUntil(this.destroy$)
-    ).subscribe(([, room]) => {
-      this.dialog.open(RoomSettingsComponent, { data: { room }, width: '350px', autoFocus: false });
-    });
-
-    this.routedDialog.register(RoomVotingsCreateComponent, { id: 'new-voting' }).pipe(
-      filter(v => !!v),
-      withLatestFrom(this.room$),
-      takeUntil(this.destroy$)
-    ).subscribe(([data, room]) => this.pp.newVoting(room.id, data.names.split('\n')));
+    this.titleService.click$.pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.router.navigate(['settings'], { relativeTo: this.route }));
 
     // Если меняется роут, или пользователь (разлогин / переподключение)
     merge(

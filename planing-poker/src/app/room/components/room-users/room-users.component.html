@@ -16,7 +16,7 @@
 <div class="footer-actions" *ngIf="room">
   <mat-selection-list [multiple]='false'>
     <mat-divider></mat-divider>
-    <mat-list-option #item (click)='openRoomSettings(); item.selected = false;'>
+    <mat-list-option #item (click)='item.selected = false' routerLink='settings'>
       <div matListIcon class='avatar' [style.background-color]='room.name | stringToColor'>{{ room.name | abbreviation }}</div>
       <div class="app-text-ellipsis" matLine>{{room.name}}</div>
       <div class="app-text-ellipsis mat-gray" matLine [ngSwitch]='currentVoting?.status'>

@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { ResolutionService } from '../../../app/services/resolution.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
+import { activatedRouteFirstChild } from '../../../shared/util/activated-route-first-child';
 import { Users } from '../../actions/users.actions';
 import { Votings } from '../../actions/votings.actions';
 
@@ -18,10 +19,12 @@ import { Votings } from '../../actions/votings.actions';
 })
 export class RoomsComponent implements OnInit, OnDestroy {
   readonly destroy$ = new Subject<void>();
+  readonly activatedRouteFirstChild = activatedRouteFirstChild;
 
   constructor(
     private dialog: MatDialog,
     public router: Router,
+    public route: ActivatedRoute,
     private store: Store,
     public pp: PlaningPokerWsService,
     public authService: AuthService,
@@ -31,7 +34,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
   ) {}
 
   get isRoot() {
-    return this.router.isActive("/", { fragment: 'ignored', matrixParams: 'exact', paths: 'exact', queryParams: 'exact' });
+    return !this.router.isActive("/room", { fragment: 'ignored', matrixParams: 'ignored', paths: 'subset', queryParams: 'ignored' });
   }
 
   ngOnInit() {

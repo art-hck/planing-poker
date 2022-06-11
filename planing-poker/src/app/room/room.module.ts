@@ -15,13 +15,17 @@ import { NgxsModule } from '@ngxs/store';
 import { AppSharedModule } from '../shared/app-shared.module';
 import { RoomCardsComponent } from './components/room-cards/room-cards.component';
 import { RoomCreateComponent } from './components/room-create/room-create.component';
+import { RoomCreateRouteComponent } from './components/room-create/room-create.route';
+import { RoomUpdateRouteComponent } from './components/room-create/room-update.route';
 import { RoomPasswordComponent } from './components/room-password/room-password.component';
 import { RoomSettingsComponent } from './components/room-settings/room-settings.component';
+import { RoomSettingsRouteComponent } from './components/room-settings/room-settings.route';
 import { RoomShareDialogComponent } from './components/room-share/room-share.component';
 import { RoomUserComponent } from './components/room-users/room-user/room-user.component';
 import { RoomUsersComponent } from './components/room-users/room-users.component';
 import { RoomUsersPipe } from './components/room-users/room-users.pipe';
 import { RoomVotingsCreateComponent } from './components/room-votings-create/room-votings-create.component';
+import { RoomVotingsCreateRouteComponent } from './components/room-votings-create/room-votings-create.route';
 import { RoomVotingsDeleteComponent } from './components/room-votings-delete/room-votings-delete.component';
 import { RoomVotingsEditComponent } from './components/room-votings-edit/room-votings-edit.component';
 import { RoomVotingsComponent } from './components/room-votings/room-votings.component';
@@ -49,9 +53,13 @@ import { VotingsState } from './states/votings.state';
     RoomShareDialogComponent,
     RoomsHomeComponent,
     RoomSettingsComponent,
+    RoomSettingsRouteComponent,
     DoughnutDirective,
     RoomVotingsEditComponent,
     RoomPasswordComponent,
+    RoomCreateRouteComponent,
+    RoomUpdateRouteComponent,
+    RoomVotingsCreateRouteComponent
   ],
   imports: [
     RoomRoutingModule,

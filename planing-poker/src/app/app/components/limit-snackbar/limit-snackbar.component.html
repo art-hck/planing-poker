@@ -7,6 +7,6 @@
   <br/>
   <div class="limit-snackbar__footer" [align]='"right"'>
     <button mat-button (click)='snackBar.dismiss()'>Закрыть</button>
-    <button mat-flat-button [routerLink]='router.url' fragment='feedback-limits' (click)='snackBar.dismiss()'>Увеличить лимиты</button>
+    <button mat-flat-button routerLink='feedback' [relativeTo]='activatedRouteFirstChild(route)' [queryParams]='{subject: "Увеличение лимитов"}' (click)='snackBar.dismiss()'>Увеличить лимиты</button>
   </div>
 </div>

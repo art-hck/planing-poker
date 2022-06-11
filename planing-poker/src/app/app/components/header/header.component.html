@@ -37,7 +37,7 @@
         </mat-icon>
         <span>Профиль</span>
       </button>
-      <a mat-menu-item [routerLink]='router.url' fragment='feedback'>
+      <a mat-menu-item routerLink='feedback' [relativeTo]='activatedRouteFirstChild(route)'>
         <mat-icon>feedback</mat-icon>
         <span>Обратная связь</span>
       </a>

@@ -18,6 +18,7 @@ import { AuthGoogleComponent } from './components/auth/auth-google.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { AuthGuard } from './components/auth/auth.guard';
 import { FeedbackComponent } from './components/feedback/feedback.component';
+import { FeedbackRouteComponent } from './components/feedback/feedback.route';
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
@@ -29,6 +30,7 @@ import { UserComponent } from './components/user/user.component';
     AuthComponent,
     AuthGoogleComponent,
     FeedbackComponent,
+    FeedbackRouteComponent,
     NotFoundComponent,
     ForbiddenComponent,
     UserComponent,
