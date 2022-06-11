@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { map, merge, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { HistoryService } from '../../../app/services/history.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { DefaultDialogConfig } from '../../../shared/util/default-dialog-config';
@@ -23,7 +23,7 @@ export class RoomUpdateRouteComponent implements OnDestroy {
       switchMap(room => this.dialog.open(RoomCreateComponent, {
         ...DefaultDialogConfig, data: { room }
       }).afterClosed().pipe(map(r => [room, r]))),
-      takeUntil(this.destroy$)
+      takeUntil(merge(this.history.urlChanges$, this.destroy$))
     ).subscribe(([room, form]) => {
       const aliasChanged = form && form.alias !== room.alias;
       if (form) {
