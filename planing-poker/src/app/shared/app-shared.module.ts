@@ -13,7 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../app/components/header/header.component';
 import { AbbreviationPipe } from './pipes/abbreviation.pipe';
@@ -32,7 +32,9 @@ import { DialogToolbarComponent } from './component/dialog-toolbar/dialog-toolba
     DialogToolbarComponent
   ],
   providers: [
-    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { enterAnimationDuration: "0ms", exitAnimationDuration: "0ms" } }
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { enterAnimationDuration: "0ms", exitAnimationDuration: "0ms" } },
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { touchGestures: 'off' } }
+
   ],
   imports: [
     CommonModule,
