@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { DialogService } from '../shared/modules/dialog/dialog.service';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -9,6 +8,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { Store } from '@ngxs/store';
 import { filter, fromEvent, switchMap, takeUntil, tap, timer, withLatestFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { DialogService } from '../shared/modules/dialog/dialog.service';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { AuthService } from './services/auth.service';
 import { HistoryService } from './services/history.service';
