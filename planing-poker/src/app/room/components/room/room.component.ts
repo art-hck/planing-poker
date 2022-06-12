@@ -59,7 +59,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.titleService.click$.pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.router.navigate(['settings'], { relativeTo: this.route }));
+      .subscribe(() => this.router.navigate(['settings'], { relativeTo: this.route, replaceUrl: true }));
 
     // Если меняется роут, или пользователь (разлогин / переподключение)
     merge(

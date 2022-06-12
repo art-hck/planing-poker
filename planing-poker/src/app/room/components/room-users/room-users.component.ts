@@ -34,8 +34,7 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
     online: false
   }];
 
-  constructor(public authService: AuthService, private dialog: MatDialog, public pp: PlaningPokerWsService) {
-  }
+  constructor(public authService: AuthService, public pp: PlaningPokerWsService) {}
 
   ngOnChanges(c: SimpleChanges) {
     if (c['currentVoting']) {

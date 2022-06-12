@@ -27,7 +27,7 @@ export class UserRouteComponent implements OnDestroy {
         const { name, role } = payload;
         this.pp.editUser(name, role);
       }
-      this.router.navigate(['..'], { relativeTo: this.route });
+      this.router.navigate(['..'], { relativeTo: this.route, replaceUrl: true });
     });
   }
 

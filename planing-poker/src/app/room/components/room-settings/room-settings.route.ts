@@ -15,7 +15,7 @@ export class RoomSettingsRouteComponent implements OnDestroy {
         return this.dialog.open(RoomSettingsComponent, { data: { room }, width: '350px', autoFocus: false }).afterClosed();
       }),
       takeUntil(this.destroy$)
-    ).subscribe(() => this.router.navigate(['..'], { relativeTo: this.route }));
+    ).subscribe(() => this.router.navigate(['..'], { relativeTo: this.route, replaceUrl: true }));
   }
 
   ngOnDestroy() {

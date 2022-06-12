@@ -1,5 +1,5 @@
 <mat-toolbar color='primary'>
-  <a mat-icon-button routerLink='..' *ngIf='!isRoot'>
+  <a mat-icon-button (click)='history.back(route)' *ngIf='!isRoot'>
     <mat-icon>arrow_back</mat-icon>
   </a>
   <button mat-icon-button (click)='showPlayersChange.emit(!showPlayers)' *ngIf='showPlayersChange.observed && (resolution.isMobile$ | async)'>
@@ -26,7 +26,7 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu='matMenu'>
-      <a mat-menu-item routerLink='user' [relativeTo]='activatedRouteFirstChild(route)'>
+      <a mat-menu-item routerLink='user' [relativeTo]='activatedRouteFirstChild(route)' [replaceUrl]='true'>
         <mat-icon
           [matBadge]='errorLength(me)'
           matBadgeSize='small'

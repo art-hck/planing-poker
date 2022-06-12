@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '@common/models';
 import { activatedRouteFirstChild } from '../../../shared/util/activated-route-first-child';
 import { AuthService } from '../../services/auth.service';
-import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
+import { HistoryService } from '../../services/history.service';
 import { ResolutionService } from '../../services/resolution.service';
 import { TitleService } from '../../services/title.service';
 
@@ -24,12 +23,11 @@ export class HeaderComponent {
 
   constructor(
     public authService: AuthService,
-    private dialog: MatDialog,
-    private pp: PlaningPokerWsService,
     public router: Router,
     public route: ActivatedRoute,
     public resolution: ResolutionService,
-    public titleService: TitleService
+    public titleService: TitleService,
+    public history: HistoryService
   ) {}
 
   get isRoot() {
