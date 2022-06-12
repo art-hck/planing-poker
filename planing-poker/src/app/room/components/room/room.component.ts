@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,6 +9,7 @@ import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
 import { TitleService } from '../../../app/services/title.service';
+import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 import { Users } from '../../actions/users.actions';
 import { Votings } from '../../actions/votings.actions';
 import { UsersState } from '../../states/users.state';
@@ -48,7 +48,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     public pp: PlaningPokerWsService,
     private title: Title,
     private titleService: TitleService,
-    private dialog: MatDialog,
+    private dialog: DialogService,
     private store: Store,
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
@@ -76,11 +76,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
 
     this.pp.requireRoomPassword$.pipe(
-      switchMap(() => this.dialog.open(RoomPasswordComponent, {
-        width: '350px',
-        disableClose: true,
-        autoFocus: true
-      }).afterClosed()),
+      switchMap(() => this.dialog.small(RoomPasswordComponent, { disableClose: true, autoFocus: true })),
       filter(v => !!v),
       takeUntil(this.destroy$)
     ).subscribe(({ password }) => this.pp.joinRoom(this.route.snapshot.params['id'], password));

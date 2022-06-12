@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Room, RoomRole, User, Uuid, Voting } from '@common/models';
 import { Subject } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { Colors } from '../../../shared/util/colors';
+import { RoomService } from '../../services/room.service';
 
 @Component({
   selector: 'pp-room-users',
@@ -34,7 +34,7 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
     online: false
   }];
 
-  constructor(public authService: AuthService, public pp: PlaningPokerWsService) {}
+  constructor(public authService: AuthService, public pp: PlaningPokerWsService, public roomService: RoomService) {}
 
   ngOnChanges(c: SimpleChanges) {
     if (c['currentVoting']) {

@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { DialogService } from '../shared/modules/dialog/dialog.service';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -9,7 +9,6 @@ import { SwUpdate } from '@angular/service-worker';
 import { Store } from '@ngxs/store';
 import { filter, fromEvent, switchMap, takeUntil, tap, timer, withLatestFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ConfirmComponent } from '../shared/component/confirm/confirm.component';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
 import { AuthService } from './services/auth.service';
 import { HistoryService } from './services/history.service';
@@ -28,7 +27,7 @@ export class AppComponent implements OnInit {
     @Inject(PLATFORM_ID) private platform: any,
     private authService: AuthService,
     private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
+    private dialog: DialogService,
     private store: Store,
     private pp: PlaningPokerWsService,
     private ws: WsService,
@@ -74,14 +73,15 @@ export class AppComponent implements OnInit {
       filter(([, c]) => c && !this.dialog.getDialogById('reconnectDialog')),
       switchMap(() => timer( 15 * 60 * 1000).pipe(takeUntil(show$))),
       tap(() => this.ws.disconnect(false)),
-      switchMap(() => this.dialog.open(ConfirmComponent, {
+      switchMap(() => this.dialog.confirm({
           id: 'reconnectDialog',
+          disableClose: true,
           data: {
             title: 'Соединение с сервером закрыто',
             content: 'Вы не активны более 15 минут и были отключены',
             submit: 'Переподключиться'
-          }, disableClose: true
-        }).afterClosed()
+          },
+        })
       ),
     ).subscribe(() => this.ws.connect());
 

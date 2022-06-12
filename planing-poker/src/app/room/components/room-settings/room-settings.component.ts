@@ -1,14 +1,14 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Room } from '@common/models';
-import { filter, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
-import { ConfirmComponent } from '../../../shared/component/confirm/confirm.component';
+import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 import { activatedRouteFirstChild } from '../../../shared/util/activated-route-first-child';
-import { RoomShareDialogComponent } from '../room-share/room-share.component';
+import { RoomService } from '../../services/room.service';
 
 @Component({
   selector: 'pp-room-settings',
@@ -23,24 +23,14 @@ export class RoomSettingsComponent implements OnDestroy {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { room: Room<true> },
     private dialogRef: MatDialogRef<RoomSettingsComponent>,
-    private dialog: MatDialog,
+    private dialog: DialogService,
     private bottomSheet: MatBottomSheet,
     private router: Router,
     private pp: PlaningPokerWsService,
     public authService: AuthService,
     public route: ActivatedRoute,
+    public roomService: RoomService,
   ) {}
-
-  inviteRoom() {
-    if (navigator?.share) {
-      navigator.share({
-        title: this.data.room.name,
-        url: window?.location?.origin + '/room/' + (this.data.room.alias || this.data.room.id)
-      });
-    } else {
-      this.bottomSheet.open(RoomShareDialogComponent, { data: this.data });
-    }
-  }
 
   deleteRoom() {
     const data = {
@@ -50,16 +40,24 @@ export class RoomSettingsComponent implements OnDestroy {
       submit: 'Удалить'
     };
 
-    this.dialog.open(ConfirmComponent, { width: '360px', data }).afterClosed().pipe(filter(Boolean))
-      .subscribe(() => {
-        this.pp.deleteRoom(this.data.room.id);
-        this.dialogRef.close();
-      });
+    this.dialog.confirm({ data }).subscribe(() => {
+      this.pp.deleteRoom(this.data.room.id);
+      this.dialogRef.close();
+    });
   }
 
   leaveRoom() {
-    this.pp.leaveRoom(this.data.room.id);
-    this.dialogRef.close();
+    const data = {
+      title: 'Покинуть комнату?',
+      content: 'Вы не сможете учавствовать в голосованиях в этой комнате, а также смотреть результаты старых голосований.',
+      cancel: 'Отмена',
+      submit: 'Покинуть'
+    };
+
+    this.dialog.confirm({ data }).subscribe(() => {
+      this.pp.leaveRoom(this.data.room.id);
+      this.dialogRef.close();
+    });
   }
 
   ngOnDestroy() {

@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, switchMap, takeUntil } from 'rxjs';
+import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 import { UserComponent } from './user.component';
@@ -12,14 +12,14 @@ export class UserRouteComponent implements OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private dialog: MatDialog,
+    private dialog: DialogService,
     private pp: PlaningPokerWsService,
     private router: Router,
     private route: ActivatedRoute
   ) {
     this.authService.user$.pipe(
       switchMap(user => {
-        return this.dialog.open(UserComponent, { width: '385px', data: { user }, autoFocus: false }).afterClosed();
+        return this.dialog.small(UserComponent, { data: { user }, autoFocus: false });
       }),
       takeUntil(this.destroy$)
     ).subscribe(payload => {

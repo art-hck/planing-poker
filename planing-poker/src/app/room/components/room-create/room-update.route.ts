@@ -1,10 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, merge, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { HistoryService } from '../../../app/services/history.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
-import { DefaultDialogConfig } from '../../../shared/util/default-dialog-config';
+import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 import { RoomCreateComponent } from './room-create.component';
 
 @Component({ template: '' })
@@ -12,7 +11,7 @@ export class RoomUpdateRouteComponent implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   constructor(
-    private dialog: MatDialog,
+    private dialog: DialogService,
     private pp: PlaningPokerWsService,
     private router: Router,
     private route: ActivatedRoute,
@@ -20,9 +19,7 @@ export class RoomUpdateRouteComponent implements OnDestroy {
   ) {
     this.pp.room$.pipe(
       take(1),
-      switchMap(room => this.dialog.open(RoomCreateComponent, {
-        ...DefaultDialogConfig, data: { room }
-      }).afterClosed().pipe(map(r => [room, r]))),
+      switchMap(room => this.dialog.big(RoomCreateComponent, { data: { room } }).pipe(map(r => [room, r]))),
       takeUntil(merge(this.history.urlChanges$, this.destroy$))
     ).subscribe(([room, form]) => {
       const aliasChanged = form && form.alias !== room.alias;

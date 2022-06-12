@@ -1,10 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { RolesName, Room, RoomRole, User, Uuid } from '@common/models';
-import { filter } from 'rxjs';
 import { AuthService } from '../../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../../app/services/planing-poker-ws.service';
-import { ConfirmComponent } from '../../../../shared/component/confirm/confirm.component';
+import { DialogService } from '../../../../shared/modules/dialog/dialog.service';
 
 @Component({
   selector: 'pp-room-user',
@@ -19,7 +17,7 @@ export class RoomUserComponent {
   readonly roomRole = RoomRole;
   readonly role = RolesName;
 
-  constructor(public authService: AuthService, public pp: PlaningPokerWsService, private dialog: MatDialog) {}
+  constructor(public authService: AuthService, public pp: PlaningPokerWsService, private dialog: DialogService) {}
 
   get isVoted(): boolean {
     return !!this.user && this.votes?.get(this.user.id) !== undefined;
@@ -33,9 +31,7 @@ export class RoomUserComponent {
       submit: 'Сменить'
     };
 
-    this.dialog.open(ConfirmComponent, { width: '365px', data }).afterClosed().pipe(filter(v => !!v)).subscribe(
-      () => this.pp.setRole(userId, roomId, RoomRole.admin)
-    );
+    this.dialog.confirm({ data }).subscribe(() => this.pp.setRole(userId, roomId, RoomRole.admin));
   }
 
   kick(userId: Uuid, roomId: Uuid) {
@@ -46,9 +42,7 @@ export class RoomUserComponent {
       submit: 'Исключить'
     };
 
-    this.dialog.open(ConfirmComponent, { width: '365px', data }).afterClosed().pipe(filter(v => !!v)).subscribe(
-      () => this.pp.leaveRoom(roomId, userId)
-    );
+    this.dialog.confirm({ data }).subscribe(() => this.pp.leaveRoom(roomId, userId));
   }
 }
 

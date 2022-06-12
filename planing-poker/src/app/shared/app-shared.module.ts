@@ -16,29 +16,26 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../app/components/header/header.component';
+import { DialogModule } from './modules/dialog/dialog.module';
 import { AbbreviationPipe } from './pipes/abbreviation.pipe';
 import { PluralizePipe } from './pipes/pluralize-pipe';
 import { StringToColorPipe } from './pipes/string-to-color.pipe';
-import { ConfirmComponent } from './component/confirm/confirm.component';
-import { DialogToolbarComponent } from './component/dialog-toolbar/dialog-toolbar.component';
 
 @NgModule({
   declarations: [
     PluralizePipe,
     AbbreviationPipe,
     StringToColorPipe,
-    ConfirmComponent,
     HeaderComponent,
-    DialogToolbarComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { enterAnimationDuration: "0ms", exitAnimationDuration: "0ms" } },
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { touchGestures: 'off' } }
-
   ],
   imports: [
     CommonModule,
     RouterModule,
+    DialogModule,
 
     MatIconModule,
     MatToolbarModule,
@@ -51,6 +48,7 @@ import { DialogToolbarComponent } from './component/dialog-toolbar/dialog-toolba
     PluralizePipe,
     AbbreviationPipe,
     StringToColorPipe,
+    DialogModule,
 
     CommonModule,
     FormsModule,
@@ -69,7 +67,6 @@ import { DialogToolbarComponent } from './component/dialog-toolbar/dialog-toolba
     MatTooltipModule,
     MatBadgeModule,
     HeaderComponent,
-    DialogToolbarComponent
   ]
 })
 export class AppSharedModule {

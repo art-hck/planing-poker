@@ -13,7 +13,7 @@
         class='mat-display-2 poker-cards__item'
         [class.mat-elevation-z8]='active === point'
         [class.poker-cards__item-disabled]='authService.hasRole(me, roomRole.observer, room) || step !== 1'
-        (click)='vote(point)'
+        (click)='selectCard(point)'
       >{{point}}</mat-card>
     </div>
   </ng-template>

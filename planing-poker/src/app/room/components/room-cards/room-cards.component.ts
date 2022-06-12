@@ -8,9 +8,8 @@ import {
   OnDestroy,
   OnInit,
   SimpleChanges,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { Room, RoomRole, User, Voting } from '@common/models';
 import * as confetti from 'canvas-confetti';
@@ -18,7 +17,7 @@ import { CreateTypes as Confetti } from 'canvas-confetti';
 import { concatMap, filter, map, range, Subject, switchMap, takeUntil, timer, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
-import { ConfirmComponent } from '../../../shared/component/confirm/confirm.component';
+import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 
 @Component({
   selector: 'pp-room-cards',
@@ -44,7 +43,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   readonly timer$ = timer(300).pipe(map(() => true));
   active?: string;
 
-  constructor(public pp: PlaningPokerWsService, private cd: ChangeDetectorRef, public authService: AuthService, private dialog: MatDialog) {
+  constructor(public pp: PlaningPokerWsService, private cd: ChangeDetectorRef, public authService: AuthService, private dialog: DialogService) {
   }
 
   get selected() {
@@ -93,7 +92,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
     }));
   }
 
-  vote(point: string) {
+  selectCard(point: string) {
     if (this.currentVoting) {
       if (this.active !== point) {
         this.active = point;
@@ -113,10 +112,9 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
       submit: 'Перезапустить'
     };
 
-    this.dialog.open(ConfirmComponent, { width: '360px', data }).afterClosed().pipe(filter(Boolean))
-      .subscribe(() => {
-        if (this.currentVoting) this.pp.restartVoting(this.currentVoting?.id);
-      });
+    this.dialog.confirm({ data }).subscribe(() => {
+      if (this.currentVoting) this.pp.restartVoting(this.currentVoting.id);
+    });
 
   }
 
@@ -133,10 +131,9 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
         submit: 'Открыть карты'
       };
 
-      this.dialog.open(ConfirmComponent, { width: '360px', data }).afterClosed().pipe(filter(Boolean))
-        .subscribe(() => {
-          if (this.currentVoting) this.pp.flip(this.currentVoting?.id);
-        });
+      this.dialog.confirm({ data }).subscribe(() => {
+        if (this.currentVoting) this.pp.flip(this.currentVoting?.id);
+      });
     } else {
       if (this.currentVoting) this.pp.flip(this.currentVoting?.id);
     }

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { filter, Subject, takeUntil } from 'rxjs';
@@ -23,7 +22,6 @@ export class RoomsComponent implements OnInit, OnDestroy {
   readonly activatedRouteFirstChild = activatedRouteFirstChild;
 
   constructor(
-    private dialog: MatDialog,
     public router: Router,
     public route: ActivatedRoute,
     private store: Store,

@@ -26,7 +26,6 @@ import { RoomUsersComponent } from './components/room-users/room-users.component
 import { RoomUsersPipe } from './components/room-users/room-users.pipe';
 import { RoomVotingsCreateComponent } from './components/room-votings-create/room-votings-create.component';
 import { RoomVotingsCreateRouteComponent } from './components/room-votings-create/room-votings-create.route';
-import { RoomVotingsDeleteComponent } from './components/room-votings-delete/room-votings-delete.component';
 import { RoomVotingsEditComponent } from './components/room-votings-edit/room-votings-edit.component';
 import { RoomVotingsComponent } from './components/room-votings/room-votings.component';
 import { RoomComponent } from './components/room/room.component';
@@ -43,7 +42,6 @@ import { VotingsState } from './states/votings.state';
     RoomComponent,
     RoomVotingsComponent,
     RoomVotingsCreateComponent,
-    RoomVotingsDeleteComponent,
     RoomUsersComponent,
     RoomCardsComponent,
     RoomUsersPipe,

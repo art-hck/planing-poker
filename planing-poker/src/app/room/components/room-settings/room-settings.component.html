@@ -12,7 +12,7 @@
           <h4 matLine>Настройки</h4>
         </mat-list-option>
       </ng-container>
-      <mat-list-option (click)='inviteRoom(); item2.selected = false' #item2>
+      <mat-list-option (click)='roomService.share(room); item2.selected = false' #item2>
         <mat-icon color='gray' matListIcon>share</mat-icon>
         <h4 matLine>Пригласить людей</h4>
       </mat-list-option>

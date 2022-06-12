@@ -1,19 +1,16 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatDialog } from '@angular/material/dialog';
 import { Room, Voting } from '@common/models';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
-import { DefaultDialogConfig } from '../../../shared/util/default-dialog-config';
-import { RoomVotingsDeleteComponent } from '../room-votings-delete/room-votings-delete.component';
+import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 import { RoomVotingsEditComponent } from '../room-votings-edit/room-votings-edit.component';
 
 @Component({
   selector: 'pp-room-votings',
   templateUrl: './room-votings.component.html',
   styleUrls: ['./room-votings.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoomVotingsComponent implements OnDestroy {
   @Input() votings?: Voting<true>[] | null;
@@ -24,8 +21,7 @@ export class RoomVotingsComponent implements OnDestroy {
   readonly destroy$ = new Subject<void>();
 
   constructor(
-    private sheet: MatBottomSheet,
-    private dialog: MatDialog,
+    private dialog: DialogService,
     public authService: AuthService,
     private pp: PlaningPokerWsService
   ) {}
@@ -33,12 +29,15 @@ export class RoomVotingsComponent implements OnDestroy {
   trackByFn = (index: number, item: Voting<true>) => item.id;
 
   deleteVoting(voting: Voting<true>) {
-    this.sheet.open(RoomVotingsDeleteComponent, { data: { voting } }).afterDismissed().pipe(filter(v => !!v), takeUntil(this.destroy$))
-      .subscribe(() => this.pp.deleteVoting(voting.id));
+    this.dialog.confirm({ data: {
+      title: `Удалить стори ${voting.name}?`,
+      cancel: 'Отмена',
+      submit: 'Удалить'
+    } }).subscribe(() => this.pp.deleteVoting(voting.id));
   }
 
   editVoting(voting: Voting<true>) {
-    this.dialog.open(RoomVotingsEditComponent, { ...DefaultDialogConfig, data: { voting } }).afterClosed()
+    this.dialog.big(RoomVotingsEditComponent, { data: { voting } })
       .pipe(filter(v => !!v), takeUntil(this.destroy$))
       .subscribe(({ name }) => this.pp.editVoting(voting.id, name));
   }

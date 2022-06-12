@@ -1,18 +1,17 @@
 import { Component, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { merge, Subject, takeUntil, withLatestFrom } from 'rxjs';
 import { HistoryService } from '../../../app/services/history.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
-import { DefaultDialogConfig } from '../../../shared/util/default-dialog-config';
+import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 import { RoomVotingsCreateComponent } from './room-votings-create.component';
 
 @Component({ template: '' })
 export class RoomVotingsCreateRouteComponent implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
-  constructor(private dialog: MatDialog, private pp: PlaningPokerWsService, private route: ActivatedRoute, private history: HistoryService) {
-    this.dialog.open(RoomVotingsCreateComponent, DefaultDialogConfig).afterClosed().pipe(
+  constructor(private dialog: DialogService, private pp: PlaningPokerWsService, private route: ActivatedRoute, private history: HistoryService) {
+    this.dialog.big(RoomVotingsCreateComponent).pipe(
       withLatestFrom(this.pp.room$),
       takeUntil(merge(this.history.urlChanges$, this.destroy$))
     ).subscribe(([data, room]) => {

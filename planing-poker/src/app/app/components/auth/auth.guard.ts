@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { CanActivate } from '@angular/router';
 import { filter, map, merge, of, switchMap, take } from 'rxjs';
+import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 import { AuthService } from '../../services/auth.service';
 import { WsService } from '../../services/ws.service';
 import { AuthComponent } from './auth.component';
@@ -10,7 +10,7 @@ import { AuthComponent } from './auth.component';
 export class AuthGuard implements CanActivate {
   constructor(
     private authService: AuthService,
-    private dialog: MatDialog,
+    private dialog: DialogService,
     private ws: WsService
   ) {
     // handshake если разлогин или подключение к сокетам
@@ -20,8 +20,7 @@ export class AuthGuard implements CanActivate {
         const token = window?.localStorage.getItem('token');
         const refreshToken = window?.localStorage.getItem('refreshToken');
 
-        const config = { disableClose: true, id: 'auth-modal' };
-        return token ? of({ token, refreshToken }) : this.dialog.open(AuthComponent, config).afterClosed();
+        return token ? of({ token, refreshToken }) : this.dialog.open(AuthComponent, { disableClose: true, id: 'auth-modal' });
       }),
     ).subscribe((handshake) => this.authService.login$.next(handshake));
   }

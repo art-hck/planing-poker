@@ -11,6 +11,13 @@
     </ng-container>
   </ng-container>
 </mat-list>
+<mat-selection-list [multiple]='false' *ngIf='room && users && users.length < 2'>
+  <mat-list-option #item (click)='item.selected = false; roomService.share(room)'>
+    <mat-icon matListIcon class='mat-gray'>add</mat-icon>
+    <div matLine class='mat-gray'>Пригласить</div>
+  </mat-list-option>
+</mat-selection-list>
+
 <div class="flex-space"></div>
 
 <div class="footer-actions" *ngIf="room">
