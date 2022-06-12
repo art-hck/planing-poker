@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '@common/models';
 import { activatedRouteFirstChild } from '../../../shared/util/activated-route-first-child';
 import { AuthService } from '../../services/auth.service';
-import { HistoryService } from '../../services/history.service';
 import { ResolutionService } from '../../services/resolution.service';
 import { TitleService } from '../../services/title.service';
 
@@ -18,6 +17,7 @@ export class HeaderComponent {
   @Input() showVotings = true;
   @Output() showPlayersChange = new EventEmitter<boolean>();
   @Output() showVotingsChange = new EventEmitter<boolean>();
+  @Output() back = new EventEmitter<void>();
 
   readonly activatedRouteFirstChild = activatedRouteFirstChild;
 
@@ -26,13 +26,8 @@ export class HeaderComponent {
     public router: Router,
     public route: ActivatedRoute,
     public resolution: ResolutionService,
-    public titleService: TitleService,
-    public history: HistoryService
+    public titleService: TitleService
   ) {}
-
-  get isRoot() {
-    return !this.router.isActive("/room", { fragment: 'ignored', matrixParams: 'ignored', paths: 'subset', queryParams: 'ignored' });
-  }
 
   verifications(user: User) {
     return {

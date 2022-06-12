@@ -1,5 +1,5 @@
 <mat-toolbar color='primary'>
-  <a mat-icon-button (click)='history.back(route)' *ngIf='!isRoot'>
+  <a mat-icon-button (click)='back.emit()' *ngIf='back.observed'>
     <mat-icon>arrow_back</mat-icon>
   </a>
   <button mat-icon-button (click)='showPlayersChange.emit(!showPlayers)' *ngIf='showPlayersChange.observed && (resolution.isMobile$ | async)'>

@@ -1,14 +1,15 @@
 <pp-header
-  *ngIf='!isRoot'
+  *ngIf='isRoom'
   [(showPlayers)]='sidebars.showPlayers'
   [(showVotings)]='sidebars.showVotings'
   (showPlayersChange)='sidebars.saveSidebarsState();'
   (showVotingsChange)='sidebars.saveSidebarsState();'
+  (back)='history.back(route)'
 ></pp-header>
-<pp-header *ngIf='isRoot'></pp-header>
+<pp-header *ngIf='!isRoom'></pp-header>
 <ng-container *ngIf='pp.rooms$ | async as rooms'>
   <mat-drawer-container *ngIf='authService.user$ | async'>
-    <mat-drawer *ngIf='(resolution.isMobile$ | async) !== true' mode='side' [opened]='!isRoot'>
+    <mat-drawer *ngIf='(resolution.isMobile$ | async) !== true' mode='side' [opened]='!isRoom'>
       <div class='rooms-list'>
         <a class='rooms-list__item' routerLinkActive='active' [routerLink]="['room', room.alias || room.id]" *ngFor='let room of rooms'>
           <div

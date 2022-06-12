@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
+import { HistoryService } from '../../../app/services/history.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { ResolutionService } from '../../../app/services/resolution.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
@@ -30,11 +31,12 @@ export class RoomsComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     public cd: ChangeDetectorRef,
     public sidebars: SidebarsService,
-    public resolution: ResolutionService
+    public resolution: ResolutionService,
+    public history: HistoryService,
   ) {}
 
-  get isRoot() {
-    return !this.router.isActive("/room", { fragment: 'ignored', matrixParams: 'ignored', paths: 'subset', queryParams: 'ignored' });
+  get isRoom() {
+    return this.router.isActive("/room", { fragment: 'ignored', matrixParams: 'ignored', paths: 'subset', queryParams: 'ignored' });
   }
 
   ngOnInit() {
