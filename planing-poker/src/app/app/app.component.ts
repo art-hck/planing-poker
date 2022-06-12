@@ -74,15 +74,14 @@ export class AppComponent implements OnInit {
       switchMap(() => timer( 15 * 60 * 1000).pipe(takeUntil(show$))),
       tap(() => this.ws.disconnect(false)),
       switchMap(() => this.dialog.confirm({
-          id: 'reconnectDialog',
-          disableClose: true,
-          data: {
-            title: 'Соединение с сервером закрыто',
-            content: 'Вы не активны более 15 минут и были отключены',
-            submit: 'Переподключиться'
-          },
-        })
-      ),
+        id: 'reconnectDialog',
+        disableClose: true,
+        data: {
+          title: 'Соединение закрыто',
+          content: 'Приложение было не активно более 15 минут и вы были отключены от сервера. Для продолжения работы переподключитесь, или обновите страницу.',
+          submit: 'Переподключиться'
+        },
+      }))
     ).subscribe(() => this.ws.connect());
 
 
