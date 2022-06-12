@@ -46,7 +46,7 @@ export class DoughnutDirective implements AfterViewInit, OnChanges {
         // events: [],
         plugins: {
           datalabels: {
-            formatter: (votesCount, { dataIndex }) => this.groupedVotes?.[dataIndex][0],
+            formatter: (_, { dataIndex }) => this.groupedVotes?.[dataIndex][0],
             color: 'white',
             font: { size: 14, weight: 'bold' },
           },

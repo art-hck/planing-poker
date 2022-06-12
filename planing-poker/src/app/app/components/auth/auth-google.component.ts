@@ -11,7 +11,7 @@ import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 export class AuthGoogleComponent implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
   constructor(private route: ActivatedRoute, router: Router, private authService: AuthService, private pp: PlaningPokerWsService) {
-    route.queryParams
+    this.route.queryParams
       .pipe(filter(({ code }) => code), takeUntil(this.destroy$))
       .subscribe(params => {
         const token = window?.localStorage.getItem('token'); // Если есть токен, то связываем пользователя, если нет - регестрируем

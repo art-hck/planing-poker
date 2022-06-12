@@ -26,7 +26,7 @@ export class RoomVotingsComponent implements OnDestroy {
     private pp: PlaningPokerWsService
   ) {}
 
-  trackByFn = (index: number, item: Voting<true>) => item.id;
+  trackByFn = (index: number, item: Voting<true>) => item.id ?? index;
 
   deleteVoting(voting: Voting<true>) {
     this.dialog.confirm({ data: {

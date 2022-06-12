@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, Voting } from '@common/models';
@@ -50,7 +49,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     private titleService: TitleService,
     private dialog: DialogService,
     private store: Store,
-    private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router

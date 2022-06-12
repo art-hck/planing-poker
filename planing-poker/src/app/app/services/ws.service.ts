@@ -1,6 +1,21 @@
 import { Injectable } from '@angular/core';
 import { WsAction, WsEvent, WsMessage } from '@common/models';
-import { BehaviorSubject, bufferToggle, distinctUntilChanged, filter, map, merge, mergeMap, Observable, Subject, timer, windowToggle } from 'rxjs';
+import {
+  BehaviorSubject,
+  bufferToggle,
+  delayWhen,
+  distinctUntilChanged,
+  filter,
+  map,
+  merge,
+  mergeMap,
+  Observable,
+  scan,
+  skip,
+  Subject,
+  timer,
+  windowToggle
+} from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../../../environments/environment';
 
@@ -12,8 +27,9 @@ export class WsService {
   private readonly read$ = new Subject<WsMessage<any>>();
   private readonly send$ = new Subject<WsMessage<any>>();
   private readonly _connected$ = new BehaviorSubject<boolean>(false);
-  public readonly handshaked$ = new BehaviorSubject<boolean>(false);
   private autoReconnect = true;
+  public readonly handshaked$ = new BehaviorSubject<boolean>(false);
+  public readonly reconnectAttempts$ = this.connected$.pipe(skip(1), scan((attempts, c) => c ? 0 : ++attempts, 0));
 
   get connected$() {
     return this._connected$.asObservable();
@@ -31,6 +47,11 @@ export class WsService {
       this.send$.pipe(bufferToggle(off$, () => on$)),
       this.send$.pipe(windowToggle(on$, () => off$))
     ).pipe(mergeMap(x => x)).subscribe(data => this.ws$.next(data));
+
+    this.reconnectAttempts$.pipe(
+      filter(attempts => this.autoReconnect && attempts > 0),
+      delayWhen(attempts => timer(Math.min(attempts - 1, 10) * 1000)),
+    ).subscribe(() => this.connect());
   }
 
   disconnect(reconnect = true) {
@@ -48,15 +69,11 @@ export class WsService {
         next: () => {
           this._connected$.next(false);
           this.handshaked$.next(false);
-          if (this.autoReconnect) {
-            timer(2000).subscribe(() => this.connect());
-          }
         }
       }
     });
 
     this.ws$.subscribe(event => this.read$.next(event));
-
   }
 
   public send<A extends keyof WsAction, P extends WsAction[A]>(action: A, payload: P, options?: WsSendOptions) {

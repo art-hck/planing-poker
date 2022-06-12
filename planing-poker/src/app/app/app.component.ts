@@ -1,12 +1,11 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, PLATFORM_ID, TemplateRef, ViewChild } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { Store } from '@ngxs/store';
-import { filter, fromEvent, switchMap, takeUntil, tap, timer, withLatestFrom } from 'rxjs';
+import { filter, fromEvent, skip, switchMap, takeUntil, tap, timer, withLatestFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { DialogService } from '../shared/modules/dialog/dialog.service';
 import { LimitSnackbarComponent } from './components/limit-snackbar/limit-snackbar.component';
@@ -18,27 +17,35 @@ import { WsService } from './services/ws.service';
 
 @Component({
   selector: 'pp-root',
-  template: `<router-outlet></router-outlet>`,
+  template: `
+    <router-outlet></router-outlet>
+    <ng-template #reconnect let-data>
+      <div class="app-flex-center" style='justify-content: flex-start; gap: 12px'>
+        <mat-icon *ngIf='data.icon'>{{data.icon}}link_off</mat-icon>
+        <span>{{data.text}}<ng-container *ngIf='ws.reconnectAttempts$ | async as a'> ({{a}})</ng-container></span>
+      </div>
+    </ng-template>
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
+  @ViewChild('reconnect') reconnect?: TemplateRef<any>;
+
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platform: any,
     private authService: AuthService,
-    private activatedRoute: ActivatedRoute,
     private dialog: DialogService,
-    private store: Store,
     private pp: PlaningPokerWsService,
-    private ws: WsService,
     private snackBar: MatSnackBar,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    public sidebars: SidebarsService,
     private sw: SwUpdate,
-    private historyService: HistoryService
+    private historyService: HistoryService,
+    public ws: WsService,
+    public sidebars: SidebarsService,
   ) {
-    historyService.init();
+    this.historyService.init();
 
     this.sw.versionUpdates.pipe(filter(e => e.type === 'VERSION_READY')).subscribe(() => {
       this.snackBar.open('Доступна новая версия приложения!', 'Обновить').onAction().subscribe(() => document?.location.reload());
@@ -54,7 +61,7 @@ export class AppComponent implements OnInit {
       ).subscribe();
     }
 
-    matIconRegistry.addSvgIcon('google', this.domSanitizer.bypassSecurityTrustResourceUrl('assets/google-icon.svg'));
+    this.matIconRegistry.addSvgIcon('google', this.domSanitizer.bypassSecurityTrustResourceUrl('assets/google-icon.svg'));
 
     this.authService.beforeLogout$.subscribe(options => {
       if (!options || options.emitEvent) this.pp.bye();
@@ -84,6 +91,11 @@ export class AppComponent implements OnInit {
       }))
     ).subscribe(() => this.ws.connect());
 
+    this.ws.connected$.pipe(
+      skip(1),
+      tap(c => c && this.snackBar._openedSnackBarRef && this.notification('Соединение восстановлено', 'link', 1000)),
+      filter(c => !c && !this.dialog.getDialogById('reconnectDialog') && !this.snackBar._openedSnackBarRef)
+    ).subscribe(() => this.notification('Восстанавливаем соединение...', 'link_off'));
 
     this.pp.events({
       handshake: ({ refreshToken, token }) => {
@@ -116,5 +128,11 @@ export class AppComponent implements OnInit {
         this.router.navigate(['/']);
       }
     }).subscribe();
+  }
+
+  private notification(text: string, icon?: string, duration?:number) {
+    return this.reconnect && this.snackBar.openFromTemplate(this.reconnect, {
+      horizontalPosition: 'end', duration, data: { text, icon }
+    });
   }
 }

@@ -44,7 +44,7 @@ export class RoomUsersComponent implements OnChanges, OnDestroy {
     }
   }
 
-  trackByFn = (index: number, item: User) => item.id;
+  trackByFn = (index: number, item: User) => item.id ?? index;
 
   ngOnDestroy() {
     this.destroy$.next();

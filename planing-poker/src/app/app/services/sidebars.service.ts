@@ -48,7 +48,7 @@ export class SidebarsService {
   }
 
   constructor(private router: Router, private resolutionService: ResolutionService) {
-    router.events.pipe(filter(e => e instanceof NavigationEnd)).pipe(
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).pipe(
       switchMap(() => this.resolutionService.isMobile$),
       filter(isMobile => isMobile)
     ).subscribe(() => this.showPlayers = this.showVotings = false);

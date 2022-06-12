@@ -1,7 +1,6 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Room } from '@common/models';
 import { Subject } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
@@ -24,8 +23,6 @@ export class RoomSettingsComponent implements OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: { room: Room<true> },
     private dialogRef: MatDialogRef<RoomSettingsComponent>,
     private dialog: DialogService,
-    private bottomSheet: MatBottomSheet,
-    private router: Router,
     private pp: PlaningPokerWsService,
     public authService: AuthService,
     public route: ActivatedRoute,

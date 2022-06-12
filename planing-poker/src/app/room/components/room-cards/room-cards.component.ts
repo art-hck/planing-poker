@@ -61,7 +61,7 @@ export class RoomCardsComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   get winner(): string {
-    return this.groupedVotes.filter((v, i, [f]) => v[1] === f[1]).map(v => v[0]).join(' или ');
+    return this.groupedVotes.filter((v, _, [f]) => v[1] === f[1]).map(v => v[0]).join(' или ');
   }
 
   ngOnChanges(changes: SimpleChanges) {
