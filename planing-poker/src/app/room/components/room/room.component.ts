@@ -76,7 +76,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     });
 
     this.pp.requireRoomPassword$.pipe(
-      switchMap(() => this.dialog.open(RoomPasswordComponent, { width: '350px', disableClose: true }).afterClosed()),
+      switchMap(() => this.dialog.open(RoomPasswordComponent, {
+        width: '350px',
+        disableClose: true,
+        autoFocus: true
+      }).afterClosed()),
       filter(v => !!v),
       takeUntil(this.destroy$)
     ).subscribe(({ password }) => this.pp.joinRoom(this.route.snapshot.params['id'], password));
