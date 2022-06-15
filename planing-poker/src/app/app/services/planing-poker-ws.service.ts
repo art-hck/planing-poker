@@ -41,6 +41,10 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('linkGoogle', { token, googleCode }, { force: true });
   }
 
+  verifyEmail(email: string) {
+    return this.ws.send('verifyEmail', { email }, { force: true });
+  }
+
   vote(votingId: Uuid, point: string) {
     this.ws.send('vote', { point, votingId });
   }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'pp-dialog-toolbar',
@@ -8,4 +8,5 @@ import { Component, Input } from '@angular/core';
 export class DialogToolbarComponent {
   @Input() closable = true;
   @Input() back = false;
+  @Output() backEvent = new EventEmitter<void>();
 }

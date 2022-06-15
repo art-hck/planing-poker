@@ -1,6 +1,7 @@
-import { NotFoundError, RoutePayload } from '../models';
-import { InvalidParamsError } from '../models/invalid-params-error';
-import { LimitsError } from '../models/limits-error';
+import { NotFoundError } from '../errors/not-found-error';
+import { RoutePayload } from '../models';
+import { InvalidParamsError } from '../errors/invalid-params-error';
+import { LimitsError } from '../errors/limits-error';
 import { limitsRepo, roomPasswordRepo, roomRepo, usersRepo, votingRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 import { broadcast } from '../utils/broadcast';

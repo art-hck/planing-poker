@@ -20,6 +20,7 @@ import { DialogModule } from './modules/dialog/dialog.module';
 import { AbbreviationPipe } from './pipes/abbreviation.pipe';
 import { PluralizePipe } from './pipes/pluralize-pipe';
 import { StringToColorPipe } from './pipes/string-to-color.pipe';
+import { AutoFocusDirective } from './directives/auto-focus.directive';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { StringToColorPipe } from './pipes/string-to-color.pipe';
     AbbreviationPipe,
     StringToColorPipe,
     HeaderComponent,
+    AutoFocusDirective,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { enterAnimationDuration: "0ms", exitAnimationDuration: "0ms" } },
@@ -49,6 +51,7 @@ import { StringToColorPipe } from './pipes/string-to-color.pipe';
     AbbreviationPipe,
     StringToColorPipe,
     DialogModule,
+    AutoFocusDirective,
 
     CommonModule,
     FormsModule,

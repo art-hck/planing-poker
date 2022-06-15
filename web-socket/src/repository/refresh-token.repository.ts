@@ -1,6 +1,6 @@
 import { Collection } from 'mongodb';
 import { Token } from '../../../common/models';
-import { Repository } from '../models/repository';
+import { Repository } from '../models';
 import { jwtDecode } from '../utils/token-utils';
 
 export class RefreshTokenRepository implements Repository<{ refreshToken: Token }> {

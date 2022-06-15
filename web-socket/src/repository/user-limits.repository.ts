@@ -1,7 +1,7 @@
 import { Collection } from 'mongodb';
-import { Config } from '../config';
-import { Repository } from '../models/repository';
 import { UserLimits, Uuid } from '../../../common/models';
+import { Config } from '../config';
+import { Repository } from '../models';
 
 export class UserLimitsRepository implements Repository<UserLimits> {
   readonly repositoryName = 'user-limits';

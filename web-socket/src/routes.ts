@@ -9,7 +9,7 @@ export const routes: Routes = {
   handshake: AuthController.handshake,
   bye: AuthController.bye,
   linkGoogle: AuthController.linkGoogle,
-  editUser: AuthController.edit,
+  verifyEmail: AuthController.verifyEmail,
   joinRoom: RoomController.join,
   disconnectRoom: RoomController.disconnect,
   leaveRoom: RoomController.leave,
@@ -27,5 +27,6 @@ export const routes: Routes = {
   activateVoting: VotingController.activate,
   flip: VotingController.flip,
   setRole: UserController.setRole,
+  editUser: UserController.edit,
   feedback: FeedbackController.send
 };

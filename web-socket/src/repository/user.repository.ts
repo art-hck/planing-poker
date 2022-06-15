@@ -1,7 +1,7 @@
 import { Collection } from 'mongodb';
 import * as uuid from 'uuid';
 import { User, Uuid } from '../../../common/models';
-import { Repository } from '../models/repository';
+import { Repository } from '../models';
 import { roomRepo } from '../mongo';
 import { connections } from './connections.repository';
 

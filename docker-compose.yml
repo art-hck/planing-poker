@@ -2,8 +2,8 @@ version: "3.3"
 services:
   nginx:
     ports:
-      - "${NGINX_PORT:-80}:8080"
-      - "${NGINX_PORT_SSL:-443}:8081"
+      - ${NGINX_PORT:-80}:8080
+      - ${NGINX_PORT_SSL:-443}:8081
     build:
       context: .
       dockerfile: ./planing-poker/Dockerfile
@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
   ws:
     ports:
-      - "${WS_PORT:-9000}:${WS_PORT:-9000}"
+      - ${WS_PORT:-9000}:${WS_PORT:-9000}
     build:
       context: .
       dockerfile: ./web-socket/Dockerfile
@@ -36,7 +36,7 @@ services:
   mongo:
     image: mongo:4.4.12
     ports:
-      - "${MONGO_PORT:-27017}:${MONGO_PORT:-27017}"
+      - ${MONGO_PORT:-27017}:${MONGO_PORT:-27017}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -44,3 +44,13 @@ services:
     volumes:
       - ${MONGO_EXTERNAL_VOLUME}:/data/db
     restart: unless-stopped
+  smtp:
+    ports:
+      - "25:25"
+    image: namshi/smtp
+    volumes:
+      - ./smtp/config:/etc/exim4/_docker_additional_macros:ro
+      - ./smtp/private.key:/etc/exim4/domain.key:ro
+    environment:
+      MAILNAME: ${MAILHOST}
+      RELAY_NETWORKS: ${RELAY_NETWORKS}

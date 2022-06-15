@@ -1,6 +1,9 @@
 <div mat-dialog-content>
   <mat-toolbar>
-    <button mat-icon-button [mat-dialog-close]='false' *ngIf='back'>
+    <button mat-icon-button [mat-dialog-close]='false' *ngIf='back && !backEvent.observed'>
+      <mat-icon color='gray'>arrow_back</mat-icon>
+    </button>
+    <button mat-icon-button (click)='backEvent.emit()' *ngIf='back && backEvent.observed'>
       <mat-icon color='gray'>arrow_back</mat-icon>
     </button>
     <ng-content></ng-content>

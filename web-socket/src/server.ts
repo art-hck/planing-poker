@@ -3,8 +3,7 @@ import { createServer } from 'https';
 import { WebSocketServer } from 'ws';
 import { Handshake, WsMessage } from '../../common/models';
 import { Config } from './config';
-import { RoutePayload, Routes, Send } from './models';
-import { Session } from './models/session';
+import { RoutePayload, Routes, Send, Session } from './models';
 import { connections } from './repository/connections.repository';
 import { routes } from './routes';
 import { broadcast } from './utils/broadcast';
@@ -24,12 +23,12 @@ new WebSocketServer(server ? { server } : { port: Number(wsPort) }).on('connecti
 
   ws.on('message', (message: string) => {
     type Payload = Routes[keyof Routes] extends (arg: RoutePayload<infer R>) => any ? R : never; // @TODO: payload always never :(
-    const { action, payload }: WsMessage<Payload> = JSON.parse(message);
-    const userId = getUserId((payload as Handshake)?.token ?? session.token); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
+    const { action, payload }: Required<Omit<WsMessage<Payload>, 'event'>> = JSON.parse(message);
+    const userId = getUserId((payload as Handshake)?.token ?? session.token ?? ""); // Первичная авторизация хранит токен в теле, а дальше храним на сервере
 
     try {
-      if (!['handshake', 'linkGoogle'].includes(action || '')) verifyToken({ ...routePayloadPart, payload, userId });
-      action && routes[action]({ ...routePayloadPart, payload, userId })?.catch(e => errorHandler(e, { ...routePayloadPart, userId }));
+      if (!['handshake', 'linkGoogle', 'verifyEmail'].includes(action)) verifyToken({ ...routePayloadPart, payload, userId });
+      routes[action]({ ...routePayloadPart, payload, userId })?.catch(e => errorHandler(e, { ...routePayloadPart, userId }));
     } catch (e) {
       errorHandler(e, { ...routePayloadPart, userId });
     }

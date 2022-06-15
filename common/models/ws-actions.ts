@@ -12,6 +12,7 @@ export interface WsAction {
   handshake: Handshake; // Авторизация + регистрация
   bye: {}; // Логаут + удаление временного аккаунта
   linkGoogle: { token: Token, googleCode: string }; // Привязать google аккаунт
+  verifyEmail: { email: string }; // Запрос подтверждения почты
   vote: { point: string, votingId: Uuid }; // Проголосовать
   unvote: { votingId: Uuid }; // Отменить голос
   flip: { votingId: Uuid }; // Открыть карты
@@ -34,7 +35,7 @@ export interface WsAction {
 }
 
 export interface WsEvent<serialized = true> {
-  handshake: Pick<Handshake, 'token' | 'refreshToken'>; // Присылает токены
+  handshake: Required<Pick<Handshake, 'token' | 'refreshToken'>>; // Присылает токены
   restartVoting: Voting<serialized>; // Перезапуск голосвания
   flip: Voting<serialized>; // Открытие карточек
   users: [Uuid, User][]; // Список пользователей
@@ -56,4 +57,5 @@ export interface WsEvent<serialized = true> {
   user: User; // Информация о пользователе
   checkAlias: { success: boolean } // Проверка адреса на доступность
   limitsError: { limits: Partial<UserLimits> };
+  emailCodeError: {};
 }

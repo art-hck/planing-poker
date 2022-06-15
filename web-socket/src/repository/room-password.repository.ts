@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { Collection } from 'mongodb';
 import { Uuid } from '../../../common/models';
-import { Repository } from '../models/repository';
+import { Repository } from '../models';
 import { serialize } from '../utils/set-map-utils';
 
 type RoomPassword = { roomId: Uuid, token: string };

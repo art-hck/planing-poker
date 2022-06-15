@@ -1,9 +1,10 @@
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { Room, User } from '../../../common/models';
 import { Config } from '../config';
-import { NotFoundError, RoutePayload } from '../models';
-import { DeniedError } from '../models/denied-error.ts';
-import { googleRepo, refreshTokenRepo, roomRepo, usersRepo } from '../mongo';
+import { NotFoundError } from '../errors/not-found-error';
+import { RoutePayload } from '../models';
+import { DeniedError } from '../errors/denied-error';
+import { emailRepo, googleRepo, refreshTokenRepo, roomRepo, usersRepo } from '../mongo';
 import { connections } from '../repository/connections.repository';
 import { GoogleAccount } from '../repository/google.repository';
 import { jwtSign, verifyToken } from '../utils/token-utils';
@@ -15,23 +16,25 @@ export class AuthController {
   static async handshake(r: RoutePayload<'handshake'>) {
     const { payload, session, userId, send } = r;
     const { jwtSecret, jwtRtSecret, jwtExp, jwtRtExp } = Config;
-    const { name, role, password, googleCode, token, refreshToken } = payload;
+    const { name, role, password, googleCode, email, emailCode, token, refreshToken } = payload;
     let user: User | undefined;
-    let googleAccount: GoogleAccount;
-    switch (true) {
-      case !!name:
-        if (password && password !== '123123') throw new DeniedError();
-        user = await usersRepo.register({ name, role, su: !!password, verified: false });
-        break;
-      case !!googleCode:
-        googleAccount = await googleRepo.get(googleCode);
-        user =
-          (await googleRepo.getLinkedUser(googleAccount.id)) || // Пытаемся получить связанного пользователя
-          (await usersRepo.find(userId)) || // Или несвязанного
-          (await usersRepo.register({ name: googleAccount.name, su: false, verified: true })); // Тогда регаем
+    if (password && password !== '123123') throw new DeniedError();
 
-        await googleRepo.register(googleAccount, user.id); // Сохраняем гугл аккаунт, если еще нет
-        break;
+    // Пробуем найти пользователя, если нет то регаем нового
+    const findOrRegister = async (name: string, verified = true) => {
+      return (await usersRepo.find(userId)) || (await usersRepo.register({ name, role, su: !!password, verified }));
+    };
+
+    if (email && emailCode) {
+      user = (await emailRepo.getLinkedUser(email)) || (await findOrRegister( name || email));
+      await emailRepo.link(email, emailCode, user.id); // Связываем почту и пользователя, если еще нет
+    } else if (googleCode) {
+      const googleAccount = await googleRepo.get(googleCode);
+      user = (await googleRepo.getLinkedUser(googleAccount.id)) || (await findOrRegister( googleAccount.name));
+
+      await googleRepo.register(googleAccount, user.id); // Сохраняем гугл аккаунт, если еще нет
+    } else if (name) {
+      user = await findOrRegister(name, false);
     }
 
     session.token = token ?? (user ? jwtSign({ id: user.id }, jwtSecret, jwtExp) : session.token);
@@ -64,6 +67,9 @@ export class AuthController {
     });
 
     session.refreshToken && await refreshTokenRepo.delete(session.refreshToken);
+
+    delete session.token;
+    delete session.refreshToken;
   }
 
   /**
@@ -85,20 +91,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * Редактирование пользователя
-   */
-  static async edit(r: RoutePayload<'editUser'>) {
-    const { payload: { name, role }, userId, broadcast, send } = r;
-    let user = await usersRepo.find(userId);
-    if (!user) throw new NotFoundError(`UserId: ${userId}`);
-    user = { ...user, name, role };
-
-    usersRepo.update(user).then(() => user && send('user', user));
-
-    await roomRepo.rooms.forEach(async room => {
-      if (!connections.get(room.id)?.has(userId)) return;
-      broadcast('users', await usersRepo.list(room.id), room.id);
-    });
+  static async verifyEmail(r: RoutePayload<'verifyEmail'>) {
+    emailRepo.verify(r.payload.email);
   }
 }

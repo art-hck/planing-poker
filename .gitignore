@@ -36,3 +36,4 @@ environment.*.ts
 .env
 mongo
 certbot
+/smtp/**/*.key

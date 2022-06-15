@@ -2,7 +2,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { Collection } from 'mongodb';
 import { Uuid } from '../../../common/models';
 import { Config } from '../config';
-import { Repository } from '../models/repository';
+import { Repository } from '../models';
 import { usersRepo } from '../mongo';
 
 export interface GoogleAccount {

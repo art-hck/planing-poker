@@ -4,6 +4,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -50,7 +51,8 @@ import { UserRouteComponent } from './components/user/user.route';
     MatSelectModule,
     MatMenuModule,
     MatBottomSheetModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerWhenStable:30000' })
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerWhenStable:30000' }),
+    MatSlideToggleModule
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent],

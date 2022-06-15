@@ -1,19 +1,31 @@
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <h1 mat-dialog-title>Введите имя</h1>
-  <div mat-dialog-content>
-      <div>
-        <mat-form-field appearance="outline" hideRequiredMarker>
-          <mat-label>Имя</mat-label>
-          <input matInput formControlName="name">
-        </mat-form-field>
-      </div>
+<form [formGroup]='form' (ngSubmit)='submit(); ngForm.resetForm(form.value)' #ngForm='ngForm'>
+  <pp-dialog-toolbar [back]='isCodeStep' [closable]='false' (backEvent)='form.get("emailCode")?.disable()'>
+    <span>{{isCodeStep ? 'Введите код' : 'Авторизация'}}</span>
+  </pp-dialog-toolbar>
 
-    <div *ngIf='devMode'>
-      <mat-form-field appearance='outline' hideRequiredMarker>
-        <mat-label>Пароль</mat-label>
-        <input matInput formControlName='password' type='password'>
-      </mat-form-field>
-    </div>
+  <div mat-dialog-content *ngIf='!isCodeStep'>
+    <mat-form-field appearance='outline' hideRequiredMarker>
+      <mat-label>Имя</mat-label>
+      <input matInput formControlName='name'>
+    </mat-form-field>
+
+    <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix' *ngIf='form.get("email") as c'>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName='email'>
+      <mat-slide-toggle matSuffix [checked]='form.get("email")?.disabled' (change)='$event.checked ? c?.disable() : c?.enable()'>
+        <div class='app-flex-center'>
+          <span>Анонимно&nbsp;</span>
+          <mat-icon matTooltip='Вы сможете голосовать, но не сможете создавать комнаты' matTooltipClass='app-big-tooltip' color='gray'>
+            help_outline
+          </mat-icon>
+        </div>
+      </mat-slide-toggle>
+    </mat-form-field>
+
+    <mat-form-field appearance='outline' hideRequiredMarker *ngIf='form.get("password")?.enabled'>
+      <mat-label>Пароль</mat-label>
+      <input matInput formControlName='password' type='password'>
+    </mat-form-field>
 
     <div class='team-roles'>
       <mat-button-toggle-group formControlName='role' [class.mat-error]='true'>
@@ -28,10 +40,20 @@
       </mat-form-field>
     </div>
   </div>
+
+  <div mat-dialog-content *ngIf='isCodeStep'>
+    <p>Мы отправили 6-значный код на адрес <span class='app-strong'>{{form.value.email}}</span>.</p>
+    <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix'>
+      <mat-label>Код доступа</mat-label>
+      <input matInput formControlName='emailCode' pattern='\d*' (keydown)='preventNonNumber($event)' ppAutoFocus>
+      <span matSuffix class='mat-gray'>{{timer$ | async}}</span>
+    </mat-form-field>
+  </div>
+
   <div mat-dialog-actions>
-    <mat-error *ngIf="devMode">Superuser mode activated</mat-error>
-    <div class="flex-space"></div>
-    <a mat-stroked-button [href]='googleLink'><mat-icon svgIcon="google"></mat-icon>&nbsp; Войти с Google</a>
-    <button type="submit" mat-flat-button color="primary">Войти</button>
+    <div class='flex-space'></div>
+    <a mat-stroked-button [href]='googleLink'>
+      <mat-icon svgIcon='google'></mat-icon>&nbsp; Войти с Google</a>
+    <button mat-flat-button color='primary'>Войти</button>
   </div>
 </form>

@@ -4,6 +4,7 @@ import { GoogleRepository } from './repository/google.repository';
 import { RefreshTokenRepository } from './repository/refresh-token.repository';
 import { RoomPasswordRepository } from './repository/room-password.repository';
 import { RoomRepository } from './repository/room.repository';
+import { UserEmailRepository } from './repository/user-email.repository';
 import { UserLimitsRepository } from './repository/user-limits.repository';
 import { UserRepository } from './repository/user.repository';
 import { VotingRepository } from './repository/voting.repository';
@@ -16,6 +17,7 @@ export const votingRepo = new VotingRepository();
 export const usersRepo = new UserRepository();
 export const limitsRepo = new UserLimitsRepository();
 export const googleRepo = new GoogleRepository();
+export const emailRepo = new UserEmailRepository();
 
 const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, googleRepo, roomPasswordRepo];
 const { dbName, dbPassword, dbUsername, dbHost, dbPort } = Config;

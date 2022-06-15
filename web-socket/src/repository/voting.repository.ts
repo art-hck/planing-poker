@@ -1,6 +1,6 @@
 import { Collection } from 'mongodb';
 import { Room, Uuid, Voting } from '../../../common/models';
-import { Repository } from '../models/repository';
+import { Repository } from '../models';
 import { roomRepo, usersRepo, votingRepo } from '../mongo';
 import { deserialize, serialize } from '../utils/set-map-utils';
 

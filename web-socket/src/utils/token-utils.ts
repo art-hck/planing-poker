@@ -2,8 +2,7 @@ import * as jwt from 'jsonwebtoken';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { Token, User, Uuid } from '../../../common/models';
 import { Config } from '../config';
-import { RoutePayload } from '../models';
-import { TokenPayload } from '../models/token-payload';
+import { RoutePayload, TokenPayload } from '../models';
 import { refreshTokenRepo } from '../mongo';
 
 export function verifyToken(r: RoutePayload, sendHandshake?: boolean): Uuid {

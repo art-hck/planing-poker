@@ -8,7 +8,7 @@
   <div mat-dialog-content *ngIf='me.verified'>
     <mat-form-field appearance='outline' hideRequiredMarker>
       <mat-label>Название</mat-label>
-      <input matInput formControlName='name' cdkFocusInitial>
+      <input matInput formControlName='name' ppAutoFocus>
     </mat-form-field>
 
     <h4 *ngIf='!customize' [align]="'center'" class='mat-gray'>

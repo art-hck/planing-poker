@@ -20,7 +20,9 @@ export class AuthGuard implements CanActivate {
         const token = window?.localStorage.getItem('token');
         const refreshToken = window?.localStorage.getItem('refreshToken');
 
-        return token ? of({ token, refreshToken }) : this.dialog.open(AuthComponent, { disableClose: true, id: 'auth-modal' });
+        return token ? of({ token, refreshToken }) : this.dialog.big(AuthComponent, {
+          width: '580px',
+          disableClose: true, id: 'auth-modal' });
       }),
     ).subscribe((handshake) => this.authService.login$.next(handshake));
   }

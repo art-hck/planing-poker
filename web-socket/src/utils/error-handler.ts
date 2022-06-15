@@ -1,10 +1,12 @@
 import { GaxiosError } from 'gaxios/build/src/common';
 import { JsonWebTokenError } from 'jsonwebtoken';
-import { NotFoundError, RoutePayload } from '../models';
-import { DeniedError } from '../models/denied-error.ts';
-import { InvalidParamsError } from '../models/invalid-params-error';
-import { LimitsError } from '../models/limits-error';
-import { RoomAccessError } from '../models/room-access-error';
+import { HandshakeCodeError } from '../errors/handshake-code-error';
+import { NotFoundError } from '../errors/not-found-error';
+import { RoutePayload } from '../models';
+import { DeniedError } from '../errors/denied-error';
+import { InvalidParamsError } from '../errors/invalid-params-error';
+import { LimitsError } from '../errors/limits-error';
+import { RoomAccessError } from '../errors/room-access-error';
 import { routes } from '../routes';
 import { log } from './log';
 
@@ -33,6 +35,10 @@ export function errorHandler(e: unknown, route: RoutePayload) {
         break;
       case e instanceof LimitsError:
         route.send('limitsError', { limits: (e as LimitsError).limits });
+        break;
+      case e instanceof HandshakeCodeError:
+        log.error('WebSocket', `Недействительный handshake-код`);
+        route.send('emailCodeError', {});
         break;
       default:
         log.error('WebSocket', e.stack);

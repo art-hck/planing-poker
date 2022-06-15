@@ -113,6 +113,10 @@ export class AppComponent implements OnInit {
         this.authService.logout$.next();
       },
       invalidToken: () => this.authService.logout$.next({ emitEvent: false }),
+      emailCodeError: () => {
+        this.authService.logout$.next({ emitEvent: false });
+        this.snackBar.open('Неверный код. Попробуйте еще раз', 'Ну ок');
+      },
       limitsError: ({ limits }) => this.snackBar.openFromComponent(LimitSnackbarComponent, { data: limits }),
       feedback: ({ success }) => {
         if (success) {

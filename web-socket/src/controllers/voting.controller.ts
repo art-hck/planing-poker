@@ -1,6 +1,7 @@
 import * as uuid from 'uuid';
 import { Uuid, Voting } from '../../../common/models';
-import { NotFoundError, RoutePayload } from '../models';
+import { NotFoundError } from '../errors/not-found-error';
+import { RoutePayload } from '../models';
 import { roomRepo, votingRepo } from '../mongo';
 
 export class VotingController {

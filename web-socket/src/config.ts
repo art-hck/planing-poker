@@ -22,5 +22,7 @@ export const Config = {
   googleClientSecret: process.env['GOOGLE_CLIENT_SECRET'],
   googleRedirectUri: process.env['GOOGLE_REDIRECT_URI'],
   limitsMaxRooms: process.env['LIMITS_MAX_ROOMS'],
-  limitsMaxVotings: process.env['LIMITS_MAX_VOTINGS']
+  limitsMaxVotings: process.env['LIMITS_MAX_VOTINGS'],
+  mailHost: process.env['MAILHOST'],
+  mailFrom: process.env['MAILFROM']
 };
