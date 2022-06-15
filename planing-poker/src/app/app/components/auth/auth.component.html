@@ -1,4 +1,4 @@
-<form [formGroup]='form' (ngSubmit)='submit(); ngForm.resetForm(form.value)' #ngForm='ngForm'>
+<form [formGroup]='form' (ngSubmit)='submit()'>
   <pp-dialog-toolbar [back]='isCodeStep' [closable]='false' (backEvent)='form.get("emailCode")?.disable()'>
     <span>{{isCodeStep ? 'Введите код' : 'Авторизация'}}</span>
   </pp-dialog-toolbar>
@@ -41,14 +41,15 @@
     </div>
   </div>
 
-  <div mat-dialog-content *ngIf='isCodeStep'>
+  <!-- Workaround: оборачиваем в форму, что бы при первом сабмите emailCode не подсвечивался как invalid (т.к. form.submitted: false) -->
+  <form mat-dialog-content *ngIf='isCodeStep' [formGroup]='form' (ngSubmit)='submit()'>
     <p>Мы отправили 6-значный код на адрес <span class='app-strong'>{{form.value.email}}</span>.</p>
     <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix'>
       <mat-label>Код доступа</mat-label>
       <input matInput formControlName='emailCode' pattern='\d*' (keydown)='preventNonNumber($event)' ppAutoFocus>
       <span matSuffix class='mat-gray'>{{timer$ | async}}</span>
     </mat-form-field>
-  </div>
+  </form>
 
   <div mat-dialog-actions>
     <div class='flex-space'></div>
