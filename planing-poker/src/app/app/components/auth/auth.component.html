@@ -12,9 +12,9 @@
     <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix' *ngIf='form.get("email") as c'>
       <mat-label>Email</mat-label>
       <input matInput formControlName='email'>
-      <mat-slide-toggle matSuffix [checked]='form.get("email")?.disabled' (change)='$event.checked ? c?.disable() : c?.enable()'>
+      <mat-slide-toggle matSuffix [checked]='form.get("email")?.disabled' (change)='$event.checked ? c?.disable() : c?.enable()' color='primary'>
         <div class='app-flex-center'>
-          <span>Анонимно&nbsp;</span>
+          <span>Анонимно&nbsp;&nbsp;</span>
           <mat-icon matTooltip='Вы сможете голосовать, но не сможете создавать комнаты' matTooltipClass='app-big-tooltip' color='gray'>
             help_outline
           </mat-icon>

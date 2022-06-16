@@ -58,7 +58,7 @@ export class UserEmailRepository implements Repository<UserEmail> {
 
     log.success('Nodemailer', 'Code ' + code);
 
-    if (Config.mailHost && Config.mailFrom) {
+    if (Config.mailFrom) {
       const data = {
         from: Config.mailFrom,
         to: email,
