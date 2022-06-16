@@ -46,7 +46,7 @@
     <p>Мы отправили 6-значный код на адрес <span class='app-strong'>{{form.value.email}}</span>.</p>
     <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix'>
       <mat-label>Код доступа</mat-label>
-      <input matInput formControlName='emailCode' pattern='\d*' (keydown)='preventNonNumber($event)' ppAutoFocus>
+      <input matInput formControlName='emailCode' inputmode='numeric' (keydown)='preventNonNumber($event)' ppAutoFocus>
       <span matSuffix class='mat-gray'>{{timer$ | async}}</span>
     </mat-form-field>
   </form>
