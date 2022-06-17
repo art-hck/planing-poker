@@ -77,7 +77,7 @@ export class AuthComponent implements OnDestroy {
   submit() {
     if (!this.isCodeStep && this.form.get('email')?.enabled && this.form.get('email')?.valid) {
       this.form.get('emailCode')?.reset({ value: '', disabled: false });
-      this.pp.verifyEmail(this.form.value.email ?? '');
+      this.pp.sendCode(this.form.value.email ?? '');
     } else if (this.form.valid) {
       this.dialogRef.close(this.form.value);
     }

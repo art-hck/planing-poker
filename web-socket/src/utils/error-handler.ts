@@ -1,6 +1,6 @@
 import { GaxiosError } from 'gaxios/build/src/common';
 import { JsonWebTokenError } from 'jsonwebtoken';
-import { HandshakeCodeError } from '../errors/handshake-code-error';
+import { EmailCodeError } from '../errors/email-code-error';
 import { NotFoundError } from '../errors/not-found-error';
 import { RoutePayload } from '../models';
 import { DeniedError } from '../errors/denied-error';
@@ -36,7 +36,7 @@ export function errorHandler(e: unknown, route: RoutePayload) {
       case e instanceof LimitsError:
         route.send('limitsError', { limits: (e as LimitsError).limits });
         break;
-      case e instanceof HandshakeCodeError:
+      case e instanceof EmailCodeError:
         log.error('WebSocket', `Недействительный handshake-код`);
         route.send('emailCodeError', {});
         break;

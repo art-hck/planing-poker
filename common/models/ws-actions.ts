@@ -12,7 +12,7 @@ export interface WsAction {
   handshake: Handshake; // Авторизация + регистрация
   bye: {}; // Логаут + удаление временного аккаунта
   linkGoogle: { token: Token, googleCode: string }; // Привязать google аккаунт
-  verifyEmail: { email: string }; // Запрос подтверждения почты
+  sendCode: { email: string }; // Запрос подтверждения почты
   vote: { point: string, votingId: Uuid }; // Проголосовать
   unvote: { votingId: Uuid }; // Отменить голос
   flip: { votingId: Uuid }; // Открыть карты

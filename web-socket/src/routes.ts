@@ -9,7 +9,7 @@ export const routes: Routes = {
   handshake: AuthController.handshake,
   bye: AuthController.bye,
   linkGoogle: AuthController.linkGoogle,
-  verifyEmail: AuthController.verifyEmail,
+  sendCode: AuthController.sendCode,
   joinRoom: RoomController.join,
   disconnectRoom: RoomController.disconnect,
   leaveRoom: RoomController.leave,

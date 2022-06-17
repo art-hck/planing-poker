@@ -26,12 +26,12 @@ export class AuthController {
     };
 
     if (email && emailCode) {
+      const emailAccount = await emailRepo.get(email, emailCode);
       user = (await emailRepo.getLinkedUser(email)) || (await findOrRegister( name || email));
-      await emailRepo.link(email, emailCode, user.id); // Связываем почту и пользователя, если еще нет
+      await emailRepo.link(emailAccount, user.id); // Связываем почту и пользователя, если еще нет
     } else if (googleCode) {
       const googleAccount = await googleRepo.get(googleCode);
       user = (await googleRepo.getLinkedUser(googleAccount.id)) || (await findOrRegister( googleAccount.name));
-
       await googleRepo.register(googleAccount, user.id); // Сохраняем гугл аккаунт, если еще нет
     } else if (name) {
       user = await findOrRegister(name, false);
@@ -91,7 +91,8 @@ export class AuthController {
     }
   }
 
-  static async verifyEmail(r: RoutePayload<'verifyEmail'>) {
-    emailRepo.verify(r.payload.email);
+  static async sendCode(r: RoutePayload<'sendCode'>) {
+    const { email } = r.payload;
+    emailRepo.sendCode(email);
   }
 }
