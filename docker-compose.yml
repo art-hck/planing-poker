@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./letsencrypt/.well-known:/usr/share/nginx/html/.well-known
+      - ./certbot/webroot/.well-known:/usr/share/nginx/html/.well-known
     restart: unless-stopped
   ws:
     ports:
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./certbot/etc:/etc/letsencrypt
       - ./certbot/var:/var/lib/letsencrypt
-      - ./letsencrypt:/usr/share/letsencrypt
+      - ./certbot/webroot:/usr/share/letsencrypt
 #    command: certonly --staging --webroot --webroot-path=/usr/share/letsencrypt --email 2111072@gmail.com --agree-tos --no-eff-email --force-renewal -d planing-poker.ru
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 24h & wait $${!}; done;'"
     restart: unless-stopped
@@ -49,8 +49,8 @@ services:
       - "25:25"
     image: namshi/smtp
     volumes:
-      - ./smtp/config:/etc/exim4/_docker_additional_macros:ro
-      - ./smtp/private.key:/etc/exim4/domain.key:ro
+      - ./smtp/config:/etc/exim4/_docker_additional_macros
+      - ${MAIL_DKIM_PRIVATE}:/etc/exim4/private.key
     environment:
-      MAILNAME: ${MAILHOST}
-      RELAY_NETWORKS: ${RELAY_NETWORKS}
+      MAILNAME: ${MAIL_HOST:-localhost}
+      RELAY_NETWORKS: ${MAIL_NETWORKS:-:192.168.0.0/24}

@@ -52,21 +52,22 @@ export class UserEmailRepository implements Repository<UserEmail> {
   verify(email: string) {
     const code = Math.round(Math.random() * +('1' + '0'.repeat(6))).toString().padStart(6, '0');
     const codeExp = +new Date(+new Date() + 5 * 60 * 1000);
+    const { host, from } = Config.mail;
+
     this.collection?.updateOne({ email }, { $set: serialize({ email, code, codeExp }) }, { upsert: true });
 
     this.userEmails.set(email, { ...this.userEmails.get(email) ?? {}, email, code, codeExp });
 
-    log.success('Nodemailer', 'Code ' + code);
-
-    if (Config.mailFrom) {
-      const data = {
-        from: Config.mailFrom,
+    if (host && from) {
+      nodemailer.createTransport({ host, port: 25 }).sendMail({
+        from,
         to: email,
         subject: 'Verification code here',
         text: `Your code: ${code}`,
         html: `<h1>Your code: <b>${code}</b></h1>`
-      };
-      nodemailer.createTransport({ host: 'planing-poker.ru', port: 25 }).sendMail(data);
+      });
+    } else {
+      log.cyan('Websocket', `Verify code ${code}`);
     }
   }
 

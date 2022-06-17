@@ -23,6 +23,8 @@ export const Config = {
   googleRedirectUri: process.env['GOOGLE_REDIRECT_URI'],
   limitsMaxRooms: process.env['LIMITS_MAX_ROOMS'],
   limitsMaxVotings: process.env['LIMITS_MAX_VOTINGS'],
-  mailHost: process.env['MAILHOST'],
-  mailFrom: process.env['MAILFROM']
+  mail: {
+    host: process.env['MAIL_HOST'],
+    from: process.env['MAIL_FROM']
+  }
 };

@@ -1,0 +1,30 @@
+server {
+  listen ${NGINX_SERVER_PORT};
+  include ssl.conf*;
+  server_name _;
+  return 404;
+}
+
+server {
+  listen ${NGINX_SERVER_PORT};
+  server_name ${NGINX_SERVER_NAME};
+
+  gzip on;
+  gzip_types      text/plain application/javascript text/css;
+  gzip_min_length 1000;
+
+  include ssl.conf*;
+
+  root /usr/share/nginx/html;
+  index index.html;
+
+  location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+    expires 30d;
+    add_header Vary Accept-Encoding;
+    access_log off;
+  }
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}

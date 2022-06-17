@@ -1,3 +1,7 @@
-dist
-node_modules
+.git
+.idea
+.run
 mongo
+
+*/node_modules
+*/.angular
