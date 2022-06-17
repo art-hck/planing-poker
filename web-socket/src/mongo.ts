@@ -19,7 +19,7 @@ export const limitsRepo = new UserLimitsRepository();
 export const googleRepo = new GoogleRepository();
 export const emailRepo = new UserEmailRepository();
 
-const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, googleRepo, roomPasswordRepo];
+const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, googleRepo, roomPasswordRepo, emailRepo];
 const { dbName, dbPassword, dbUsername, dbHost, dbPort } = Config;
 const mongo = new MongoClient(`mongodb://${dbUsername}:${dbPassword}@${dbHost}:${dbPort}`);
 
