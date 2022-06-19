@@ -20,6 +20,9 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
+        "urls": [
+          "https://fonts.gstatic.com/**"
+        ],
         "files": [
           "/assets/**",
           "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
