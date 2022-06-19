@@ -1,6 +1,6 @@
 server {
   listen ${NGINX_SERVER_PORT};
-  include ssl.conf*;
+  include ssl*.conf;
   server_name _;
   return 404;
 }
@@ -13,7 +13,7 @@ server {
   gzip_types      text/plain application/javascript text/css;
   gzip_min_length 1000;
 
-  include ssl.conf*;
+  include ssl*.conf;
 
   root /usr/share/nginx/html;
   index index.html;
