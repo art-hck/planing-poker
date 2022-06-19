@@ -17,7 +17,7 @@ export class RoomUpdateRouteComponent implements OnDestroy {
     private route: ActivatedRoute,
     private history: HistoryService
   ) {
-    this.pp.room$.pipe(
+    this.pp.roomShared$.pipe(
       take(1),
       switchMap(room => this.dialog.big(RoomCreateComponent, { data: { room } }).pipe(map(r => [room, r]))),
       takeUntil(merge(this.history.urlChanges$, this.destroy$))

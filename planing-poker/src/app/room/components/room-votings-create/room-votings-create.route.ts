@@ -12,7 +12,7 @@ export class RoomVotingsCreateRouteComponent implements OnDestroy {
 
   constructor(private dialog: DialogService, private pp: PlaningPokerWsService, private route: ActivatedRoute, private history: HistoryService) {
     this.dialog.big(RoomVotingsCreateComponent).pipe(
-      withLatestFrom(this.pp.room$),
+      withLatestFrom(this.pp.roomShared$),
       takeUntil(merge(this.history.urlChanges$, this.destroy$))
     ).subscribe(([data, room]) => {
       if (data) {
