@@ -1,9 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { RolesName, User } from '@common/models';
-import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'pp-user',
@@ -19,16 +18,6 @@ export class UserComponent {
   });
   edit = false;
 
-  readonly googleLink: string = 'https://accounts.google.com/o/oauth2/v2/auth' + this.router.createUrlTree(['.'], {
-    queryParams: {
-      access_type: 'offline',
-      scope: 'https://www.googleapis.com/auth/userinfo.profile',
-      client_id: environment.googleClientId,
-      redirect_uri: environment.googleRedirectUri,
-      response_type: 'code'
-    }
-  }).toString().slice(1);
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { user: User }, private fb: FormBuilder, private router: Router) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { user: User }, private fb: FormBuilder, public authService: AuthService) {
   }
 }

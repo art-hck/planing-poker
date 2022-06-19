@@ -5,10 +5,10 @@ import { usersRepo } from '../mongo';
 
 export class FeedbackController {
   static send({ payload: { subject, message }, userId, send }: RoutePayload<'feedback'>) {
-    const { tmChatId } = Config;
-    if (!tmChatId) throw new Error('Chat id not provided');
+    const { chatId } = Config.telegram;
+    if (!chatId) throw new Error('Chat id not provided');
     bot?.telegram
-      .sendMessage(tmChatId, `<b>${subject}</b>\nОт: <b>${usersRepo.get(userId)?.name}</b>\n${message}`, { parse_mode: 'HTML' })
+      .sendMessage(chatId, `<b>${subject}</b>\nОт: <b>${usersRepo.get(userId)?.name}</b>\n${message}`, { parse_mode: 'HTML' })
       .then(() => send('feedback', { success: true }))
       .catch(() => send('feedback', { success: false }));
   }

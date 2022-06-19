@@ -2,14 +2,14 @@ import { Telegraf } from 'telegraf';
 import { Config } from './config';
 import { log } from './utils/log';
 
-const { tmBotToken } = Config;
-export const bot = tmBotToken ? new Telegraf(tmBotToken) : undefined;
+const { token } = Config.telegram;
+export const bot = token ? new Telegraf(token) : undefined;
 
 if (bot) {
   log.normal('Telegram', `Starting...`);
 
   bot
     .launch()
-    .then(() => log.success('Telegram', `Started with ${tmBotToken}`))
+    .then(() => log.success('Telegram', `Started with ${token}`))
     .catch(e => log.error('Telegram', e));
 }

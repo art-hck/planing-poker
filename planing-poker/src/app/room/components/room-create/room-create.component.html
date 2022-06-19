@@ -92,7 +92,7 @@
     <button mat-flat-button color='primary' *ngIf='data?.room && me.verified'>Сохранить</button>
     <ng-container *ngIf='!me.verified'>
       <button mat-stroked-button matTooltip='Временно недоступно' matTooltipPosition='above'>По почте</button>
-      <a mat-stroked-button [href]='googleLink'>
+      <a mat-stroked-button [href]='authService.googleAuthLink'>
         <mat-icon svgIcon='google'></mat-icon>
         <span>&nbsp;Привязать аккаунт Google</span>
       </a>

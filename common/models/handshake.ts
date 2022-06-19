@@ -5,6 +5,7 @@ export interface Handshake {
   name?: string;
   password?: string;
   googleCode?: string;
+  googleRedirectUri?: string;
   email?: string;
   emailCode?: string;
   role?: Role;

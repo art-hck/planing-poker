@@ -15,8 +15,8 @@ export class AuthController {
    */
   static async handshake(r: RoutePayload<'handshake'>) {
     const { payload, session, userId, send } = r;
-    const { jwtSecret, jwtRtSecret, jwtExp, jwtRtExp } = Config;
-    const { name, role, password, googleCode, email, emailCode, token, refreshToken } = payload;
+    const { secret, rt, exp } = Config.jwt;
+    const { name, role, password, googleCode, googleRedirectUri, email, emailCode, token, refreshToken } = payload;
     let user: User | undefined;
     if (password && password !== '123123') throw new DeniedError();
 
@@ -29,16 +29,16 @@ export class AuthController {
       const emailAccount = await emailRepo.get(email, emailCode);
       user = (await emailRepo.getLinkedUser(email)) || (await findOrRegister( name || email));
       await emailRepo.link(emailAccount, user.id); // Связываем почту и пользователя, если еще нет
-    } else if (googleCode) {
-      const googleAccount = await googleRepo.get(googleCode);
+    } else if (googleCode && googleRedirectUri) {
+      const googleAccount = await googleRepo.get(googleCode, googleRedirectUri);
       user = (await googleRepo.getLinkedUser(googleAccount.id)) || (await findOrRegister( googleAccount.name));
       await googleRepo.register(googleAccount, user.id); // Сохраняем гугл аккаунт, если еще нет
     } else if (name) {
       user = await findOrRegister(name, false);
     }
 
-    session.token = token ?? (user ? jwtSign({ id: user.id }, jwtSecret, jwtExp) : session.token);
-    session.refreshToken = refreshToken ?? (user ? jwtSign({ id: user.id }, jwtRtSecret, jwtRtExp) : session.refreshToken);
+    session.token = token ?? (user ? jwtSign({ id: user.id }, secret, exp) : session.token);
+    session.refreshToken = refreshToken ?? (user ? jwtSign({ id: user.id }, rt.secret, rt.exp) : session.refreshToken);
 
     const id = verifyToken(r, true);
 
@@ -77,9 +77,9 @@ export class AuthController {
    */
   static async linkGoogle(r: RoutePayload<'linkGoogle'>) {
     const { payload, userId, send } = r;
-    const { googleCode } = payload;
+    const { googleCode, googleRedirectUri } = payload;
     const user = await usersRepo.find(userId);
-    const googleAccount: GoogleAccount = await googleRepo.get(googleCode);
+    const googleAccount: GoogleAccount = await googleRepo.get(googleCode, googleRedirectUri);
 
     if (!user) throw new NotFoundError(`UserId: ${userId}`);
 

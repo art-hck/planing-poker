@@ -16,7 +16,8 @@ export class AuthGoogleComponent implements OnDestroy {
       .subscribe(params => {
         const token = window?.localStorage.getItem('token'); // Если есть токен, то связываем пользователя, если нет - регестрируем
         const googleCode = params['code'];
-        token ? this.pp.linkGoogle(token, params['code']) : this.authService.login$.next({ googleCode } as Handshake);
+        const googleRedirectUri = this.authService.googleRedirectUri;
+        token ? this.pp.linkGoogle(token, params['code'], googleRedirectUri) : this.authService.login$.next({ googleCode, googleRedirectUri } as Handshake);
       });
 
     this.pp.events({

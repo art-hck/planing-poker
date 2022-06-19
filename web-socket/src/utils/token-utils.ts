@@ -6,7 +6,7 @@ import { RoutePayload, TokenPayload } from '../models';
 import { refreshTokenRepo } from '../mongo';
 
 export function verifyToken(r: RoutePayload, sendHandshake?: boolean): Uuid {
-  const { jwtSecret, jwtRtSecret, jwtExp, jwtRtExp } = Config;
+  const { secret, rt, exp } = Config.jwt;
   const { send, session: s } = r;
   const rtRepo = refreshTokenRepo;
   let id: User['id'] | undefined;
@@ -14,12 +14,12 @@ export function verifyToken(r: RoutePayload, sendHandshake?: boolean): Uuid {
   if (!s.token || !s.refreshToken) throw new JsonWebTokenError('');
 
   try {
-    id = jwtVerify(s.token, jwtSecret)?.id; // проверяем и декодируем токен
+    id = jwtVerify(s.token, secret)?.id; // проверяем и декодируем токен
   } catch (e) {
     // Если токен протух, но есть рефреш токен который еще не использовался
     if (e instanceof TokenExpiredError && rtRepo.has(s.refreshToken)) {
       rtRepo.delete(s.refreshToken).then(); // использованый токен удаляем
-      id = jwtVerify(s.refreshToken, jwtRtSecret)?.id; // проверяем и декодируем рефреш токен
+      id = jwtVerify(s.refreshToken, rt.secret)?.id; // проверяем и декодируем рефреш токен
       s.token = s.refreshToken = undefined; // удаляем данные клиента, т.к. ниже их нужно перезаписать
       sendHandshake = true;
     } else throw e;
@@ -29,8 +29,8 @@ export function verifyToken(r: RoutePayload, sendHandshake?: boolean): Uuid {
     throw new JsonWebTokenError('');
   }
 
-  s.token = s.token ?? jwtSign({ id }, jwtSecret, jwtExp);
-  s.refreshToken = s.refreshToken ?? jwtSign({ id }, jwtRtSecret, jwtRtExp);
+  s.token = s.token ?? jwtSign({ id }, secret, exp);
+  s.refreshToken = s.refreshToken ?? jwtSign({ id }, rt.secret, rt.exp);
 
   rtRepo.create(s.refreshToken).then();
 

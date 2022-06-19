@@ -3,10 +3,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Router } from '@angular/router';
 import { RolesName } from '@common/models';
 import { debounceTime, distinctUntilChanged, filter, finalize, map, Subject, takeUntil, takeWhile, timer } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
 
 @Component({
@@ -37,21 +36,11 @@ export class AuthComponent implements OnDestroy {
     return !!this.form.get('emailCode')?.enabled;
   }
 
-  readonly googleLink: string = 'https://accounts.google.com/o/oauth2/v2/auth' + this.router.createUrlTree(['.'], {
-    queryParams: {
-      access_type: 'offline',
-      scope: 'https://www.googleapis.com/auth/userinfo.profile',
-      client_id: environment.googleClientId,
-      redirect_uri: environment.googleRedirectUri,
-      response_type: 'code'
-    }
-  }).toString().slice(1);
-
   constructor(
     public dialogRef: MatDialogRef<AuthComponent>,
     private fb: FormBuilder,
     private pp: PlaningPokerWsService,
-    private router: Router
+    public authService: AuthService
   ) {
     this.form?.valueChanges.pipe(debounceTime(400), filter(() => !!this.form.get('emailCode')?.valid), takeUntil(this.destroy$))
       .subscribe(() => this.submit());

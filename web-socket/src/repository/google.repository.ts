@@ -18,7 +18,6 @@ export interface GoogleAccount {
 export class GoogleRepository implements Repository<GoogleAccount> {
   readonly repositoryName = 'google';
   private collection?: Collection<GoogleAccount>;
-  private oAuth2Client = new OAuth2Client(Config.googleClientId, Config.googleClientSecret, Config.googleRedirectUri);
 
   init(collection: Collection<GoogleAccount>) {
     this.collection = collection;
@@ -27,11 +26,13 @@ export class GoogleRepository implements Repository<GoogleAccount> {
   /**
    * Получить инфу о гугл-аккаунте пользователя
    * @param code
+   * @param googleRedirectUri
    */
-  async get(code: string) {
-    const { tokens } = await this.oAuth2Client.getToken(code);
-    this.oAuth2Client.setCredentials(tokens);
-    const { data } = await this.oAuth2Client.request<GoogleAccount>({ url: 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json' });
+  async get(code: string, googleRedirectUri: string) {
+    const oAuth2Client = new OAuth2Client(Config.google.clientId, Config.google.clientSecret, googleRedirectUri);
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens);
+    const { data } = await oAuth2Client.request<GoogleAccount>({ url: 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json' });
     return data;
   }
 

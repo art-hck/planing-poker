@@ -8,8 +8,8 @@ export class UserLimitsRepository implements Repository<UserLimits> {
   readonly userLimits = new Map<Uuid, UserLimits>();
   private collection?: Collection<UserLimits>;
   private defaultUserLimits = {
-    maxRooms: Number(Config.limitsMaxRooms),
-    maxVotings: Number(Config.limitsMaxVotings)
+    maxRooms: Number(Config.limits.maxRooms),
+    maxVotings: Number(Config.limits.maxVotings)
   };
 
   init(collection: Collection<UserLimits>) {

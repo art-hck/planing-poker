@@ -38,8 +38,8 @@ export class PlaningPokerWsService implements PlaningPokerWsServiceType {
     this.ws.send('bye', {});
   }
 
-  linkGoogle(token: Token, googleCode: string) {
-    this.ws.send('linkGoogle', { token, googleCode }, { force: true });
+  linkGoogle(token: Token, googleCode: string, googleRedirectUri: string) {
+    this.ws.send('linkGoogle', { token, googleCode, googleRedirectUri }, { force: true });
   }
 
   sendCode(email: string) {

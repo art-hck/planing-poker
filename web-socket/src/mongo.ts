@@ -20,16 +20,16 @@ export const googleRepo = new GoogleRepository();
 export const emailRepo = new UserEmailRepository();
 
 const repoDeclaration = [refreshTokenRepo, roomRepo, votingRepo, usersRepo, googleRepo, roomPasswordRepo, emailRepo];
-const { dbName, dbPassword, dbUsername, dbHost, dbPort } = Config;
-const mongo = new MongoClient(`mongodb://${dbUsername}:${dbPassword}@${dbHost}:${dbPort}`);
+const { dbName, password, username, host, port } = Config.mongo;
+const mongo = new MongoClient(`mongodb://${username}:${password}@${host}:${port}`);
 
 log.normal('MongoDB', 'Connecting...');
 export const onMongoConnect = mongo.connect();
 onMongoConnect.then(() => {
-  log.success('MongoDB', `Started at ${dbPort} port`);
+  log.success('MongoDB', `Started at ${port} port`);
   const db = mongo.db(dbName);
   repoDeclaration.forEach(instance => instance.init(db.collection(instance.repositoryName) as Collection<any>));
-  mongo.on('serverHeartbeatFailed', () => log.cyan('MongoDB', 'HeartbeatFailed. Сервис продолжит работать, но данные не будут записаны в базу.'));
+  mongo.on('server  HeartbeatFailed', () => log.cyan('MongoDB', 'HeartbeatFailed. Сервис продолжит работать, но данные не будут записаны в базу.'));
 }).catch(e => {
   if (e instanceof MongoServerSelectionError) {
     log.cyan('MongoDB', 'ServerSelectionError. Сервис продолжит работать, но данные не будут записаны в базу.');

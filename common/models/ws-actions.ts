@@ -11,7 +11,7 @@ import { Voting } from './voting';
 export interface WsAction {
   handshake: Handshake; // Авторизация + регистрация
   bye: {}; // Логаут + удаление временного аккаунта
-  linkGoogle: { token: Token, googleCode: string }; // Привязать google аккаунт
+  linkGoogle: { token: Token, googleCode: string, googleRedirectUri: string }; // Привязать google аккаунт
   sendCode: { email: string }; // Запрос подтверждения почты
   vote: { point: string, votingId: Uuid }; // Проголосовать
   unvote: { votingId: Uuid }; // Отменить голос

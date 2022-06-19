@@ -12,10 +12,10 @@ import { log } from './utils/log';
 import { replacer } from './utils/set-map-utils';
 import { getUserId, verifyToken } from './utils/token-utils';
 
-const { wsPort, wsCert, wsKey } = Config;
-const server = wsCert && wsKey && createServer({ cert: readFileSync(wsCert), key: readFileSync(wsKey) });
+const { port, cert, key } = Config.ws;
+const server = cert && key && createServer({ cert: readFileSync(cert), key: readFileSync(key) });
 
-new WebSocketServer(server ? { server } : { port: Number(wsPort) }).on('connection', ws => {
+new WebSocketServer(server ? { server } : { port: Number(port) }).on('connection', ws => {
   const session: Session = {};
   const send: Send = (event, payload) => ws.send(JSON.stringify({ event, payload }, replacer));
   const payload = {};
@@ -43,7 +43,7 @@ new WebSocketServer(server ? { server } : { port: Number(wsPort) }).on('connecti
 });
 
 if (server) {
-  server.listen(wsPort);
+  server.listen(port);
 }
 
-log.success('WebSocket', `Started at ${wsPort} port`);
+log.success('WebSocket', `Started at ${port} port`);
