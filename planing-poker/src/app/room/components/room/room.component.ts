@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
-import { filter, map, merge, Observable, shareReplay, skip, startWith, Subject, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { filter, map, merge, Observable, shareReplay, skip, startWith, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
@@ -36,7 +36,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   );
   readonly destroy$ = new Subject<void>();
   readonly room$ = this.pp.room$.pipe(
-    take(1),
     tap(room => {
       this.titleService.set(room.name);
       this.title.setTitle(`${room.name} - PlaningPoker`);
