@@ -1,0 +1,11 @@
+server_names_hash_bucket_size  64;
+
+server {
+  listen 8080;
+  return 301 https://$host$request_uri;
+}
+
+server {
+    server_name www.${NGINX_SERVER_NAME};
+    return 301 $scheme://${NGINX_SERVER_NAME}$request_uri;
+}

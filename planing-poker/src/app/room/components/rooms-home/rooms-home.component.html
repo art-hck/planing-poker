@@ -8,26 +8,21 @@
   <ng-container *ngIf='rooms.length > 0'>
     <div class='room-cards'>
       <a [routerLink]="['room', room.alias || room.id]" *ngFor='let room of rooms'>
-        <mat-card>
+        <mat-card matRipple>
           <div mat-card-image [style.background-color]='room.name | stringToColor'>
             <span>{{ room.name | abbreviation }}</span>
           </div>
           <mat-card-header>
             <mat-card-title>{{room.name}}</mat-card-title>
-          </mat-card-header>
-        </mat-card>
-      </a>
-      <a routerLink='create'>
-        <mat-card>
-          <div mat-card-image>
-            <span>+</span>
-          </div>
-          <mat-card-header>
-            <mat-card-title>Создать комнату</mat-card-title>
+            <mat-card-subtitle>{{ room.users.length | pluralize: 'пользователь' : 'пользователя' : 'пользователей' }}</mat-card-subtitle>
           </mat-card-header>
         </mat-card>
       </a>
     </div>
+    <a mat-fab color="primary" routerLink='create'>
+      <mat-icon>add</mat-icon>
+    </a>
+
   </ng-container>
 </ng-container>
 <router-outlet></router-outlet>

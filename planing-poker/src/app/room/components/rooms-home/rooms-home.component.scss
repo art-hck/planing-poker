@@ -37,20 +37,27 @@ $max-width: 560px;
   min-width: 330px;
 
   @media screen and (max-width: $max-width) {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 90px);
-    justify-content: center;
-    grid-gap: 20px;
+    flex-direction: column;
     width: 100%;
+    padding: 0;
   }
 
   a {
     text-decoration: none;
     margin: 15px;
     cursor: pointer;
+    display: block;
 
     @media screen and (max-width: $max-width) {
       margin: 0;
+
+      &:not(:first-child) {
+        border-top: 1px mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 300) solid
+      }
+
+      &:last-child {
+        display: none;
+      }
     }
   }
 
@@ -60,6 +67,11 @@ $max-width: 560px;
 
     @media screen and (max-width: $max-width) {
       width: auto;
+      display: flex;
+      align-items: center;
+      box-shadow: none;
+      border-radius: 0;
+      padding: 12px;
     }
 
     ::ng-deep .mat-card-header-text {
@@ -77,11 +89,17 @@ $max-width: 560px;
       margin-bottom: 0;
 
       @media screen and (max-width: $max-width) {
-        font-size: 14px;
-        height: 18px;
+        font-size: 16px;
+        height: auto;
       }
     }
-
+    .mat-card-subtitle {
+      display: none;
+      @media screen and (max-width: $max-width) {
+        display: block;
+        margin: 0;
+      }
+    }
 
     .mat-card-image {
       font-size: 3em;
@@ -93,8 +111,12 @@ $max-width: 560px;
       background: mat.get-color-from-palette(mat.define-palette(mat.$gray-palette), 300);
 
       @media screen and (max-width: $max-width) {
-        font-size: 2em;
-        height: 70px;
+        font-size: 1.5em;
+        font-weight: 500;
+        margin: 0 12px 0 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
       }
 
       span {
@@ -108,4 +130,10 @@ $max-width: 560px;
       transform: scale(1.2);
     }
   }
+}
+
+.mat-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
 }

@@ -37,7 +37,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   readonly destroy$ = new Subject<void>();
   readonly room$ = this.pp.room$.pipe(
     tap(room => {
-      this.titleService.title$.next(room.name);
+      this.titleService.set(room.name);
       this.title.setTitle(`${room.name} - PlaningPoker`);
     }), shareReplay(1));
 

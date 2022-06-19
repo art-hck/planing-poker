@@ -12,7 +12,7 @@ export class RoomsHomeComponent implements OnDestroy {
   readonly destroy$ = new Subject<void>();
 
   constructor(public pp: PlaningPokerWsService, public titleService: TitleService) {
-    this.titleService.reset();
+    this.titleService.set("Список комнат");
   }
 
   ngOnDestroy() {

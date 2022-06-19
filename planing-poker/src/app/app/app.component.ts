@@ -104,9 +104,7 @@ export class AppComponent implements OnInit {
         this.ws.handshaked$.next(true);
       },
       user: user => this.authService.user$.next(user),
-      // Выходим из модального окна, что б оно не показывалось по нажатию на "назад"
-      newRoom: ({ roomId }) => this.router.navigate(['..'], { replaceUrl: true })
-          .then(() => this.router.navigate(['room', roomId])),
+      newRoom: ({ roomId }) => this.router.navigate(['room', roomId]),
       notFound: () => this.router.navigate(['not-found'], { skipLocationChange: true }),
       denied: () => {
         this.router.navigate(['forbidden'], { skipLocationChange: true });

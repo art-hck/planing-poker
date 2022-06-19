@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, HostListener, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { RolesName } from '@common/models';
 import { debounceTime, distinctUntilChanged, filter, finalize, map, Subject, takeUntil, takeWhile, timer } from 'rxjs';
@@ -13,9 +15,10 @@ import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthComponent implements OnDestroy {
+  @ViewChild('matTooltipRef', { read: MatTooltip }) matTooltip?: MatTooltip;
   readonly roles = Object.entries(RolesName);
   readonly form = this.fb.nonNullable.group({
-    name: '',
+    name: { value: '', disabled: true },
     email: ['', [Validators.required, Validators.email]],
     password: [{ value: '', disabled: true }],
     role: '',
@@ -71,6 +74,17 @@ export class AuthComponent implements OnDestroy {
       }
     } else {
       this.ctrlCount = 0;
+    }
+  }
+
+  checkAnonymous(e: MatSlideToggleChange) {
+    if (e.checked) {
+      this.form.get('email')?.disable();
+      this.form.get('name')?.enable();
+      this.matTooltip?.show();
+    } else {
+      this.form.get('email')?.enable();
+      this.form.get('name')?.disable();
     }
   }
 

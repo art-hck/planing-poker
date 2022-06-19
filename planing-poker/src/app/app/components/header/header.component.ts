@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '@common/models';
 import { activatedRouteFirstChild } from '../../../shared/util/activated-route-first-child';
@@ -12,7 +12,7 @@ import { TitleService } from '../../services/title.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   @Input() showPlayers = true;
   @Input() showVotings = true;
   @Output() showPlayersChange = new EventEmitter<boolean>();
@@ -26,8 +26,14 @@ export class HeaderComponent {
     public router: Router,
     public route: ActivatedRoute,
     public resolution: ResolutionService,
-    public titleService: TitleService
-  ) {}
+    public titleService: TitleService,
+    public cd: ChangeDetectorRef
+  ) {
+  }
+
+  ngOnInit() {
+    this.titleService.title$.subscribe(() => this.cd.detectChanges());
+  }
 
   verifications(user: User) {
     return {

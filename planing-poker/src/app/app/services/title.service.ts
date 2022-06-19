@@ -5,12 +5,20 @@ import { BehaviorSubject, Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class TitleService {
-  private defaultTitle = 'Planing Poker';
-  title$ = new BehaviorSubject(this.defaultTitle);
-  click$ = new Subject<void>();
+  private readonly defaultTitle = 'Planing Poker';
+  private readonly _title$ = new BehaviorSubject<string>(this.defaultTitle);
+  readonly click$ = new Subject<void>();
+
+  get title$() {
+    return this._title$.asObservable();
+  }
+
+  set(title: string) {
+    this._title$.next(title);
+  }
 
   reset() {
-    this.title$.next(this.defaultTitle);
+    this.set(this.defaultTitle);
   }
 
   click() {

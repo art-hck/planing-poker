@@ -4,30 +4,43 @@
   </pp-dialog-toolbar>
 
   <div mat-dialog-content *ngIf='!isCodeStep'>
-    <mat-form-field appearance='outline' hideRequiredMarker>
-      <mat-label>Имя</mat-label>
-      <input matInput formControlName='name'>
-    </mat-form-field>
-
-    <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix' *ngIf='form.get("email") as c'>
-      <mat-label>Email</mat-label>
-      <input matInput formControlName='email' inputmode='email'>
-      <mat-slide-toggle matSuffix [checked]='form.get("email")?.disabled' (change)='$event.checked ? c?.disable() : c?.enable()' color='primary'>
-        <div class='app-flex-center'>
-          <span>Анонимно&nbsp;&nbsp;</span>
-          <mat-icon matTooltip='Вы сможете голосовать, но не сможете создавать комнаты' matTooltipClass='app-big-tooltip' color='gray'>
-            help_outline
-          </mat-icon>
+    <div class='app-flex-center' style='gap: 20px'>
+      <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix' *ngIf='form.get("email")'>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName='email' inputmode='email'>
+        <div matSuffix class='app-flex-center' (click)='$event.stopPropagation()'>
+          <mat-slide-toggle [checked]='form.get("email")?.disabled' (change)='checkAnonymous($event)' color='primary'>
+            <div class='app-flex-center'>
+              <span>Анонимно&nbsp;&nbsp;</span>
+            </div>
+          </mat-slide-toggle>
+          <button mat-icon-button (click)='$event.preventDefault(); matTooltip?.show()'>
+            <mat-icon
+              #matTooltipRef
+              (mouseenter)="$event.stopImmediatePropagation()"
+              matTooltip='Вы сможете голосовать, но не сможете создавать комнаты'
+              matTooltipClass='app-big-tooltip'
+              color='gray'>help_outline</mat-icon>
+          </button>
         </div>
-      </mat-slide-toggle>
-    </mat-form-field>
+      </mat-form-field>
+    </div>
 
     <mat-form-field appearance='outline' hideRequiredMarker *ngIf='form.get("password")?.enabled'>
       <mat-label>Пароль</mat-label>
       <input matInput formControlName='password' type='password'>
     </mat-form-field>
 
-    <div class='team-roles'>
+    <h4 class='app-flex-center mat-gray' *ngIf='!form.get("name")?.enabled'>
+      <button mat-button type='button' (click)='form.get("name")?.enable()'>Регистрация</button>
+    </h4>
+
+    <mat-form-field appearance='outline' hideRequiredMarker *ngIf='form.get("name")?.enabled'>
+      <mat-label>Имя</mat-label>
+      <input matInput formControlName='name'>
+    </mat-form-field>
+
+    <div class='team-roles' *ngIf='form.get("name")?.enabled'>
       <mat-button-toggle-group formControlName='role' [class.mat-error]='true'>
         <mat-button-toggle *ngFor='let role of roles' [value]='role[0]'>{{role[1]}}</mat-button-toggle>
       </mat-button-toggle-group>
