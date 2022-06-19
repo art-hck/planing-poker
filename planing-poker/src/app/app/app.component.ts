@@ -48,7 +48,7 @@ export class AppComponent implements OnInit {
     this.historyService.init();
 
     this.sw.versionUpdates.pipe(filter(e => e.type === 'VERSION_READY')).subscribe(() => {
-      this.snackBar.open('Доступна новая версия приложения!', 'Обновить').onAction().subscribe(() => document?.location.reload());
+      this.snackBar.open('Доступна новая версия приложения!', 'Обновить').onAction().subscribe(() => location?.reload());
     });
 
     if (isPlatformBrowser(this.platform) && environment.yandexMetrikaId) {

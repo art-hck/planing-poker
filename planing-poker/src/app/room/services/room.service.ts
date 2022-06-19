@@ -14,7 +14,7 @@ export class RoomService {
     if (navigator?.share) {
       navigator.share({
         title: room.name,
-        url: window?.location?.origin + '/room/' + (room.alias || room.id)
+        url: location?.origin + '/room/' + (room.alias || room.id)
       });
     } else {
       this.bottomSheet.open(RoomShareDialogComponent, { data: { room } });

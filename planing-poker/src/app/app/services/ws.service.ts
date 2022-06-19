@@ -63,7 +63,7 @@ export class WsService {
   connect() {
     this.disconnect();
     this.ws$ = new WebSocketSubject<WsMessage>({
-      url: environment.websocketHost || `ws://${window?.location.hostname}:9000`,
+      url: environment.websocketHost || location.origin.replace(/^http/, 'ws').replace(location.port, '9000'),
       openObserver: { next: () => this._connected$.next(true) },
       closeObserver: {
         next: () => {

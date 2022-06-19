@@ -14,7 +14,7 @@ import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.se
 })
 export class RoomCreateComponent implements OnDestroy {
   @ViewChild('pointsChipList') pointsChipList!: MatChipList;
-  readonly location = window?.location?.origin;
+  readonly location = location?.origin;
   readonly presets = [
     { name: 'Scrum', values: ['0', '0.5', '1', '2', '3', '5', '8', '13', '20', '40'] },
     { name: 'Fibonacci', values: ['0', '1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?', '☕'] },
