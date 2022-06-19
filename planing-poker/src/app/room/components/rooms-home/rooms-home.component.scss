@@ -50,14 +50,7 @@ $max-width: 560px;
 
     @media screen and (max-width: $max-width) {
       margin: 0;
-
-      &:not(:first-child) {
-        border-top: 1px mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 300) solid
-      }
-
-      &:last-child {
-        display: none;
-      }
+      border-bottom: 1px mat.get-color-from-palette(mat.define-palette(mat.$grey-palette), 300) solid;
     }
   }
 
