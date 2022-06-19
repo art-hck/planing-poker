@@ -21,5 +21,6 @@ export class RoomSettingsRouteComponent implements OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.dialog.matDialog.closeAll();
   }
 }
