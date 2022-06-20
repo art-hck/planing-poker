@@ -1,0 +1,78 @@
+{
+  "cancel": "Отмена",
+  "close": "Закрыть",
+  "connect": "Подключиться",
+  "email": "Email",
+  "feedback": "Обратная связь",
+  "language": "Язык",
+  "message": "Сообщение",
+  "name": "Имя",
+  "password": "Пароль",
+  "profile": "Профиль",
+  "reconnect": "Переподключиться",
+  "refresh": "Обновить",
+  "role": "Роль",
+  "save": "Сохранить",
+  "send": "Отправить",
+  "signIn": "Войти",
+  "signingIn": "Авторизация",
+  "signOut": "Выйти",
+  "signUp": "Регистрация",
+  "subject": "Тема обращения",
+  "auth": {
+    "enterCode": "Введите код",
+    "anonymously": "Анонимно",
+    "anonymouslyTooltip": "Вы сможете голосовать, но не сможете создавать комнаты",
+    "codeDescription": "Мы отправили 6-значный код на адрес <span class='app-strong'>{{email}}</span>.",
+    "code": "Код доступа",
+    "googleButton": "Войти с Google"
+  },
+  "feedbackDialog": {
+    "proposal": "Предложение",
+    "bug": "Ошибка",
+    "limits": "Увеличение лимитов",
+    "other": "Другое"
+  },
+  "disconnectDialog": {
+    "title": "Соединение закрыто",
+    "description": "Приложение было не активно более 15 минут и вы были отключены от сервера. Для продолжения работы переподключитесь, или обновите страницу."
+  },
+  "errorPages": {
+    "notFound": "Страница не найдена",
+    "forbidden": "Доступ запрещен",
+    "goToMainPage": "Вернуться на главную страницу"
+  },
+  "user": {
+    "verifiedTooltip": "Аккаунт прошел верификацию",
+    "notVerifiedTooltip": "Аккаунт не верифицирован",
+    "emptyRole": "Не задана",
+    "emptyRoleTooltip": "Роль не задана",
+    "notVerifiedDescription": "<span class='app-strong'>Аккаунт не верифицирован.</span> При выходе или неактивности течение 30 дней все данные <span class='app-strong'>удалятся</span>. Вы не можете использовать аккаунт более чем на одном устройстве, а также быть создателем комнаты.",
+    "notImplemented": "Временно недоступно",
+    "linkEmail": "По почте",
+    "linkWithGoogle": "Привязать аккаунт Google"
+  },
+  "snackbar": {
+    "errorTitle": "Внимание ошибка выполнения операции!",
+    "maxRoomsMessage": "Максимальное количество комнат - {{maxRooms}}",
+    "maxVotingsMessage": "Максимальное количество сторей - {{maxVotings}}",
+    "increaseLimits": "Увеличить лимиты",
+    "updateNotification": "Доступна новая версия приложения!",
+    "successfullyConnected": "Соединение восстановлено",
+    "reconnecting": "Восстанавливаем соединение...",
+    "emailCodeError": "Неверный код. Попробуйте еще раз",
+    "feedback": "Большое спасибо за обратную связь!",
+    "deleteRoom": "Комната удалена, вы были перемещены на список комнат",
+    "googleAlreadyLinked": "Данный google аккаунт уже привязан к пользователю",
+    "close": "Ну ок"
+  },
+  "langs": {
+    "en": "English",
+    "ru": "Русский"
+  },
+  "rooms": {
+    "homeTitle": "Список комнат",
+    "noRoomsTitle": "Для начала работы создайте комнату",
+    "usersCount": "{length, plural, one {# пользователь} few {# пользователя} other {# пользователей}}"
+  }
+}

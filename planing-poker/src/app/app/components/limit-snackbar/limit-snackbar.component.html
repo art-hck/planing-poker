@@ -1,12 +1,14 @@
-<div class="limit-snackbar">
+<div class="limit-snackbar" *transloco='let t'>
   <div *ngIf='limits'>
-    <span class='app-strong'>Внимание ошибка выполнения операции!</span><br/>
-    <span *ngIf='limits.maxRooms'>Максимальное количество комнат - {{limits.maxRooms}}.</span>
-    <span *ngIf='limits.maxVotings'>Максимальное количество сторей - {{limits.maxVotings}}.</span>
+    <span class='app-strong'>{{t('snackbar.errorTitle')}}</span><br/>
+    <span *ngIf='limits.maxRooms'>{{t('snackbar.maxRoomsMessage', limits)}}</span>
+    <span *ngIf='limits.maxVotings'>{{t('snackbar.maxVotingsMessage', limits)}}</span>
   </div>
   <br/>
   <div class="limit-snackbar__footer" [align]='"right"'>
-    <button mat-button (click)='snackBar.dismiss()'>Закрыть</button>
-    <button mat-flat-button routerLink='feedback' [relativeTo]='activatedRouteFirstChild(route)' [queryParams]='{subject: "Увеличение лимитов"}' (click)='snackBar.dismiss()'>Увеличить лимиты</button>
+    <button mat-button (click)='snackBar.dismiss()'>{{t('close')}}</button>
+    <button mat-flat-button routerLink='feedback' [relativeTo]='activatedRouteFirstChild(route)' [queryParams]='{subject: "Увеличение лимитов"}' (click)='snackBar.dismiss()'>
+      {{t('snackbar.increaseLimits')}}
+    </button>
   </div>
 </div>

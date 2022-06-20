@@ -1,8 +1,8 @@
 <pp-header></pp-header>
 <mat-drawer-container>
-  <mat-drawer-content>
+  <mat-drawer-content *transloco='let t'>
     <h3>
-      <div>Доступ запрещен</div>
+      <div>{{t('errorPages.forbidden')}}</div>
     </h3>
     <h1>
       <div class='app-flex-center'>
@@ -11,7 +11,7 @@
     </h1>
 
     <div [align]="'center'">
-      <a mat-button routerLink='/' color='primary'>Вернуться на главную страницу</a>
+      <a mat-button routerLink='/' color='primary'>{{t('errorPages.goToMainPage')}}</a>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>

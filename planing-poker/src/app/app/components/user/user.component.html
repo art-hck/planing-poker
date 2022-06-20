@@ -1,5 +1,6 @@
+<ng-container *transloco='let t'>
 <pp-dialog-toolbar>
-  <h1>Профиль</h1>
+  <h1>{{t('profile')}}</h1>
 </pp-dialog-toolbar>
 <mat-dialog-content *ngIf='data.user as me'>
   <div class='avatar' [style.background-color]='me.name | stringToColor'>
@@ -9,13 +10,13 @@
     <mat-list-option [selected]='false' (click)='edit = true'>
       <mat-icon color='gray' matListIcon>perm_identity</mat-icon>
       <h4 matLine>{{me.name}}</h4>
-      <p matLine class='mat-gray mat-small'>Имя</p>
-      <div matListIcon style='order: -1'>
-        <mat-icon *ngIf='!me.verified' color='warn' matTooltip='Аккаунт не верифицирован' matTooltipPosition='before'
+      <p matLine class='mat-gray mat-small'>{{t('name')}}</p>
+      <div matListIcon [style.order]='-1'>
+        <mat-icon *ngIf='!me.verified' color='warn' [matTooltip]='t("user.notVerifiedTooltip")' matTooltipPosition='before'
                   matTooltipClass='app-big-tooltip'
                   matTooltipShowDelay='500'>error
         </mat-icon>
-        <mat-icon *ngIf='me.verified' color='success' matTooltip='Аккаунт прошел верификацию' matTooltipPosition='before'
+        <mat-icon *ngIf='me.verified' color='success' [matTooltip]='t("user.verifiedTooltip")' matTooltipPosition='before'
                   matTooltipClass='app-big-tooltip'
                   matTooltipShowDelay='500'>verified_user
         </mat-icon>
@@ -26,56 +27,67 @@
       <mat-icon color='gray' matListIcon>work_outline</mat-icon>
       <h4 matLine>
         <span *ngIf='me.role'>{{RolesName[me.role]}}</span>
-        <span *ngIf='!me.role'>Не задана</span>
+        <span *ngIf='!me.role'>{{t('user.emptyRole')}}</span>
       </h4>
-      <p matLine class='mat-gray mat-small'>Роль</p>
-      <div matListIcon style='order: -1'>
-        <mat-icon *ngIf='!me.role' color='orange' matTooltip='Роль не задана' matTooltipPosition='before'
+      <p matLine class='mat-gray mat-small'>{{t('role')}}</p>
+      <div matListIcon [style.order]='-1'>
+        <mat-icon *ngIf='!me.role' color='orange' [matTooltip]='t("user.emptyRoleTooltip")' matTooltipPosition='before'
                   matTooltipClass='app-big-tooltip'
                   matTooltipShowDelay='500'>error
         </mat-icon>
       </div>
 
     </mat-list-option>
+    <mat-list-option (click)='edit = true'>
+      <mat-icon color='gray' matListIcon>language</mat-icon>
+      <h4 matLine>{{t("langs." + translocoService.getActiveLang())}}</h4>
+      <p matLine class='mat-gray mat-small'>{{t('language')}}</p>
+    </mat-list-option>
   </mat-selection-list>
 
   <form *ngIf='edit' [formGroup]='form'>
     <div>
       <mat-form-field appearance='outline' hideRequiredMarker>
-        <mat-label>Имя</mat-label>
+        <mat-label>{{t('name')}}</mat-label>
         <input matInput formControlName='name'>
       </mat-form-field>
     </div>
     <div class='team-roles'>
       <mat-form-field appearance='outline' hideRequiredMarker>
-        <mat-label>Роль</mat-label>
+        <mat-label>{{t('role')}}</mat-label>
         <mat-select formControlName='role'>
           <mat-option *ngFor='let role of roles' [value]='role[0]'>{{role[1]}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field appearance='outline' hideRequiredMarker>
+        <mat-label>{{t('language')}}</mat-label>
+        <mat-select formControlName='lang'>
+          <mat-option [value]='"ru"'>{{t('langs.ru')}}</mat-option>
+          <mat-option [value]='"en"'>{{t('langs.en')}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
   </form>
 
   <div *ngIf='!edit && !me.verified'>
-    <div class='mat-caption' [style.margin]='"12px 0"'>
-      <span class='app-strong'>Аккаунт не верифицирован.</span> При выходе или неактивности течение 30 дней все данные <span
-      class='app-strong'>удалятся</span>.
-      Вы не можете использовать аккаунт более чем на одном устройстве, а также быть создателем комнаты.
-    </div>
+    <div class='mat-caption' [style.margin]='"12px 0"' [innerHTML]='t("user.notVerifiedDescription")'></div>
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions *ngIf='!edit && !data.user.verified'>
   <div class='flex-space'></div>
-  <button mat-flat-button matTooltip='Временно недоступно' matTooltipPosition='above'>По почте</button>
+  <button mat-flat-button [matTooltip]='t("user.notImplemented")' matTooltipPosition='above'>{{t('user.linkEmail')}}</button>
   <a mat-stroked-button [href]='authService.googleAuthLink'>
     <mat-icon svgIcon='google'></mat-icon>
-    <span>&nbsp;Привязать аккаунт Google</span>
+    <span>&nbsp;{{t('user.linkWithGoogle')}}</span>
   </a>
 </mat-dialog-actions>
 
 <mat-dialog-actions *ngIf='edit'>
   <div class='flex-space'></div>
-  <button mat-flat-button (click)='edit = false'>Отмена</button>
-  <button mat-flat-button color='primary' [mat-dialog-close]='form.value'>Сохранить</button>
+  <button mat-flat-button (click)='edit = false'>{{t('cancel')}}</button>
+  <button mat-flat-button color='primary' [mat-dialog-close]='form.value'>{{t('save')}}</button>
 </mat-dialog-actions>
+</ng-container>

@@ -1,22 +1,22 @@
-<form [formGroup]='form' (ngSubmit)='form.valid && dialogRef.close(form.value)'>
+<form [formGroup]='form' (ngSubmit)='form.valid && dialogRef.close(form.value)' *transloco='let t'>
   <pp-dialog-toolbar [back]='true' [closable]='false'>
-    <h1>Обратная связь</h1>
+    <h1>{{t('feedback')}}</h1>
   </pp-dialog-toolbar>
   <div mat-dialog-content>
     <div>
       <mat-form-field appearance='outline'>
-        <mat-label>Тема обращения</mat-label>
+        <mat-label>{{t('subject')}}</mat-label>
         <mat-select formControlName='subject'>
-          <mat-option [value]="'Предложение'">Предложение</mat-option>
-          <mat-option [value]="'Ошибка'">Ошибка</mat-option>
-          <mat-option [value]="'Увеличение лимитов'">Увеличение лимитов</mat-option>
-          <mat-option [value]="'Другое'">Другое</mat-option>
+          <mat-option [value]="'Предложение'">{{t('feedbackDialog.proposal')}}</mat-option>
+          <mat-option [value]="'Ошибка'">{{t('feedbackDialog.bug')}}</mat-option>
+          <mat-option [value]="'Увеличение лимитов'">{{t('feedbackDialog.limits')}}</mat-option>
+          <mat-option [value]="'Другое'">{{t('feedbackDialog.other')}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
     <div>
       <mat-form-field appearance='outline' hideRequiredMarker>
-        <mat-label>Сообщение</mat-label>
+        <mat-label>{{t('message')}}</mat-label>
         <textarea matInput
                   formControlName='message'
                   cdkTextareaAutosize
@@ -28,7 +28,7 @@
   </div>
   <div mat-dialog-actions>
     <div class='flex-space'></div>
-    <button mat-flat-button [mat-dialog-close]='false'>Отмена</button>
-    <button mat-flat-button color='primary'>Создать</button>
+    <button mat-flat-button [mat-dialog-close]='false'>{{t('cancel')}}</button>
+    <button mat-flat-button color='primary'>{{t('send')}}</button>
   </div>
 </form>

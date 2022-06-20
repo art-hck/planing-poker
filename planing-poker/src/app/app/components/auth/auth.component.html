@@ -1,42 +1,45 @@
-<form [formGroup]='form' (ngSubmit)='submit()'>
+<form [formGroup]='form' (ngSubmit)='submit()' *transloco='let t'>
   <pp-dialog-toolbar [back]='isCodeStep' [closable]='false' (backEvent)='form.get("emailCode")?.disable()'>
-    <span>{{isCodeStep ? 'Введите код' : 'Авторизация'}}</span>
+    <span>{{isCodeStep ? t('auth.enterCode') : t('signingIn')}}</span>
+    <div class='flex-space'></div>
+
+    <button type='button' mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>language</mat-icon></button>
+    <mat-menu #menu="matMenu">
+      <button type='button' mat-menu-item (click)='translocoService.setActiveLang("ru")'>{{t('langs.ru')}}</button>
+      <button type='button' mat-menu-item (click)='translocoService.setActiveLang("en")'>{{t('langs.en')}}</button>
+    </mat-menu>
   </pp-dialog-toolbar>
 
   <div mat-dialog-content *ngIf='!isCodeStep'>
-    <div class='app-flex-center' style='gap: 20px'>
-      <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix' *ngIf='form.get("email")'>
-        <mat-label>Email</mat-label>
-        <input matInput formControlName='email' inputmode='email'>
-        <div matSuffix class='app-flex-center' (click)='$event.stopPropagation()'>
-          <mat-slide-toggle [checked]='form.get("email")?.disabled' (change)='checkAnonymous($event)' color='primary'>
-            <div class='app-flex-center'>
-              <span>Анонимно&nbsp;&nbsp;</span>
-            </div>
-          </mat-slide-toggle>
-          <button mat-icon-button (click)='$event.preventDefault(); matTooltip?.show()'>
-            <mat-icon
-              #matTooltipRef
-              (mouseenter)="$event.stopImmediatePropagation()"
-              matTooltip='Вы сможете голосовать, но не сможете создавать комнаты'
-              matTooltipClass='app-big-tooltip'
-              color='gray'>help_outline</mat-icon>
-          </button>
-        </div>
-      </mat-form-field>
-    </div>
+    <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix' *ngIf='form.get("email")'>
+      <mat-label><ng-container *transloco='let t'>{{t('email')}}</ng-container></mat-label>
+      <input matInput formControlName='email' inputmode='email'>
+      <div matSuffix class='app-flex-center' (click)='$event.stopPropagation()'>
+        <mat-slide-toggle [checked]='form.get("email")?.disabled' (change)='checkAnonymous($event)' color='primary'>
+          <div class='app-flex-center'><span>{{t('auth.anonymously')}}&nbsp;&nbsp;</span></div>
+        </mat-slide-toggle>
+        <button type='button' mat-icon-button (click)='$event.preventDefault(); matTooltip?.show()'>
+          <mat-icon
+            #matTooltipRef
+            (mouseenter)="$event.stopImmediatePropagation()"
+            [matTooltip]='t("auth.anonymouslyTooltip")'
+            matTooltipClass='app-big-tooltip'
+            color='gray'>help_outline</mat-icon>
+        </button>
+      </div>
+    </mat-form-field>
 
     <mat-form-field appearance='outline' hideRequiredMarker *ngIf='form.get("password")?.enabled'>
-      <mat-label>Пароль</mat-label>
+      <mat-label>{{ t('password')}}</mat-label>
       <input matInput formControlName='password' type='password'>
     </mat-form-field>
 
-    <h4 class='app-flex-center mat-gray' *ngIf='!form.get("name")?.enabled'>
-      <button mat-button type='button' (click)='form.get("name")?.enable()'>Регистрация</button>
+    <h4 class='app-flex-center mat-gray' *ngIf='form.get("name")?.disabled'>
+      <button mat-button type='button' (click)='form.get("name")?.enable()'>{{t('signUp')}}</button>
     </h4>
 
     <mat-form-field appearance='outline' hideRequiredMarker *ngIf='form.get("name")?.enabled'>
-      <mat-label>Имя</mat-label>
+      <mat-label>{{t('name')}}</mat-label>
       <input matInput formControlName='name'>
     </mat-form-field>
 
@@ -46,7 +49,7 @@
       </mat-button-toggle-group>
 
       <mat-form-field appearance='outline' hideRequiredMarker>
-        <mat-label>Роль</mat-label>
+        <mat-label>{{t('role')}}</mat-label>
         <mat-select formControlName='role'>
           <mat-option *ngFor='let role of roles' [value]='role[0]'>{{role[1]}}</mat-option>
         </mat-select>
@@ -56,9 +59,9 @@
 
   <!-- Workaround: оборачиваем в форму, что бы при первом сабмите emailCode не подсвечивался как invalid (т.к. form.submitted: false) -->
   <form mat-dialog-content *ngIf='isCodeStep' [formGroup]='form' (ngSubmit)='submit()'>
-    <p>Мы отправили 6-значный код на адрес <span class='app-strong'>{{form.value.email}}</span>.</p>
+    <p [innerHTML]='t("auth.codeDescription", form.value)'></p>
     <mat-form-field appearance='outline' hideRequiredMarker class='mat-align-text-suffix'>
-      <mat-label>Код доступа</mat-label>
+      <mat-label>{{t('auth.code')}}</mat-label>
       <input matInput formControlName='emailCode' inputmode='numeric' (keydown)='preventNonNumber($event)' ppAutoFocus>
       <span matSuffix class='mat-gray'>{{timer$ | async}}</span>
     </mat-form-field>
@@ -67,7 +70,7 @@
   <div mat-dialog-actions>
     <div class='flex-space'></div>
     <a mat-stroked-button [href]='authService.googleAuthLink'>
-      <mat-icon svgIcon='google'></mat-icon>&nbsp; Войти с Google</a>
-    <button mat-flat-button color='primary'>Войти</button>
+      <mat-icon svgIcon='google'></mat-icon>&nbsp; {{t('auth.googleButton')}}</a>
+    <button mat-flat-button color='primary'>{{t('signIn')}}</button>
   </div>
 </form>

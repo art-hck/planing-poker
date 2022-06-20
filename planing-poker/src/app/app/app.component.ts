@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
+import { TranslocoService } from '@ngneat/transloco';
 import { filter, fromEvent, skip, switchMap, takeUntil, tap, timer, withLatestFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { DialogService } from '../shared/modules/dialog/dialog.service';
@@ -20,7 +21,7 @@ import { WsService } from './services/ws.service';
   template: `
     <router-outlet></router-outlet>
     <ng-template #reconnect let-data>
-      <div class="app-flex-center" style='justify-content: flex-start; gap: 12px'>
+      <div class='app-flex-center' style='justify-content: flex-start; gap: 12px'>
         <mat-icon *ngIf='data.icon'>{{data.icon}}link_off</mat-icon>
         <span>{{data.text}}<ng-container *ngIf='ws.reconnectAttempts$ | async as a'> ({{a}})</ng-container></span>
       </div>
@@ -44,16 +45,18 @@ export class AppComponent implements OnInit {
     private historyService: HistoryService,
     public ws: WsService,
     public sidebars: SidebarsService,
+    private t: TranslocoService
   ) {
     this.historyService.init();
 
     this.sw.versionUpdates.pipe(filter(e => e.type === 'VERSION_READY')).subscribe(() => {
-      this.snackBar.open('Доступна новая версия приложения!', 'Обновить').onAction().subscribe(() => location?.reload());
+      this.snackBar.open(this.t.translate('snackbar.updateNotification'), this.t.translate('refresh'))
+        .onAction().subscribe(() => location?.reload());
     });
 
     if (isPlatformBrowser(this.platform) && environment.yandexMetrikaId) {
       const ym = (window as any)?.ym;
-      ym(environment.yandexMetrikaId, "init", environment.yandexMetrikaOptions ?? {});
+      ym(environment.yandexMetrikaId, 'init', environment.yandexMetrikaOptions ?? {});
 
       this.router.events.pipe(
         filter(e => e instanceof NavigationEnd),
@@ -78,24 +81,24 @@ export class AppComponent implements OnInit {
     hide$.pipe(
       withLatestFrom(this.ws.connected$),
       filter(([, c]) => c && !this.dialog.getDialogById('reconnectDialog')),
-      switchMap(() => timer( 15 * 60 * 1000).pipe(takeUntil(show$))),
+      switchMap(() => timer(15 * 60 * 1000).pipe(takeUntil(show$))),
       tap(() => this.ws.disconnect(false)),
       switchMap(() => this.dialog.confirm({
         id: 'reconnectDialog',
         disableClose: true,
         data: {
-          title: 'Соединение закрыто',
-          content: 'Приложение было не активно более 15 минут и вы были отключены от сервера. Для продолжения работы переподключитесь, или обновите страницу.',
-          submit: 'Переподключиться'
-        },
+          title: this.t.translate('disconnectDialog.title'),
+          content: this.t.translate('disconnectDialog.description'),
+          submit: this.t.translate('reconnect')
+        }
       }))
     ).subscribe(() => this.ws.connect());
 
     this.ws.connected$.pipe(
       skip(1),
-      tap(c => c && this.snackBar._openedSnackBarRef && this.notification('Соединение восстановлено', 'link', 1000)),
+      tap(c => c && this.snackBar._openedSnackBarRef && this.notification(this.t.translate('snackbar.successfullyConnected'), 'link', 1000)),
       filter(c => !c && !this.dialog.getDialogById('reconnectDialog') && !this.snackBar._openedSnackBarRef)
-    ).subscribe(() => this.notification('Восстанавливаем соединение...', 'link_off'));
+    ).subscribe(() => this.notification(this.t.translate('snackbar.reconnecting'), 'link_off'));
 
     this.pp.events({
       handshake: ({ refreshToken, token }) => {
@@ -113,26 +116,26 @@ export class AppComponent implements OnInit {
       invalidToken: () => this.authService.logout$.next({ emitEvent: false }),
       emailCodeError: () => {
         this.authService.logout$.next({ emitEvent: false });
-        this.snackBar.open('Неверный код. Попробуйте еще раз', 'Ну ок');
+        this.snackBar.open(this.t.translate('snackbar.emailCodeError'), this.t.translate('snackbar.close'));
       },
       limitsError: ({ limits }) => this.snackBar.openFromComponent(LimitSnackbarComponent, { data: limits }),
       feedback: ({ success }) => {
         if (success) {
-          this.snackBar.open('Большое спасибо за обратную связь!', undefined, { duration: 1000 });
+          this.snackBar.open(this.t.translate('snackbar.feedback'), undefined, { duration: 1000 });
         }
       },
       deleteRoom: () => {
-        this.snackBar.open('Комната удалена, вы были перемещены на список комнат', 'Ну ок');
+        this.snackBar.open(this.t.translate('snackbar.deleteRoom'), this.t.translate('snackbar.close'));
         this.router.navigate(['/']);
       },
       googleAlreadyLinked: () => {
-        this.snackBar.open('Данный google аккаунт уже привязан к пользователю.', 'Ну ок');
+        this.snackBar.open(this.t.translate('snackbar.googleAlreadyLinked'), this.t.translate('snackbar.close'));
         this.router.navigate(['/']);
       }
     }).subscribe();
   }
 
-  private notification(text: string, icon?: string, duration?:number) {
+  private notification(text: string, icon?: string, duration?: number) {
     return this.reconnect && this.snackBar.openFromTemplate(this.reconnect, {
       horizontalPosition: 'end', duration, data: { text, icon }
     });

@@ -16,11 +16,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../app/components/header/header.component';
+import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { DialogModule } from './modules/dialog/dialog.module';
+import { TranslocoModule } from './modules/transloco/transloco.module';
 import { AbbreviationPipe } from './pipes/abbreviation.pipe';
 import { PluralizePipe } from './pipes/pluralize-pipe';
 import { StringToColorPipe } from './pipes/string-to-color.pipe';
-import { AutoFocusDirective } from './directives/auto-focus.directive';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
     MatMenuModule,
     MatBadgeModule,
     MatDialogModule,
+    TranslocoModule
   ],
   exports: [
     PluralizePipe,
@@ -70,6 +72,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
     MatTooltipModule,
     MatBadgeModule,
     HeaderComponent,
+    TranslocoModule
   ]
 })
 export class AppSharedModule {

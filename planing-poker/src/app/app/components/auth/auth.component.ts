@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RolesName } from '@common/models';
+import { TranslocoService } from '@ngneat/transloco';
 import { debounceTime, distinctUntilChanged, filter, finalize, map, Subject, takeUntil, takeWhile, timer } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { PlaningPokerWsService } from '../../services/planing-poker-ws.service';
@@ -40,7 +41,8 @@ export class AuthComponent implements OnDestroy {
     public dialogRef: MatDialogRef<AuthComponent>,
     private fb: FormBuilder,
     private pp: PlaningPokerWsService,
-    public authService: AuthService
+    public authService: AuthService,
+    public translocoService: TranslocoService
   ) {
     this.form?.valueChanges.pipe(debounceTime(400), filter(() => !!this.form.get('emailCode')?.valid), takeUntil(this.destroy$))
       .subscribe(() => this.submit());

@@ -1,4 +1,4 @@
-<mat-toolbar color='primary'>
+<mat-toolbar color='primary' *transloco='let t'>
   <a mat-icon-button (click)='back.emit()' *ngIf='back.observed'>
     <mat-icon>arrow_back</mat-icon>
   </a>
@@ -35,15 +35,15 @@
         >
           account_circle
         </mat-icon>
-        <span>Профиль</span>
+        <span>{{t('profile')}}</span>
       </a>
       <a mat-menu-item routerLink='feedback' [relativeTo]='activatedRouteFirstChild(route)'>
         <mat-icon>feedback</mat-icon>
-        <span>Обратная связь</span>
+        <span>{{t('feedback')}}</span>
       </a>
       <button mat-menu-item (click)='authService.logout$.next(undefined)'>
         <mat-icon>logout</mat-icon>
-        <span>Выйти</span>
+        <span>{{t('signOut')}}</span>
       </button>
     </mat-menu>
 

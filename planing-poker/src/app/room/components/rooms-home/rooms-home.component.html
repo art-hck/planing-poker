@@ -1,7 +1,7 @@
 <ng-container *ngIf='pp.rooms$ | async as rooms'>
   <ng-container *ngIf='rooms.length === 0'>
     <h1 class='mat-display-3 app-strong' routerLink='create'>
-      <span>Для начала работы создайте комнату</span>
+      <span *transloco='let t'>{{t('rooms.noRoomsTitle')}}</span>
     </h1>
   </ng-container>
 
@@ -14,7 +14,7 @@
           </div>
           <mat-card-header>
             <mat-card-title>{{room.name}}</mat-card-title>
-            <mat-card-subtitle>{{ room.users.length | pluralize: 'пользователь' : 'пользователя' : 'пользователей' }}</mat-card-subtitle>
+            <mat-card-subtitle *transloco='let t'>{{t('rooms.usersCount', room.users)}}</mat-card-subtitle>
           </mat-card-header>
         </mat-card>
       </a>

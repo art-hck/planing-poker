@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoService } from '@ngneat/transloco';
 import { Subject, switchMap, takeUntil } from 'rxjs';
 import { DialogService } from '../../../shared/modules/dialog/dialog.service';
 import { AuthService } from '../../services/auth.service';
@@ -15,7 +16,8 @@ export class UserRouteComponent implements OnDestroy {
     private dialog: DialogService,
     private pp: PlaningPokerWsService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translocoService: TranslocoService
   ) {
     this.authService.user$.pipe(
       switchMap(user => {
@@ -24,8 +26,9 @@ export class UserRouteComponent implements OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(payload => {
       if (payload) {
-        const { name, role } = payload;
+        const { name, role, lang } = payload;
         this.pp.editUser(name, role);
+        this.translocoService.setActiveLang(lang);
       }
       this.router.navigate(['..'], { relativeTo: this.route, replaceUrl: true });
     });

@@ -1,0 +1,78 @@
+{
+  "cancel": "Cancel",
+  "close": "Close",
+  "connect": "Connect",
+  "email": "Email",
+  "feedback": "Feedback",
+  "language": "Language",
+  "message": "Message",
+  "name": "Name",
+  "password": "Password",
+  "profile": "Profile",
+  "reconnect": "Reconnect",
+  "refresh": "Refresh",
+  "role": "Role",
+  "save": "Save",
+  "send": "Send",
+  "signIn": "Sign in",
+  "signingIn": "Signing In",
+  "signOut": "Sign out",
+  "signUp": "Sign Up",
+  "subject": "Subject",
+  "auth": {
+    "enterCode": "Enter code",
+    "anonymously": "Anonymously",
+    "anonymouslyTooltip": "You will be able to vote but not be able to create rooms",
+    "codeDescription": "We have sent a 6-digit code to the <span class='app-strong'>{{email}}</span>.",
+    "code": "Access code",
+    "googleButton": "Sign in with Google"
+  },
+  "feedbackDialog": {
+    "proposal": "Proposal",
+    "bug": "Error",
+    "limits": "Limit increase",
+    "other": "Other"
+  },
+  "disconnectDialog": {
+    "title": "Connection closed",
+    "description": "The application has been inactive for more than 15 minutes and you have been disconnected from the server. To continue working, reconnect or refresh the page."
+  },
+  "errorPages": {
+    "notFound": "Page not found",
+    "forbidden": "Access denied",
+    "goToMainPage": "Return to the main page"
+  },
+  "user": {
+    "verifiedTooltip": "Account has been verified",
+    "notVerifiedTooltip": "Account not verified",
+    "emptyRole": "Not set",
+    "emptyRoleTooltip": "Role not set",
+    "notVerifiedDescription": "<span class='app-strong'>Account not verified.</span> If you log out or are inactive for 30 days, all data will be <span class='app-strong'>deleted</span>. You cannot use your account on more than one device, nor can you create rooms.",
+    "notImplemented": "Temporarily unavailable",
+    "linkEmail": "By email",
+    "linkWithGoogle": "Link Google account"
+  },
+  "snackbar": {
+    "errorTitle": "Attention operation error!",
+    "maxRoomsMessage": "Maximum number of rooms - {{maxRooms}}",
+    "maxVotingsMessage": "Maximum number of stories - {{maxVotings}}",
+    "increaseLimits": "Increase limits",
+    "updateNotification": "A new version of the app is available!",
+    "successfullyConnected": "Successfully connected",
+    "reconnecting": "Reconnecting...",
+    "emailCodeError": "Invalid code. Try again",
+    "feedback": "Thank you for feedback!",
+    "deleteRoom": "The room has been deleted, you have been moved to the room list",
+    "googleAlreadyLinked": "This google account is already linked to the user",
+    "close": "Ok, so"
+  },
+  "langs": {
+    "en": "English",
+    "ru": "Russian"
+  },
+  "rooms": {
+    "homeTitle": "Room list",
+    "noRoomsTitle": "Create a room to get started",
+    "usersCount": "{length, plural, one {# user} other {# users}}"
+  }
+}
