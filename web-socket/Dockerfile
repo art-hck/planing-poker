@@ -1,11 +1,13 @@
 FROM node:lts-alpine
 WORKDIR /usr/src/app
 
-COPY ./web-socket ./web-socket
+ADD ./web-socket/package*.json ./web-socket/
 RUN cd ./web-socket && npm ci
+COPY ./web-socket ./web-socket
 
-COPY ./common ./common
+ADD ./common/package*.json ./common/
 RUN cd ./common && npm ci
+COPY ./common ./common
 
 COPY ./certbot /etc/nginx/certbot
 

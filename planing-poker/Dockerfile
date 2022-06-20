@@ -1,11 +1,13 @@
 FROM node:lts-alpine AS build
 WORKDIR /usr/src/app
 
-COPY ./planing-poker ./planing-poker
+ADD ./planing-poker/package*.json ./planing-poker/
 RUN cd ./planing-poker && npm ci
+COPY ./planing-poker ./planing-poker
 
-COPY ./common ./common
+ADD ./common/package*.json ./common/
 RUN cd ./common && npm ci
+COPY ./common ./common
 
 RUN cd ./planing-poker && npm run build
 
