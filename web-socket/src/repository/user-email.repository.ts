@@ -25,11 +25,12 @@ export class UserEmailRepository implements Repository<UserEmail> {
   }
 
   async get(email: string, code: string): Promise<UserEmail> {
-    const account = this.userEmails.get(email) || await this.collection?.findOne({ email });
+    const account = await this.collection?.findOne({ email }) || this.userEmails.get(email);
 
     if (!account?.code || !account.codeExp || account.code !== code || account.codeExp < +new Date())
       throw new EmailCodeError();
 
+    await this.collection?.updateOne({ email: account.email }, { $unset: { code: "", codeExp: "" } });
     return account;
   }
 
@@ -46,7 +47,7 @@ export class UserEmailRepository implements Repository<UserEmail> {
     delete account.codeExp;
     this.userEmails.set(account.email, account);
 
-    await this.collection?.updateOne({ email: account.email }, { $set: serialize({ userId }), $unset: { code: "", codeExp: "" } });
+    await this.collection?.updateOne({ email: account.email }, { $set: serialize({ userId }) });
     return true;
   }
 
@@ -81,7 +82,7 @@ export class UserEmailRepository implements Repository<UserEmail> {
    * @param email
    */
   async getLinkedUser(email: string) {
-    const account = this.userEmails.get(email) || await this.collection?.findOne({ email }, { projection: { _id: 0 } });
+    const account = await this.collection?.findOne({ email }, { projection: { _id: 0 } }) || this.userEmails.get(email);
 
     return (account?.userId && (await usersRepo.find(account.userId))) || undefined;
   }
