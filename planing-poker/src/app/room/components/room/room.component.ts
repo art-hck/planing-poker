@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
@@ -39,6 +39,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     tap(room => {
       this.titleService.set(room.name);
       this.title.setTitle(`${room.name} - PlaningPoker`);
+      this.meta.updateTag({ name: 'description', content: `${room.name} - PlaningPoker` });
     }), shareReplay(1));
 
   constructor(
@@ -46,6 +47,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     public pp: PlaningPokerWsService,
     private title: Title,
+    private meta: Meta,
     private titleService: TitleService,
     private dialog: DialogService,
     private store: Store,

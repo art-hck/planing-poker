@@ -10,6 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
+import { TRANSLOCO_SCOPE } from '@ngneat/transloco';
 import { NgxsModule } from '@ngxs/store';
 
 import { AppSharedModule } from '../shared/app-shared.module';
@@ -75,6 +76,9 @@ import { VotingsState } from './states/votings.state';
     MatCheckboxModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule
+  ],
+  providers: [
+    { provide: TRANSLOCO_SCOPE, useValue: 'rooms' }
   ]
 })
 export class RoomModule {
