@@ -21,7 +21,8 @@
       "updateMode": "prefetch",
       "resources": {
         "urls": [
-          "https://fonts.gstatic.com/**"
+          "https://fonts.gstatic.com/**",
+          "https://mc.yandex.ru/**"
         ],
         "files": [
           "/assets/**",
