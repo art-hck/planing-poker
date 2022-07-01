@@ -22,7 +22,7 @@
       "resources": {
         "urls": [
           "https://fonts.gstatic.com/**",
-          "https://mc.yandex.ru/**"
+          "https://mc.yandex.ru/metrika/tag.js"
         ],
         "files": [
           "/assets/**",
