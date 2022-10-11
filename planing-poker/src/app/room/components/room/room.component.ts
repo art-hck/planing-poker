@@ -3,7 +3,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
-import { filter, map, merge, Observable, shareReplay, skip, startWith, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { filter, map, merge, Observable, skip, startWith, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
@@ -35,12 +35,18 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.pp.flip$.pipe(map(() => 2))
   );
   readonly destroy$ = new Subject<void>();
-  readonly room$ = this.pp.room$.pipe(
+  readonly joinRoom$ = new Subject<void>();
+  readonly room$ = merge(
+    // Когда переходим с комнаты на комнату обнуляем значение потока
+    this.joinRoom$.pipe(map(() => undefined)),
+    this.pp.roomShared$
+  ).pipe(
     tap(room => {
+      if (!room) return;
       this.titleService.set(room.name);
       this.title.setTitle(`${room.name} - PlaningPoker`);
       this.meta.updateTag({ name: 'description', content: `${room.name} - PlaningPoker` });
-    }), shareReplay(1));
+    }));
 
   constructor(
     public sidebars: SidebarsService,
@@ -73,12 +79,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       if (room) {
         this.pp.disconnectRoom(room.id);
       }
+      this.joinRoom$.next();
       this.pp.joinRoom(id);
     });
 
     this.pp.requireRoomPassword$.pipe(
       switchMap(() => this.dialog.small(RoomPasswordComponent, { disableClose: true, autoFocus: true })),
       filter(v => !!v),
+      tap(() => this.joinRoom$),
       takeUntil(this.destroy$)
     ).subscribe(({ password }) => this.pp.joinRoom(this.route.snapshot.params['id'], password));
 

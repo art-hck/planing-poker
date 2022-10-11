@@ -1,11 +1,12 @@
 <ng-container *ngIf='authService.user$ | async'>
+  <!-- @TODO: (back) event должен очищать N записей в history перед переходом на уровень выше, что бы при нажатии системной кнопки back мы не возвращались обратно в комнату -->
   <pp-header
     *ngIf='isRoom'
     [(showPlayers)]='sidebars.showPlayers'
     [(showVotings)]='sidebars.showVotings'
     (showPlayersChange)='sidebars.saveSidebarsState();'
     (showVotingsChange)='sidebars.saveSidebarsState();'
-    (back)='history.back(route)'
+    (back)='router.navigate([".."], { relativeTo: route })'
   ></pp-header>
   <pp-header *ngIf='!isRoom'></pp-header>
   <ng-container *ngIf='pp.rooms$ | async as rooms'>

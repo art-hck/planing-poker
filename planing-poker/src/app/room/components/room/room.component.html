@@ -1,4 +1,4 @@
-<ng-container *ngIf="pp.room$ | async as room">
+<ng-container *ngIf="room$ | async as room">
   <mat-drawer-container *ngIf="authService.user$ | async as me">
     <mat-drawer class='app-left-side' [mode]="sidebars.sidenavMode" [(opened)]="sidebars.showPlayers" [autoFocus]="false">
       <!--- USERS --->
