@@ -3,7 +3,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, Voting } from '@common/models';
 import { Select, Store } from '@ngxs/store';
-import { filter, map, merge, Observable, skip, startWith, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { filter, map, merge, Observable, shareReplay, skip, startWith, Subject, switchMap, takeUntil, tap, timer, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../app/services/auth.service';
 import { PlaningPokerWsService } from '../../../app/services/planing-poker-ws.service';
 import { SidebarsService } from '../../../app/services/sidebars.service';
@@ -29,7 +29,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   readonly currentVoting$ = this.route.queryParams.pipe(switchMap(({ votingId }) => {
     return this.store.select(VotingsState.voting(votingId));
   }));
-  step$ = merge(
+  readonly step$ = merge(
     this.pp.restartVoting$.pipe(map(() => 1)),
     this.currentVoting$.pipe(map(v => v ? v?.status === 'end' ? 2 : 1 : 0)),
     this.pp.flip$.pipe(map(() => 2))
@@ -38,7 +38,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   readonly joinRoom$ = new Subject<void>();
   readonly room$ = merge(
     // Когда переходим с комнаты на комнату обнуляем значение потока
-    this.joinRoom$.pipe(map(() => undefined)),
+    this.joinRoom$.pipe(switchMap(() => timer(500).pipe(map(() => undefined), takeUntil(this.pp.room$)))),
     this.pp.roomShared$
   ).pipe(
     tap(room => {
@@ -46,7 +46,9 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.titleService.set(room.name);
       this.title.setTitle(`${room.name} - PlaningPoker`);
       this.meta.updateTag({ name: 'description', content: `${room.name} - PlaningPoker` });
-    }));
+    }),
+    shareReplay(1),
+  );
 
   constructor(
     public sidebars: SidebarsService,
